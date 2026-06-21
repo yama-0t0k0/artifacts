@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>artifacts — 公開アーティファクト集</title>
+<style>
+:root{ --bg:#16171a; --bg2:#1e2025; --card:#23262c; --txt:#e9eaec; --muted:#9aa1ab; --line:rgba(255,255,255,.1); --accent:#6aa6ff; --a2:#7ee0c0; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f7f5; --bg2:#fff; --card:#fff; --txt:#1b1d21; --muted:#5f656e; --line:rgba(0,0,0,.1); --accent:#1f6fe0; --a2:#119a7a; } }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.7;}
+.wrap{max-width:840px;margin:0 auto;padding:0 20px 80px;}
+.hero{padding:54px 32px;border-radius:24px;margin-top:40px;border:1px solid var(--line);background:
+  radial-gradient(120% 120% at 0% 0%, rgba(106,166,255,.18), transparent 55%),
+  radial-gradient(120% 120% at 100% 30%, rgba(126,224,192,.16), transparent 55%), var(--bg2);}
+.eyebrow{font-size:12px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;font-weight:600;}
+h1{font-size:34px;margin:10px 0 12px;font-weight:800;letter-spacing:-.5px;}
+.hero p{max-width:600px;color:var(--muted);margin:0;font-size:16px;}
+h2{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin:44px 0 14px;font-weight:600;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
+.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;transition:transform .15s,border-color .15s;}
+.card:hover{transform:translateY(-3px);border-color:var(--accent);}
+.card .ic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;background:rgba(106,166,255,.15);font-size:20px;}
+.card h3{margin:0 0 6px;font-size:17px;}
+.card p{margin:0;font-size:13px;color:var(--muted);}
+.card .go{margin-top:12px;font-size:13px;color:var(--accent);font-weight:600;}
+.note{margin-top:14px;font-size:12px;color:var(--muted);}
+.foot{margin-top:46px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:13px;}
+.foot a{color:var(--accent);text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">artifacts</div>
+    <h1>公開アーティファクト集</h1>
+    <p>仕様ドキュメントのインフォグラフィックなど、公開可能なアーティファクトを GitHub Pages で配信します。</p>
+  </div>
+
+  <h2>コンテンツ</h2>
+  <div class="grid">
+    <a class="card" href="./infographic/">
+      <div class="ic">📊</div>
+      <h3>法人ユーザーアプリ 仕様インフォグラフィック</h3>
+      <p>6機能・3ロールRBAC・成長ファーストのマッチング・データ隔離・外部連携・入社後サーベイをインタラクティブに可視化。</p>
+      <div class="go">開く →</div>
+      <div class="note">🔒 パスワード保護されています。</div>
+    </a>
+    <a class="card" href="https://github.com/yama-0t0k0/artifacts">
+      <div class="ic">📦</div>
+      <h3>GitHub リポジトリ</h3>
+      <p>本サイトのソース・ビルドスクリプト・デプロイワークフロー。</p>
+      <div class="go">リポジトリへ →</div>
+    </a>
+  </div>
+
+  <div class="foot">
+    公開: GitHub Pages（GitHub Actions デプロイ）／ リポジトリ: <a href="https://github.com/yama-0t0k0/artifacts">yama-0t0k0/artifacts</a>
+  </div>
+</div>
+</body>
+</html>
