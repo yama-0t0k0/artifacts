@@ -6,6 +6,7 @@ on:
     paths:
       - "index.html"
       - "infographic/**"
+      - "reports/**"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -34,6 +35,7 @@ jobs:
           cp index.html _site/index.html
           mkdir -p _site/infographic
           cp infographic/index.html _site/infographic/index.html
+          if [ -d reports ]; then cp -R reports _site/reports; fi
           touch _site/.nojekyll
 
       - name: Setup Pages

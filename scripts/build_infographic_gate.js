@@ -15,6 +15,7 @@
  *   --src  <path>      平文ソース HTML（既定: .preview_infographic/index.html）
  *   --out  <path>      出力先（既定: infographic/index.html）
  *   --iter <n>         PBKDF2 反復回数（既定: 250000）
+ *   --title <text>     ログイン画面の見出し（既定: 法人ユーザーアプリ 仕様）
  *   --today            ドキュメント先頭の「更新日」を当日(ローカル)に差し替える
  *   --date <YYYY-MM-DD> 「更新日」を指定日に差し替える（--today より優先）
  *
@@ -44,6 +45,7 @@ const PASSWORD = arg('pw', process.env.INFOGRAPHIC_PW);
 const SRC = path.resolve(ROOT, arg('src', '.preview_infographic/index.html'));
 const OUT = path.resolve(ROOT, arg('out', 'infographic/index.html'));
 const ITER = parseInt(arg('iter', '250000'), 10);
+const TITLE = arg('title', '法人ユーザーアプリ 仕様');
 const DATE_OVERRIDE = arg('date', flag('today') ? todayLocal() : null);
 
 if (!PASSWORD) {
@@ -86,7 +88,7 @@ const login = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>法人ユーザーアプリ 仕様 — ログイン</title>
+<title>${TITLE} — ログイン</title>
 <style>
 :root{ --bg:#16171a; --bg2:#1e2025; --card:#23262c; --txt:#e9eaec; --muted:#9aa1ab; --line:rgba(255,255,255,.12); --accent:#6aa6ff; --bad:#ff8a8a; }
 @media (prefers-color-scheme: light){ :root{ --bg:#f6f7f5; --bg2:#fff; --card:#fff; --txt:#1b1d21; --muted:#5f656e; --line:rgba(0,0,0,.12); --accent:#1f6fe0; --bad:#d8463f; } }
@@ -115,7 +117,7 @@ button:disabled{opacity:.6;cursor:default;}
 <body>
 <form class="box" id="f" autocomplete="off">
   <div class="lockico">🔒</div>
-  <h1>法人ユーザーアプリ 仕様</h1>
+  <h1>${TITLE}</h1>
   <p class="sub">このページは保護されています。閲覧するにはパスワードを入力してください。</p>
   <label for="pw">パスワード</label>
   <input type="password" id="pw" autofocus autocomplete="current-password">
