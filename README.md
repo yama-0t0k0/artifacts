@@ -6,6 +6,7 @@
 
 - ランディング: https://yama-0t0k0.github.io/artifacts/
 - 法人ユーザーアプリ 仕様インフォグラフィック（🔒 パスワード保護）: https://yama-0t0k0.github.io/artifacts/infographic/
+- 個別アプリ共通化調査 — apps × shared 監査（🔒 パスワード保護）: https://yama-0t0k0.github.io/artifacts/reports/apps-shared-audit/
 
 ## 構成
 
