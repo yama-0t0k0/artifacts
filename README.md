@@ -11,6 +11,7 @@
 | 📊 法人ユーザーアプリ 仕様インフォグラフィック | https://yama-0t0k0.github.io/artifacts/infographic/ | 🔒 |
 | 🔍 バックエンド実装調査 — JS/TS 監査 | https://yama-0t0k0.github.io/artifacts/reports/backend-dart-audit/ | 🔒 |
 | 🧩 個別アプリ共通化調査 — apps × shared 監査 | https://yama-0t0k0.github.io/artifacts/reports/apps-shared-audit/ | 🔒 |
+| ⚙️ GitHub Actions 失敗調査 — forAgent CI/CD 監査 | https://yama-0t0k0.github.io/artifacts/reports/github-actions-failure-audit/ | 🔒 |
 
 ## 構成
 
@@ -22,8 +23,10 @@ artifacts/
 ├── reports/                         調査レポート（いずれも暗号化 + ログインゲート）
 │   ├── backend-dart-audit/
 │   │   └── index.html               バックエンド実装調査 — JS/TS 監査
-│   └── apps-shared-audit/
-│       └── index.html               個別アプリ共通化調査 — apps × shared 監査
+│   ├── apps-shared-audit/
+│   │   └── index.html               個別アプリ共通化調査 — apps × shared 監査
+│   └── github-actions-failure-audit/
+│       └── index.html               GitHub Actions 失敗調査 — forAgent CI/CD 監査
 ├── scripts/
 │   └── build_infographic_gate.js    平文HTMLを暗号化しゲートを生成するビルドスクリプト
 └── .github/workflows/deploy-pages.yml  GitHub Actions による Pages デプロイ
