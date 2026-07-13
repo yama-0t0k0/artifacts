@@ -12,6 +12,7 @@
 | 🔍 バックエンド実装調査 — JS/TS 監査 | https://yama-0t0k0.github.io/artifacts/reports/backend-dart-audit/ | 🔒 |
 | 🧩 個別アプリ共通化調査 — apps × shared 監査 | https://yama-0t0k0.github.io/artifacts/reports/apps-shared-audit/ | 🔒 |
 | ⚙️ GitHub Actions 失敗調査 — forAgent CI/CD 監査 | https://yama-0t0k0.github.io/artifacts/reports/github-actions-failure-audit/ | 🔒 |
+| 🎛️ Adminダッシュボード 機能ギャップ調査 | https://yama-0t0k0.github.io/artifacts/reports/admin-app-feature-gaps/ | なし |
 
 ## 構成
 
@@ -20,19 +21,21 @@ artifacts/
 ├── index.html                       ランディングページ
 ├── infographic/
 │   └── index.html                   法人ユーザーアプリ 仕様インフォグラフィック（暗号化 + ログインゲート）
-├── reports/                         調査レポート（いずれも暗号化 + ログインゲート）
+├── reports/                         調査レポート
 │   ├── backend-dart-audit/
-│   │   └── index.html               バックエンド実装調査 — JS/TS 監査
+│   │   └── index.html               バックエンド実装調査 — JS/TS 監査（🔒）
 │   ├── apps-shared-audit/
-│   │   └── index.html               個別アプリ共通化調査 — apps × shared 監査
-│   └── github-actions-failure-audit/
-│       └── index.html               GitHub Actions 失敗調査 — forAgent CI/CD 監査
+│   │   └── index.html               個別アプリ共通化調査 — apps × shared 監査（🔒）
+│   ├── github-actions-failure-audit/
+│   │   └── index.html               GitHub Actions 失敗調査 — forAgent CI/CD 監査（🔒）
+│   └── admin-app-feature-gaps/
+│       └── index.html               Adminダッシュボード 機能ギャップ調査（保護なし・平文）
 ├── scripts/
 │   └── build_infographic_gate.js    平文HTMLを暗号化しゲートを生成するビルドスクリプト
 └── .github/workflows/deploy-pages.yml  GitHub Actions による Pages デプロイ
 ```
 
-## 暗号化方式（全コンテンツ共通）
+## 暗号化方式（🔒 付きコンテンツ）
 
 - 本体HTMLを **AES-256-GCM（PBKDF2-SHA256 / 250,000回 / ランダム salt・iv）** で暗号化。
 - 配信物はログイン画面＋暗号文のみ。入力パスワードからブラウザ内（Web Crypto）で復号して表示。
@@ -56,6 +59,8 @@ INFOGRAPHIC_PW=<password> node scripts/build_infographic_gate.js \
 
 git add -A && git commit -m "Update artifact" && git push origin main
 ```
+
+パスワード保護しないコンテンツは、平文HTMLをそのまま `reports/<slug>/index.html` に配置して push します。
 
 新しいコンテンツを追加した場合は、`index.html`（ランディング）のカードと本 README の一覧も更新します。
 
