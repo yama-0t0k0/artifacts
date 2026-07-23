@@ -8,6 +8,7 @@ on:
       - "infographic/**"
       - "reports/**"
       - "tools/**"
+      - "docs/**"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -38,6 +39,7 @@ jobs:
           cp infographic/index.html _site/infographic/index.html
           if [ -d reports ]; then cp -R reports _site/reports; fi
           if [ -d tools ]; then cp -R tools _site/tools; fi
+          if [ -d docs ]; then cp -R docs _site/docs; fi
           touch _site/.nojekyll
 
       - name: Setup Pages

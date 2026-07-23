@@ -13,6 +13,7 @@
 | 🧩 個別アプリ共通化調査 — apps × shared 監査 | https://yama-0t0k0.github.io/artifacts/reports/apps-shared-audit/ | 🔒 |
 | ⚙️ GitHub Actions 失敗調査 — forAgent CI/CD 監査 | https://yama-0t0k0.github.io/artifacts/reports/github-actions-failure-audit/ | 🔒 |
 | 🎛️ Adminダッシュボード 機能ギャップ調査 | https://yama-0t0k0.github.io/artifacts/reports/admin-app-feature-gaps/ | なし |
+| 🗺️ forAgent アプリ全体構造マップ | https://yama-0t0k0.github.io/artifacts/docs/foragent-structure-map/ | 🔒 |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | なし |
 
 ## 構成
@@ -31,6 +32,9 @@ artifacts/
 │   │   └── index.html               GitHub Actions 失敗調査 — forAgent CI/CD 監査（🔒）
 │   └── admin-app-feature-gaps/
 │       └── index.html               Adminダッシュボード 機能ギャップ調査（保護なし・平文）
+├── docs/                            リファレンス・設計ドキュメント
+│   └── foragent-structure-map/
+│       └── index.html               forAgent アプリ全体構造マップ（🔒）
 ├── tools/                           操作パネル・ツール類
 │   └── screenshot-audit-launcher/
 │       └── index.html               forAgent スクリーンショット撮影パネル（保護なし・平文）
@@ -71,6 +75,11 @@ INFOGRAPHIC_PW=<password> node scripts/build_infographic_gate.js \
 INFOGRAPHIC_PW=<password> node scripts/build_infographic_gate.js \
   --src <平文ソース.html> --out reports/apps-shared-audit/index.html \
   --title '個別アプリ共通化調査 — apps × shared 監査'
+
+# 例3: リファレンス・設計ドキュメント（docs/<slug>/index.html に出力）
+INFOGRAPHIC_PW=<password> node scripts/build_infographic_gate.js \
+  --src <平文ソース.html> --out docs/foragent-structure-map/index.html \
+  --title 'forAgent アプリ全体構造マップ'
 
 git add -A && git commit -m "Update artifact" && git push origin main
 ```
