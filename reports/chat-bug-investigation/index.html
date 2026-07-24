@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>チャット機能 不具合調査 &amp; 改善詳細設計 — インフォグラフィック</title>
+<style>
+:root{
+  --bg:#16171a; --bg2:#1e2025; --card:#23262c; --card2:#282c33;
+  --txt:#e9eaec; --muted:#9aa1ab; --line:rgba(255,255,255,.1);
+  --accent:#6aa6ff; --teal:#7ee0c0; --red:#ff8080; --orange:#ffb46a; --yellow:#ffd76a; --grey:#a8b0bb; --purple:#c9a6ff;
+  --red-bg:rgba(255,128,128,.12); --orange-bg:rgba(255,180,106,.12); --yellow-bg:rgba(255,215,106,.10);
+  --teal-bg:rgba(126,224,192,.12); --accent-bg:rgba(106,166,255,.14); --grey-bg:rgba(168,176,187,.10); --purple-bg:rgba(201,166,255,.12);
+  --code:#1a1c21;
+}
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#f6f7f5; --bg2:#fff; --card:#fff; --card2:#f2f4f7;
+    --txt:#1b1d21; --muted:#5f656e; --line:rgba(0,0,0,.12);
+    --accent:#1f6fe0; --teal:#0e9a78; --red:#d64545; --orange:#d97e1f; --yellow:#b8931a; --grey:#6b7280; --purple:#7c4fd0;
+    --red-bg:rgba(214,69,69,.10); --orange-bg:rgba(217,126,31,.10); --yellow-bg:rgba(184,147,26,.10);
+    --teal-bg:rgba(14,154,120,.10); --accent-bg:rgba(31,111,224,.10); --grey-bg:rgba(107,114,128,.10); --purple-bg:rgba(124,79,208,.10);
+    --code:#f0f2f5;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);line-height:1.7;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Noto Sans JP",sans-serif;}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px 90px;}
+a{color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;
+  background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;}
+pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+  overflow-x:auto;font-size:12.8px;line-height:1.6;margin:12px 0 0;}
+pre code{background:none;border:none;padding:0;}
+
+/* ---------- hero ---------- */
+.hero{padding:48px 36px 40px;border-radius:24px;margin-top:34px;border:1px solid var(--line);background:
+  radial-gradient(120% 130% at 0% 0%, rgba(255,128,128,.16), transparent 55%),
+  radial-gradient(110% 120% at 100% 20%, rgba(106,166,255,.18), transparent 55%),
+  radial-gradient(90% 120% at 60% 110%, rgba(126,224,192,.12), transparent 60%), var(--bg2);}
+.eyebrow{font-size:12px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;font-weight:700;}
+h1{font-size:clamp(26px,4.4vw,38px);margin:10px 0 10px;font-weight:800;letter-spacing:-.5px;line-height:1.3;}
+.hero .lead{max-width:760px;color:var(--muted);margin:0 0 20px;font-size:15.5px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{font-size:12.5px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--muted);}
+.chip b{color:var(--txt);font-weight:600;}
+.verdict{margin-top:22px;display:flex;gap:14px;align-items:flex-start;background:var(--red-bg);
+  border:1px solid var(--line);border-left:4px solid var(--red);border-radius:14px;padding:16px 18px;}
+.verdict .vi{font-size:24px;line-height:1.2;}
+.verdict p{margin:0;font-size:14.5px;}
+.verdict b{color:var(--red);}
+
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin:26px -20px 0;padding:0 20px;}
+nav .in{max-width:1060px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:10px 0;}
+nav a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:13.5px;font-weight:600;
+  padding:7px 14px;border-radius:999px;border:1px solid transparent;}
+nav a:hover{color:var(--txt);}
+nav a.on{color:var(--accent);background:var(--accent-bg);border-color:var(--line);}
+
+/* ---------- sections ---------- */
+section{margin-top:56px;scroll-margin-top:72px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
+.sec-head h2{font-size:22px;margin:0;font-weight:800;letter-spacing:-.3px;}
+.sec-head .no{font-size:13px;color:var(--accent);font-weight:700;letter-spacing:2px;}
+.sec-lead{color:var(--muted);font-size:14.5px;margin:0 0 20px;max-width:840px;}
+
+/* ---------- stat tiles ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;}
+.stat .n{font-size:34px;font-weight:800;line-height:1.1;}
+.stat .l{font-size:12.5px;color:var(--muted);margin-top:4px;}
+.stat.crit .n{color:var(--red)} .stat.high .n{color:var(--orange)}
+.stat.med .n{color:var(--yellow)} .stat.low .n{color:var(--grey)} .stat.total .n{color:var(--accent)}
+
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;}
+@media (max-width:760px){.duo{grid-template-columns:1fr;}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;}
+.panel h3{margin:0 0 8px;font-size:15.5px;}
+.panel .sub{font-size:12.5px;color:var(--muted);margin:0 0 12px;}
+.svgbox{width:100%;overflow-x:auto;}
+.svgbox svg{display:block;max-width:100%;height:auto;}
+.svgwide{width:100%;overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;}
+.svgwide svg{display:block;min-width:860px;height:auto;}
+
+/* ---------- badges ---------- */
+.b{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 10px;line-height:1.6;white-space:nowrap;}
+.b.crit{color:var(--red);background:var(--red-bg);border:1px solid var(--red);}
+.b.high{color:var(--orange);background:var(--orange-bg);border:1px solid var(--orange);}
+.b.med{color:var(--yellow);background:var(--yellow-bg);border:1px solid var(--yellow);}
+.b.low{color:var(--grey);background:var(--grey-bg);border:1px solid var(--grey);}
+.b.p0{color:var(--red);background:var(--red-bg);border:1px solid var(--red);}
+.b.p1{color:var(--orange);background:var(--orange-bg);border:1px solid var(--orange);}
+.b.p2{color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal);}
+
+/* ---------- critical cards ---------- */
+.crit-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+.crit-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:16px;padding:22px;}
+.crit-card .top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;}
+.crit-card h3{margin:0;font-size:17px;}
+.crit-card .desc{font-size:14px;color:var(--muted);margin:6px 0 0;max-width:900px;}
+.crit-card .desc b{color:var(--txt);}
+.crit-card .fig{margin-top:14px;}
+.kv{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.kv span{font-size:11.5px;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;color:var(--muted);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+
+/* ---------- filter + table ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px;}
+.fbtn{cursor:pointer;font-size:12.5px;font-weight:600;padding:6px 14px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card);color:var(--muted);}
+.fbtn.on{color:var(--accent);background:var(--accent-bg);border-color:var(--accent);}
+.fcount{font-size:12.5px;color:var(--muted);margin-left:auto;align-self:center;}
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--card);}
+table{border-collapse:collapse;width:100%;min-width:900px;font-size:13px;}
+th{position:sticky;top:0;text-align:left;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--muted);background:var(--card2);padding:10px 14px;border-bottom:1px solid var(--line);}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td.id{font-weight:700;white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+td .loc{display:block;margin-top:5px;font-size:11.5px;color:var(--muted);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+td .cause{display:block;margin-top:4px;color:var(--muted);font-size:12.3px;}
+tr.hid{display:none;}
+
+/* ---------- root cause cards ---------- */
+.rc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
+.rc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;}
+.rc .ic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:12px;background:var(--accent-bg);font-size:20px;}
+.rc h3{margin:0 0 6px;font-size:15.5px;}
+.rc p{margin:0;font-size:13px;color:var(--muted);}
+
+/* ---------- design cards ---------- */
+.ph{margin-top:26px;}
+.ph-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.ph-head h3{margin:0;font-size:18px;}
+.ph-head .eff{font-size:12.5px;color:var(--muted);}
+.design{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-top:14px;}
+.design .top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.design h4{margin:0;font-size:15.5px;}
+.design .fixes{font-size:11.5px;color:var(--muted);}
+.design p{font-size:13.5px;color:var(--muted);margin:8px 0 0;}
+.design p b{color:var(--txt);}
+.design ul{font-size:13.5px;color:var(--muted);margin:8px 0 0;padding-left:20px;}
+.design li{margin-top:4px;}
+.design li b{color:var(--txt);}
+details{margin-top:10px;}
+summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--accent);}
+.p2tbl td:first-child{white-space:nowrap;font-weight:700;font-family:ui-monospace,Menlo,monospace;}
+
+/* ---------- roadmap ---------- */
+.notice{margin-top:16px;display:flex;gap:12px;align-items:flex-start;background:var(--yellow-bg);
+  border:1px solid var(--line);border-left:4px solid var(--yellow);border-radius:14px;padding:14px 16px;font-size:13.5px;}
+.notice b{color:var(--yellow);}
+.ok-list{margin:8px 0 0;padding-left:20px;font-size:13.5px;color:var(--muted);}
+.ok-list li{margin-top:4px;}
+
+.foot{margin-top:60px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:13px;}
+.foot a{color:var(--accent);text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ================= HERO ================= -->
+<div class="hero">
+  <div class="eyebrow">forAgent / Chat Investigation Report</div>
+  <h1>💬 チャット機能 不具合調査 &amp; 改善詳細設計</h1>
+  <p class="lead">AIコンシェルジュチャットと P2P チャットの全コンポーネント（UI・状態管理・LLM通信・ツール実行・Firestore ルール/インデックス・バックエンドトリガ）を静的解析し、<b>33件</b>の不具合を特定。P0〜P2 の3段階改善計画を詳細設計付きでまとめた。</p>
+  <div class="chips">
+    <span class="chip">調査日 <b>2026-07-24</b></span>
+    <span class="chip">対象 <b>Agent @ a7d815a</b></span>
+    <span class="chip">不具合 <b>33件</b></span>
+    <span class="chip">Critical <b>3</b> / High <b>8</b> / Medium <b>15</b> / Low <b>7</b></span>
+    <span class="chip">改善 <b>P0〜P2・12〜16人日</b></span>
+  </div>
+  <div class="verdict">
+    <div class="vi">🚨</div>
+    <p><b>結論:</b> チャット機能は「画面は実装済みだが導線が結線されていない」状態。<b>P2Pチャットにはそもそも到達できず（C-1）</b>、AIコンシェルジュも既定構成では操作代行が全滅（C-2）、初回送信メッセージが消える（C-3）。3件の Critical はいずれも小規模な修正で解消可能で、P0 対応は 3〜4人日と見積もる。</p>
+  </div>
+</div>
+
+<!-- ================= NAV ================= -->
+<nav><div class="in">
+  <a href="#overview" class="on">概要</a>
+  <a href="#map">全体マップ</a>
+  <a href="#critical">Critical 3件</a>
+  <a href="#bugs">不具合一覧 33件</a>
+  <a href="#roots">根本原因</a>
+  <a href="#design">改善設計</a>
+  <a href="#roadmap">ロードマップ</a>
+</div></nav>
+
+<!-- ================= 1. OVERVIEW ================= -->
+<section id="overview">
+  <div class="sec-head"><span class="no">01</span><h2>調査サマリ</h2></div>
+  <p class="sec-lead">shared/common_frontend の chat 機能一式・LLMService・ConciergeFAB・各アプリ Navigator・firestore.rules / indexes・Dart バックエンドを横断調査した。</p>
+
+  <div class="stats">
+    <div class="stat total"><div class="n">33</div><div class="l">検出した不具合の総数</div></div>
+    <div class="stat crit"><div class="n">3</div><div class="l">Critical — 機能不全</div></div>
+    <div class="stat high"><div class="n">8</div><div class="l">High — 主要機能欠損・データ破壊</div></div>
+    <div class="stat med"><div class="n">15</div><div class="l">Medium — UX劣化・保守リスク</div></div>
+    <div class="stat low"><div class="n">7</div><div class="l">Low — 軽微</div></div>
+  </div>
+
+  <div class="duo">
+    <div class="panel">
+      <h3>重大度の内訳</h3>
+      <p class="sub">33件のうち3分の1が Critical / High。</p>
+      <div class="svgbox">
+      <svg viewBox="0 0 420 200" role="img" aria-label="重大度別ドーナツチャート">
+        <!-- donut: total 33 => C3(32.7°) H8(87.3°) M15(163.6°) L7(76.4°), r=70, cx=105 cy=100, C=439.8 -->
+        <g transform="rotate(-90 105 100)">
+          <circle cx="105" cy="100" r="70" fill="none" stroke="var(--red)"    stroke-width="26" stroke-dasharray="39.98 399.84" stroke-dashoffset="0"/>
+          <circle cx="105" cy="100" r="70" fill="none" stroke="var(--orange)" stroke-width="26" stroke-dasharray="106.62 333.2" stroke-dashoffset="-39.98"/>
+          <circle cx="105" cy="100" r="70" fill="none" stroke="var(--yellow)" stroke-width="26" stroke-dasharray="199.92 239.9" stroke-dashoffset="-146.6"/>
+          <circle cx="105" cy="100" r="70" fill="none" stroke="var(--grey)"   stroke-width="26" stroke-dasharray="93.29 346.53" stroke-dashoffset="-346.52"/>
+        </g>
+        <text x="105" y="96" text-anchor="middle" font-size="30" font-weight="800" fill="var(--txt)">33</text>
+        <text x="105" y="116" text-anchor="middle" font-size="11" fill="var(--muted)">件</text>
+        <g font-size="12.5" fill="var(--txt)">
+          <rect x="220" y="46"  width="12" height="12" rx="3" fill="var(--red)"/>   <text x="240" y="57">Critical <tspan fill="var(--muted)">3件 (9%)</tspan></text>
+          <rect x="220" y="76"  width="12" height="12" rx="3" fill="var(--orange)"/><text x="240" y="87">High <tspan fill="var(--muted)">8件 (24%)</tspan></text>
+          <rect x="220" y="106" width="12" height="12" rx="3" fill="var(--yellow)"/><text x="240" y="117">Medium <tspan fill="var(--muted)">15件 (46%)</tspan></text>
+          <rect x="220" y="136" width="12" height="12" rx="3" fill="var(--grey)"/>  <text x="240" y="147">Low <tspan fill="var(--muted)">7件 (21%)</tspan></text>
+        </g>
+      </svg>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>コンポーネント別の分布</h3>
+      <p class="sub">AIコンシェルジュ本体 (ConciergeChat) に4割が集中。</p>
+      <div class="svgbox">
+      <svg viewBox="0 0 420 200" role="img" aria-label="コンポーネント別件数バー">
+        <!-- max 14 => 240px scale: 17.14px/件 -->
+        <g font-size="12" fill="var(--txt)">
+          <text x="150" y="28"  text-anchor="end">AIコンシェルジュ</text> <rect x="158" y="17" width="240" height="14" rx="7" fill="var(--accent)"/><text x="392" y="28" text-anchor="end" font-weight="700" fill="#fff">14</text>
+          <text x="150" y="56"  text-anchor="end">LLM通信</text>          <rect x="158" y="45" width="86"  height="14" rx="7" fill="var(--teal)"/>  <text x="252" y="56" fill="var(--muted)">5</text>
+          <text x="150" y="84"  text-anchor="end">P2Pチャット</text>       <rect x="158" y="73" width="86"  height="14" rx="7" fill="var(--orange)"/><text x="252" y="84" fill="var(--muted)">5</text>
+          <text x="150" y="112" text-anchor="end">ツール実行・連携</text>   <rect x="158" y="101" width="69" height="14" rx="7" fill="var(--purple)"/><text x="235" y="112" fill="var(--muted)">4</text>
+          <text x="150" y="140" text-anchor="end">導線・ナビ</text>        <rect x="158" y="129" width="52" height="14" rx="7" fill="var(--red)"/>   <text x="218" y="140" fill="var(--muted)">3</text>
+          <text x="150" y="168" text-anchor="end">Firestoreルール</text>   <rect x="158" y="157" width="35" height="14" rx="7" fill="var(--yellow)"/><text x="201" y="168" fill="var(--muted)">2</text>
+        </g>
+      </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. MAP ================= -->
+<section id="map">
+  <div class="sec-head"><span class="no">02</span><h2>チャット機能 全体マップと不具合の所在</h2></div>
+  <p class="sec-lead">赤いバッジは各コンポーネントで検出した不具合件数。太い矢印がユーザーの主要動線で、❌ は現在断線している経路。</p>
+  <div class="svgwide">
+  <svg viewBox="0 0 960 560" role="img" aria-label="チャット機能アーキテクチャ図と不具合の所在">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+      </marker>
+      <marker id="arR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0L10 5L0 10z" fill="var(--red)"/>
+      </marker>
+    </defs>
+    <style>
+      .bx{fill:var(--card2);stroke:var(--line);rx:12;}
+      .bt{font-size:13px;font-weight:700;fill:var(--txt);}
+      .bs{font-size:10.5px;fill:var(--muted);}
+      .lb{font-size:10.5px;fill:var(--muted);}
+      .ln{stroke:var(--muted);stroke-width:1.6;fill:none;marker-end:url(#ar);}
+      .lnR{stroke:var(--red);stroke-width:2.2;fill:none;stroke-dasharray:6 5;marker-end:url(#arR);}
+      .badge{fill:var(--red);}
+      .badgeT{font-size:11px;font-weight:800;fill:#fff;}
+      .zone{fill:none;stroke:var(--line);stroke-dasharray:4 4;rx:16;}
+      .zoneT{font-size:11px;font-weight:700;fill:var(--accent);letter-spacing:1px;}
+    </style>
+
+    <!-- zones -->
+    <rect class="zone" x="16" y="16" width="270" height="250" rx="16"/>
+    <text class="zoneT" x="30" y="38">導線 (各アプリ)</text>
+    <rect class="zone" x="310" y="16" width="340" height="528" rx="16"/>
+    <text class="zoneT" x="324" y="38">shared/common_frontend</text>
+    <rect class="zone" x="676" y="16" width="268" height="528" rx="16"/>
+    <text class="zoneT" x="690" y="38">外部・インフラ</text>
+
+    <!-- 導線 -->
+    <g>
+      <rect class="bx" x="36" y="56" width="230" height="58" rx="12"/>
+      <text class="bt" x="52" y="80">🤖 ConciergeFAB</text>
+      <text class="bs" x="52" y="98">全画面フローティングボタン</text>
+      <circle class="badge" cx="262" cy="60" r="13"/><text class="badgeT" x="262" y="64" text-anchor="middle">2</text>
+
+      <rect class="bx" x="36" y="140" width="230" height="58" rx="12"/>
+      <text class="bt" x="52" y="164">🧭 AppNavigator</text>
+      <text class="bs" x="52" y="182">individual / corporate 両アプリ</text>
+      <circle class="badge" cx="262" cy="144" r="13"/><text class="badgeT" x="262" y="148" text-anchor="middle">1</text>
+      <text x="52" y="222" font-size="11" fill="var(--red)" font-weight="700">❌ TalkList / P2PChat 未登録 (C-1)</text>
+    </g>
+
+    <!-- shared chat -->
+    <g>
+      <rect class="bx" x="334" y="56" width="292" height="56" rx="12"/>
+      <text class="bt" x="350" y="80">📋 TalkListScreen / 🗨️ P2PChatScreen</text>
+      <text class="bs" x="350" y="97">LINE風 1対1チャット（実装済み・未結線）</text>
+      <circle class="badge" cx="622" cy="60" r="13"/><text class="badgeT" x="622" y="64" text-anchor="middle">5</text>
+
+      <rect class="bx" x="334" y="140" width="292" height="66" rx="12"/>
+      <text class="bt" x="350" y="164">💬 ConciergeChat</text>
+      <text class="bs" x="350" y="181">AIチャットUI・Optimistic UI・トピック管理</text>
+      <text class="bs" x="350" y="196">ChatBubble / ChatInput / TopicList</text>
+      <circle class="badge" cx="622" cy="144" r="13"/><text class="badgeT" x="622" y="148" text-anchor="middle">14</text>
+
+      <rect class="bx" x="334" y="234" width="292" height="56" rx="12"/>
+      <text class="bt" x="350" y="258">🛠️ ActionExecutor</text>
+      <text class="bs" x="350" y="275">7ツール実行・確認フロー・認可</text>
+      <circle class="badge" cx="622" cy="238" r="13"/><text class="badgeT" x="622" y="242" text-anchor="middle">4</text>
+
+      <rect class="bx" x="334" y="318" width="292" height="56" rx="12"/>
+      <text class="bt" x="350" y="342">🧠 ChatContextBuilder</text>
+      <text class="bs" x="350" y="359">システムプロンプト構築・RAG注入 (Few-Shot)</text>
+
+      <rect class="bx" x="334" y="402" width="292" height="56" rx="12"/>
+      <text class="bt" x="350" y="426">📡 LLMService</text>
+      <text class="bs" x="350" y="443">5プロバイダ抽象化・tools・タイムアウト</text>
+      <circle class="badge" cx="622" cy="406" r="13"/><text class="badgeT" x="622" y="410" text-anchor="middle">5</text>
+
+      <rect class="bx" x="334" y="486" width="292" height="44" rx="12"/>
+      <text class="bt" x="350" y="506">🔔 UnreadContext / chatFanout</text>
+      <text class="bs" x="350" y="521">未読インボックス fan-out</text>
+    </g>
+
+    <!-- infra -->
+    <g>
+      <rect class="bx" x="696" y="56" width="228" height="90" rx="12"/>
+      <text class="bt" x="712" y="80">🔥 Firestore</text>
+      <text class="bs" x="712" y="98">chat_topics / chat_messages</text>
+      <text class="bs" x="712" y="113">chat_feedback / chat_rooms</text>
+      <text class="bs" x="712" y="128">users/{uid}/unread_chats</text>
+      <circle class="badge" cx="920" cy="60" r="13"/><text class="badgeT" x="920" y="64" text-anchor="middle">2</text>
+
+      <rect class="bx" x="696" y="176" width="228" height="70" rx="12"/>
+      <text class="bt" x="712" y="200">🌐 LLM API</text>
+      <text class="bs" x="712" y="218">gemini(既定)/qwen/ollama/openai</text>
+      <text class="bs" x="712" y="233">forAgentBackend (Dart Cloud Run)</text>
+
+      <rect class="bx" x="696" y="276" width="228" height="70" rx="12"/>
+      <text class="bt" x="712" y="300">☁️ Dart Backend API</text>
+      <text class="bs" x="712" y="318">/api/v1/agent/chat (RAG検索)</text>
+      <text class="bs" x="712" y="333">/api/v1/compile-context</text>
+
+      <rect class="bx" x="696" y="376" width="228" height="56" rx="12"/>
+      <text class="bt" x="712" y="400">📲 chat_trigger_service</text>
+      <text class="bs" x="712" y="417">Expo Push 通知 (Dart)</text>
+
+      <rect class="bx" x="696" y="462" width="228" height="56" rx="12"/>
+      <text class="bt" x="712" y="486">🗄️ Firebase Storage</text>
+      <text class="bs" x="712" y="503">chat_images/* — ❌ 未使用 (H-8)</text>
+    </g>
+
+    <!-- edges -->
+    <path class="lnR" d="M266 85 C 300 85, 300 84, 330 84"/>
+    <text x="272" y="74" font-size="10" fill="var(--red)" font-weight="700">断線 C-1</text>
+    <path class="ln" d="M151 140 C 151 128, 200 100, 240 92" opacity=".5"/>
+    <path class="ln" d="M480 112 L 480 140"/>
+    <path class="ln" d="M480 206 L 480 234"/>
+    <path class="ln" d="M480 290 L 480 318"/>
+    <path class="ln" d="M480 374 L 480 402"/>
+    <path class="ln" d="M626 168 C 670 168, 670 100, 692 100"/>
+    <path class="ln" d="M626 430 C 665 430, 665 211, 692 211"/>
+    <path class="ln" d="M626 262 C 668 262, 668 311, 692 311"/>
+    <path class="ln" d="M480 462 L 480 486"/>
+    <path class="ln" d="M626 508 C 668 508, 660 150, 692 132"/>
+    <path class="ln" d="M810 146 L 810 176" opacity=".45"/>
+    <path class="ln" d="M810 346 L 810 376" opacity=".45"/>
+  </svg>
+  </div>
+</section>
+
+<!-- ================= 3. CRITICAL ================= -->
+<section id="critical">
+  <div class="sec-head"><span class="no">03</span><h2>Critical 3件 — 何が起きているか</h2></div>
+  <p class="sec-lead">いずれも「チャットが使えない」レベルの不具合。図は現状の壊れた流れを示す。</p>
+
+  <div class="crit-grid">
+
+    <!-- C-1 -->
+    <div class="crit-card">
+      <div class="top"><span class="b crit">C-1</span><h3>チャット画面のルート未登録 — FABを押しても何も起きない</h3></div>
+      <p class="desc"><code>ROUTES.TALK_LIST</code> / <code>ROUTES.P2P_CHAT</code> は定数として定義され、<b>TalkListScreen / P2PChatScreen も実装・テスト済み</b>。しかし <code>Stack.Screen</code> として登録している Navigator が個人アプリ・法人アプリのどちらにも存在しない。React Navigation は未登録ルートへの navigate を console エラーだけで握り潰すため、catch にも落ちず<b>ユーザーには完全な無反応</b>に見える。</p>
+      <div class="fig svgbox">
+      <svg viewBox="0 0 900 120" role="img" aria-label="C-1 断線図">
+        <defs><marker id="c1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+        <g font-size="12.5" font-weight="700" fill="var(--txt)">
+          <rect x="10" y="34" width="180" height="52" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="100" y="56" text-anchor="middle">🤖 FABタップ</text>
+          <text x="100" y="74" text-anchor="middle" font-size="10.5" font-weight="400" fill="var(--muted)">navigate('TalkList')</text>
+          <rect x="270" y="34" width="200" height="52" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="370" y="56" text-anchor="middle">🧭 Navigator</text>
+          <text x="370" y="74" text-anchor="middle" font-size="10.5" font-weight="400" fill="var(--red)">'TalkList' 未登録</text>
+          <rect x="550" y="34" width="160" height="52" rx="12" fill="var(--card2)" stroke="var(--line)" opacity=".45"/>
+          <text x="630" y="56" text-anchor="middle" opacity=".45">📋 トーク一覧</text>
+          <text x="630" y="74" text-anchor="middle" font-size="10.5" font-weight="400" fill="var(--muted)" opacity=".45">到達不能</text>
+          <rect x="760" y="34" width="130" height="52" rx="12" fill="var(--card2)" stroke="var(--line)" opacity=".45"/>
+          <text x="825" y="56" text-anchor="middle" opacity=".45">🗨️ P2P</text>
+          <text x="825" y="74" text-anchor="middle" font-size="10.5" font-weight="400" fill="var(--muted)" opacity=".45">到達不能</text>
+        </g>
+        <path d="M190 60 L 266 60" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#c1a)"/>
+        <path d="M470 60 L 546 60" stroke="var(--red)" stroke-width="2.2" stroke-dasharray="6 5"/>
+        <text x="508" y="50" text-anchor="middle" font-size="15">❌</text>
+        <path d="M710 60 L 756 60" stroke="var(--muted)" stroke-width="1.6" opacity=".4"/>
+      </svg>
+      </div>
+      <div class="kv"><span>ConciergeFAB.js:113</span><span>AppNavigator.js（登録なし）</span><span>corporate App.js:79-110（登録なし）</span><span>CorporateConnectionScreen.js:94</span></div>
+    </div>
+
+    <!-- C-2 -->
+    <div class="crit-card">
+      <div class="top"><span class="b crit">C-2</span><h3>既定LLMプロバイダ (gemini) が Function Calling 非対応 — 操作代行が全滅</h3></div>
+      <p class="desc">gemini の <code>buildBody(messages, systemPrompt)</code> は第3引数 <code>tools</code> を受け取らず<b>ツール定義を黙って破棄</b>。さらに role マッピングが assistant→model / それ以外→user しかなく、<code>role:'tool'</code> の実行結果や <code>tool_calls</code> が不正な形で送信され、ツール実行後の再リクエストで会話が破壊される。<code>EXPO_PUBLIC_LLM_PROVIDER</code> 未設定の既定構成で発生する。</p>
+      <div class="fig svgbox">
+      <svg viewBox="0 0 900 130" role="img" aria-label="C-2 tools破棄図">
+        <defs><marker id="c2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+        <g font-size="12.5" font-weight="700" fill="var(--txt)">
+          <rect x="10" y="12" width="215" height="52" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="117" y="34" text-anchor="middle">💬 ConciergeChat</text>
+          <text x="117" y="52" text-anchor="middle" font-size="10.5" font-weight="400" fill="var(--muted)">CONCIERGE_TOOLS 7種を渡す</text>
+          <rect x="330" y="12" width="230" height="52" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="445" y="34" text-anchor="middle">📡 gemini.buildBody</text>
+          <text x="445" y="52" text-anchor="middle" font-size="10.5" font-weight="400" fill="var(--red)">(messages, systemPrompt) ← tools欠落</text>
+          <rect x="660" y="12" width="230" height="52" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="775" y="34" text-anchor="middle">🌐 Gemini API</text>
+          <text x="775" y="52" text-anchor="middle" font-size="10.5" font-weight="400" fill="var(--muted)">functionDeclarations なし</text>
+        </g>
+        <path d="M225 38 L 326 38" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#c2a)"/>
+        <text x="275" y="28" text-anchor="middle" font-size="14">🗑️</text>
+        <path d="M560 38 L 656 38" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#c2a)"/>
+        <text x="450" y="105" text-anchor="middle" font-size="12.5" fill="var(--red)" font-weight="700">→ LLM はツールの存在を知らないため view_profile / apply_for_job 等を一切呼べない</text>
+      </svg>
+      </div>
+      <div class="kv"><span>LLMService.js:35-48</span><span>DEFAULT_PROVIDER = 'gemini'</span><span>role:'tool' → 'user' 誤変換</span></div>
+    </div>
+
+    <!-- C-3 -->
+    <div class="crit-card">
+      <div class="top"><span class="b crit">C-3</span><h3>初回メッセージ送信でユーザーの発言が消える — 購読切替レース</h3></div>
+      <p class="desc">新規トピックの初回送信で <code>handleSend</code> がトピック作成 → <code>setActiveTopicId</code> を実行すると、メッセージ購読 effect が再実行される。serverTimestamp 確定前の<b>空 snapshot が Optimistic 表示中の一時メッセージ (temp_...) を welcome だけの配列で上書き</b>し、送ったはずのメッセージが画面から消える。</p>
+      <div class="fig svgbox">
+      <svg viewBox="0 0 900 170" role="img" aria-label="C-3 レース図">
+        <g font-size="11.5" fill="var(--txt)">
+          <line x1="120" y1="20" x2="120" y2="150" stroke="var(--line)" stroke-width="1.5"/>
+          <line x1="450" y1="20" x2="450" y2="150" stroke="var(--line)" stroke-width="1.5"/>
+          <line x1="780" y1="20" x2="780" y2="150" stroke="var(--line)" stroke-width="1.5"/>
+          <text x="120" y="14" text-anchor="middle" font-weight="700">handleSend</text>
+          <text x="450" y="14" text-anchor="middle" font-weight="700">messages effect</text>
+          <text x="780" y="14" text-anchor="middle" font-weight="700">画面</text>
+          <path d="M120 40 L 446 40" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#c2a)"/>
+          <text x="283" y="33" text-anchor="middle" fill="var(--muted)">① topic作成 → setActiveTopicId</text>
+          <path d="M120 70 L 776 70" stroke="var(--teal)" stroke-width="1.6" marker-end="url(#c2a)"/>
+          <text x="440" y="63" text-anchor="middle" fill="var(--teal)">② Optimistic 表示 temp_xxx「こんにちは」</text>
+          <path d="M450 105 L 776 105" stroke="var(--red)" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#c2a)"/>
+          <text x="612" y="98" text-anchor="middle" fill="var(--red)" font-weight="700">③ 空snapshot → setMessages([welcome])</text>
+          <text x="780" y="140" text-anchor="middle" font-size="13" fill="var(--red)" font-weight="700">😱 メッセージ消失</text>
+        </g>
+      </svg>
+      </div>
+      <div class="kv"><span>ConciergeChat.js:130-159</span><span>ConciergeChat.js:197-235</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4. BUG TABLE ================= -->
+<section id="bugs">
+  <div class="sec-head"><span class="no">04</span><h2>不具合一覧（全33件）</h2></div>
+  <p class="sec-lead">重大度・コンポーネントで絞り込みできる。詳細な原因分析と該当行は <a href="https://github.com/yama-0t0k0/forAgent/blob/same/docs/Chat/Chat_bug_investigation_and_improvement_design.md">原本レポート（forAgent/same）</a> を参照。</p>
+
+  <div class="filters" id="sevFilters">
+    <button class="fbtn on" data-f="all">すべて</button>
+    <button class="fbtn" data-f="crit">Critical</button>
+    <button class="fbtn" data-f="high">High</button>
+    <button class="fbtn" data-f="med">Medium</button>
+    <button class="fbtn" data-f="low">Low</button>
+  </div>
+  <div class="filters" id="catFilters">
+    <button class="fbtn on" data-f="all">全コンポーネント</button>
+    <button class="fbtn" data-f="nav">導線・ナビ</button>
+    <button class="fbtn" data-f="ai">AIコンシェルジュ</button>
+    <button class="fbtn" data-f="llm">LLM通信</button>
+    <button class="fbtn" data-f="exec">実行・連携</button>
+    <button class="fbtn" data-f="p2p">P2P</button>
+    <button class="fbtn" data-f="rules">ルール</button>
+    <span class="fcount" id="fcount">33 / 33 件</span>
+  </div>
+
+  <div class="tblwrap">
+  <table id="bugTable">
+    <thead><tr><th>ID</th><th>重大度</th><th>コンポーネント</th><th>現象 / 原因 / 該当箇所</th></tr></thead>
+    <tbody>
+      <tr data-sev="crit" data-cat="nav"><td class="id">C-1</td><td><span class="b crit">Critical</span></td><td>導線</td><td>FAB・「チャットする」ボタンが無反応<span class="cause">TalkList / P2PChat を登録する Navigator がどのアプリにも存在しない</span><span class="loc">ConciergeFAB.js:113 / AppNavigator.js / corporate App.js:79-110</span></td></tr>
+      <tr data-sev="crit" data-cat="ai"><td class="id">C-2</td><td><span class="b crit">Critical</span></td><td>AIコンシェルジュ</td><td>既定構成 (gemini) で Function Calling 全滅・ツール履歴で会話破壊<span class="cause">gemini buildBody が tools を黙殺。role:'tool' / tool_calls を不正変換</span><span class="loc">LLMService.js:35-48</span></td></tr>
+      <tr data-sev="crit" data-cat="ai"><td class="id">C-3</td><td><span class="b crit">Critical</span></td><td>AIコンシェルジュ</td><td>新規トピック初回送信でユーザーの発言が画面から消える<span class="cause">topic作成→activeTopicId変更→空snapshotがOptimisticメッセージを破棄するレース</span><span class="loc">ConciergeChat.js:130-159, 197-235</span></td></tr>
+      <tr data-sev="high" data-cat="ai"><td class="id">H-1</td><td><span class="b high">High</span></td><td>AIコンシェルジュ</td><td>インデックス未作成・権限エラー時に無表示のまま沈黙<span class="cause">messages / topics / feedback の3購読すべて onSnapshot にエラーコールバックなし</span><span class="loc">ConciergeChat.js:112,143,174</span></td></tr>
+      <tr data-sev="high" data-cat="ai"><td class="id">H-2</td><td><span class="b high">High</span></td><td>AIコンシェルジュ</td><td>👍/👎 評価がリロードで消える。DPOデータと突合不能<span class="cause">Optimistic ID (ai_...) が Firestore doc ID と不一致のまま chat_feedback.messageId に保存される</span><span class="loc">ConciergeChat.js:359-365, 496-542 / ChatBubble.js:36</span></td></tr>
+      <tr data-sev="high" data-cat="ai"><td class="id">H-3</td><td><span class="b high">High</span></td><td>AIコンシェルジュ</td><td>RAG注入用フィードバックが「最新20件」にならない<span class="cause">limit(20) に orderBy がなく doc ID 順の20件を取得（クライアントソートでは補正不能）</span><span class="loc">ConciergeChat.js:272-283, 589-600</span></td></tr>
+      <tr data-sev="high" data-cat="ai"><td class="id">H-4</td><td><span class="b high">High</span></td><td>AIコンシェルジュ</td><td>Webビルドでトピックの削除・リネーム・ピン留めが全滅<span class="cause">Alert.prompt は iOS 専用、react-native-web の Alert は no-op</span><span class="loc">ConciergeChat.js:421-489</span></td></tr>
+      <tr data-sev="high" data-cat="ai"><td class="id">H-5</td><td><span class="b high">High</span></td><td>AIコンシェルジュ</td><td>ピン留めしても並び順が変わらない。一覧順序が不定<span class="cause">chat_topics クエリにも TopicList にもソートなし</span><span class="loc">ConciergeChat.js:104-127 / TopicList.js:70-77</span></td></tr>
+      <tr data-sev="high" data-cat="llm"><td class="id">H-6</td><td><span class="b high">High</span></td><td>LLM通信</td><td>APIキー（URLクエリ）と会話全文が console に平文出力<span class="cause">Request URL / Body を本番でも無条件 console.log</span><span class="loc">LLMService.js:305-307, 33-34</span></td></tr>
+      <tr data-sev="high" data-cat="exec"><td class="id">H-7</td><td><span class="b high">High</span></td><td>実行・連携</td><td>バックエンドAPIへ認証トークン未送付。userId 自己申告でなりすまし可能<span class="cause">fetch に Authorization ヘッダなし。Dart 側もトークン検証なし</span><span class="loc">ActionExecutor.js:177-184, 258-267 / LLMService.js:176-196</span></td></tr>
+      <tr data-sev="high" data-cat="p2p"><td class="id">H-8</td><td><span class="b high">High</span></td><td>P2P</td><td>画像メッセージが相手に表示されない<span class="cause">ローカルURI (file://) をそのまま imageUrl に保存。Storage アップロードが TODO のまま</span><span class="loc">P2PChatScreen.js:212-260</span></td></tr>
+      <tr data-sev="med" data-cat="nav"><td class="id">M-1</td><td><span class="b med">Medium</span></td><td>導線</td><td>ログイン完了前にFABがマウントされると未読バッジが更新されない<span class="cause">mount 時の auth.currentUser のみ参照し onAuthStateChanged 未購読</span><span class="loc">ConciergeFAB.js:69-89</span></td></tr>
+      <tr data-sev="med" data-cat="nav"><td class="id">M-2</td><td><span class="b med">Medium</span></td><td>導線</td><td>FABバッジが実際の未読チャットと連動しない<span class="cause">notifications (open_chat) を数えるが未読の実体は unread_chats。二重系統で書き手も不在</span><span class="loc">ConciergeFAB.js:75-80 / chatFanout.js</span></td></tr>
+      <tr data-sev="med" data-cat="ai"><td class="id">M-3</td><td><span class="b med">Medium</span></td><td>AIコンシェルジュ</td><td>help コンテキストの welcome 文がLLM履歴に混入<span class="cause">フィルタが id !== 'welcome' のみで welcome_help を除外しない</span><span class="loc">ConciergeChat.js:41-51, 252, 555</span></td></tr>
+      <tr data-sev="med" data-cat="ai"><td class="id">M-4</td><td><span class="b med">Medium</span></td><td>AIコンシェルジュ</td><td>複数 tool_calls の2件目以降が黙って捨てられる<span class="cause">toolCalls[0] のみ処理。tool応答も1件のみでプロバイダにより後続400</span><span class="loc">ConciergeChat.js:291-345</span></td></tr>
+      <tr data-sev="med" data-cat="ai"><td class="id">M-5</td><td><span class="b med">Medium</span></td><td>AIコンシェルジュ</td><td>トピック削除後も配下メッセージ・評価がオーファンとして残存<span class="cause">chat_topics の deleteDoc のみでカスケード削除なし</span><span class="loc">ConciergeChat.js:430-441</span></td></tr>
+      <tr data-sev="med" data-cat="ai"><td class="id">M-6</td><td><span class="b med">Medium</span></td><td>AIコンシェルジュ</td><td>ツール実行確認で失敗すると確認カードごと消えて無反応<span class="cause">先に deleteDoc → 実行の順で、失敗時のリカバリなし</span><span class="loc">ConciergeChat.js:547-629</span></td></tr>
+      <tr data-sev="med" data-cat="ai"><td class="id">M-7</td><td><span class="b med">Medium</span></td><td>AIコンシェルジュ</td><td>エラー応答・キャンセル文言の保存方針が3経路で不整合<span class="cause">保存+表示 / 表示のみ / 保存のみが混在</span><span class="loc">ConciergeChat.js:347-380, 634-651</span></td></tr>
+      <tr data-sev="med" data-cat="llm"><td class="id">M-8</td><td><span class="b med">Medium</span></td><td>LLM通信</td><td>モデルの思考テキスト (reasoning) がそのまま回答として表示されうる<span class="cause">extractResponse が content || reasoning とフォールバック</span><span class="loc">LLMService.js:78, 166</span></td></tr>
+      <tr data-sev="med" data-cat="llm"><td class="id">M-9</td><td><span class="b med">Medium</span></td><td>LLM通信</td><td>forAgentBackend でシステムプロンプトと tools が破棄される<span class="cause">buildBody が query と history しか送らない</span><span class="loc">LLMService.js:184-192</span></td></tr>
+      <tr data-sev="med" data-cat="exec"><td class="id">M-10</td><td><span class="b med">Medium</span></td><td>実行・連携</td><td>profiles 未作成ユーザーの edit_profile が常に失敗<span class="cause">updateDoc は存在しない doc に失敗。setDoc(merge) 未使用・空更新ガードなし</span><span class="loc">ActionExecutor.js:158-168</span></td></tr>
+      <tr data-sev="med" data-cat="p2p"><td class="id">M-11</td><td><span class="b med">Medium</span></td><td>P2P</td><td>既読 (isRead) が永久に false。既読管理が機能しない<span class="cause">クライアントに更新処理がなく、rules にも messages の update 権限がない</span><span class="loc">firestore.rules:261-268</span></td></tr>
+      <tr data-sev="med" data-cat="p2p"><td class="id">M-12</td><td><span class="b med">Medium</span></td><td>P2P</td><td>入室中に届いたメッセージ分の未読バッジが残り続ける<span class="cause">resetUnread が画面 mount 時のみ実行</span><span class="loc">P2PChatScreen.js:48-50</span></td></tr>
+      <tr data-sev="med" data-cat="p2p"><td class="id">M-13</td><td><span class="b med">Medium</span></td><td>P2P</td><td>権限エラーでも「部屋がない」と誤判定し既存ルームを上書き初期化しようとする<span class="cause">ensureRoom の catch が失敗理由を区別しない</span><span class="loc">P2PChatScreen.js:132-163</span></td></tr>
+      <tr data-sev="med" data-cat="rules"><td class="id">M-14</td><td><span class="b med">Medium</span></td><td>ルール</td><td>ブロック後も相手はメッセージを送り続けられる<span class="cause">chat_rooms ルールが connections のブロック状態を参照しない</span><span class="loc">firestore.rules:249-268</span></td></tr>
+      <tr data-sev="med" data-cat="rules"><td class="id">M-15</td><td><span class="b med">Medium</span></td><td>ルール</td><td>評価の変更・取消が不可能。連打で重複ドキュメントが無限増殖<span class="cause">chat_feedback に update/delete ルールなし + クライアントが毎回 addDoc</span><span class="loc">firestore.rules:300-305 / ConciergeChat.js:496-518</span></td></tr>
+      <tr data-sev="low" data-cat="ai"><td class="id">L-1</td><td><span class="b low">Low</span></td><td>AIコンシェルジュ</td><td>setTimeout でダミー応答を返すモック ConciergeChatModal.tsx が残置<span class="cause">プロトタイプの削除漏れ。関数内 interface 宣言も不正</span><span class="loc">ConciergeChatModal.tsx</span></td></tr>
+      <tr data-sev="low" data-cat="ai"><td class="id">L-2</td><td><span class="b low">Low</span></td><td>AIコンシェルジュ</td><td>'=' + '=' / '\x3D\x3D' 等の難読化演算子が広範囲に存在<span class="cause">自動生成の痕跡。動作はするが grep 不能で保守性低下</span><span class="loc">ConciergeChat.js / P2PChatScreen.js / ConciergeFAB.js 他</span></td></tr>
+      <tr data-sev="low" data-cat="llm"><td class="id">L-3</td><td><span class="b low">Low</span></td><td>LLM通信</td><td>「ローカル接続」判定が緩く example10.com 等もキー不要扱い<span class="cause">url.includes('10.') 等の部分一致判定</span><span class="loc">LLMService.js:258-265</span></td></tr>
+      <tr data-sev="low" data-cat="llm"><td class="id">L-4</td><td><span class="b low">Low</span></td><td>LLM通信</td><td>タイムアウト解除が2箇所に分散し二重管理<span class="cause">try/finally 構造になっていない</span><span class="loc">LLMService.js:299-335</span></td></tr>
+      <tr data-sev="low" data-cat="exec"><td class="id">L-5</td><td><span class="b low">Low</span></td><td>実行・連携</td><td>search_agent_knowledge だけ戻り値スキーマが {success, answer} で不整合<span class="cause">実装揺れ（他は {success, data}）</span><span class="loc">ActionExecutor.js:274</span></td></tr>
+      <tr data-sev="low" data-cat="exec"><td class="id">L-6</td><td><span class="b low">Low</span></td><td>実行・連携</td><td>ActionExecutor の外部 fetch にタイムアウトなし<span class="cause">AbortController 未使用（LLMService 側は90秒あり）</span><span class="loc">ActionExecutor.js:177, 258</span></td></tr>
+      <tr data-sev="low" data-cat="p2p"><td class="id">L-7</td><td><span class="b low">Low</span></td><td>P2P</td><td>相手が削除したメッセージが自分の画面に残り続ける<span class="cause">onSnapshot マージが追加・更新のみで removed を扱わない</span><span class="loc">P2PChatScreen.js:59-93</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ================= 5. ROOT CAUSES ================= -->
+<section id="roots">
+  <div class="sec-head"><span class="no">05</span><h2>根本原因の分析</h2></div>
+  <p class="sec-lead">33件の不具合は、個別ミスではなく5つの構造的な原因に収束する。</p>
+  <div class="rc-grid">
+    <div class="rc"><div class="ic">🔌</div><h3>① 画面は作ったが結線していない</h3><p>TalkListScreen / P2PChatScreen は実装・テスト済みなのに Navigator 登録工程が抜けている。Issue #643（SupportScreens 導入の契機）と同型の<b>「共通画面のルート登録漏れ」再発パターン</b>。</p></div>
+    <div class="rc"><div class="ic">🧩</div><h3>② プロバイダ抽象化の非対称性</h3><p>Function Calling 対応が qwen / ollama / openai だけに後付けされ、既定の gemini と forAgentBackend が取り残された。buildBody のシグネチャ不一致をテストが検出していない。</p></div>
+    <div class="rc"><div class="ic">⚡</div><h3>③ Optimistic UI の境界設計が未定義</h3><p>「一時IDとサーバdoc IDの対応付け」「購読切替時の一時メッセージ保護」という基本設計が欠落。C-3 / H-2 / M-7 は同根で発生している。</p></div>
+    <div class="rc"><div class="ic">🌐</div><h3>④ Web配信前提の不徹底</h3><p>Alert.prompt（iOS専用）・多ボタンAlert（Web no-op）・ローカルURI画像など、iOSネイティブ前提の実装が混入。Expo Web ビルドは主要配信チャネルなのに検証から漏れている。</p></div>
+    <div class="rc"><div class="ic">🔐</div><h3>⑤ セキュリティ設計の後回し</h3><p>APIキー・会話本文のログ出力、バックエンドAPIの無認証呼び出し（uid 自己申告）、rules の update/delete 欠落。攻撃前提の設計レビューが行われていない。</p></div>
+  </div>
+</section>
+
+<!-- ================= 6. DESIGN ================= -->
+<section id="design">
+  <div class="sec-head"><span class="no">06</span><h2>改善詳細設計 — P0 / P1 / P2</h2></div>
+  <p class="sec-lead">各改善はコードレベルの設計・rules / indexes の変更差分・テスト計画までを原本レポート第4章に記載。ここでは骨子と主要図解を示す。</p>
+
+  <!-- P0 -->
+  <div class="ph">
+    <div class="ph-head"><span class="b p0">P0 即時修正</span><h3>Critical の解消</h3><span class="eff">3〜4人日</span></div>
+
+    <div class="design">
+      <div class="top"><h4>P0-1 チャットルートの共通登録ファクトリ</h4><span class="fixes">→ C-1</span></div>
+      <p><code>SupportScreens.js</code> 方式を踏襲した <b><code>renderChatScreens(Stack)</code></b> を新設し、TalkList / P2PChat の登録を1関数に集約。individual / corporate 両 Navigator に組み込む。再発防止として「ROUTES の全値が Navigator に登録済みか」を検査する jest テストと、FAB→トーク一覧の E2E スモークを追加する。</p>
+      <details><summary>コード骨子を見る</summary>
+<pre><code>// shared/common_frontend/src/core/navigation/ChatScreens.js
+export const renderChatScreens = (Stack, options = {}) =&gt; {
+  const { screenOptions = { headerShown: false } } = options;
+  return [
+    &lt;Stack.Screen key={ROUTES.TALK_LIST} name={ROUTES.TALK_LIST}
+      component={TalkListScreen} options={screenOptions} /&gt;,
+    &lt;Stack.Screen key={ROUTES.P2P_CHAT} name={ROUTES.P2P_CHAT}
+      component={P2PChatScreen} options={screenOptions} /&gt;,
+  ];
+};</code></pre></details>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>P0-2 全プロバイダの Function Calling 統一</h4><span class="fixes">→ C-2 / M-9</span></div>
+      <p>全プロバイダで <code>buildBody(messages, systemPrompt, tools)</code> の3引数シグネチャを強制。gemini は OpenAI 形式 tools を <b>functionDeclarations</b> へ、<code>role:'tool'</code> を <b>functionResponse</b> part へ、<code>tool_calls</code> を <b>functionCall</b> part へ変換するアダプタを実装し、レスポンスは OpenAI 互換 <code>{content, toolCalls}</code> に正規化して返す。</p>
+      <div class="svgbox" style="margin-top:12px">
+      <svg viewBox="0 0 900 120" role="img" aria-label="P0-2 変換アダプタ図">
+        <defs><marker id="d2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+        <g font-size="12" font-weight="700" fill="var(--txt)">
+          <rect x="10" y="24" width="200" height="70" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="110" y="48" text-anchor="middle">OpenAI形式</text>
+          <text x="110" y="66" text-anchor="middle" font-size="10.5" font-weight="400" fill="var(--muted)">tools / tool_calls / role:'tool'</text>
+          <rect x="330" y="24" width="240" height="70" rx="12" fill="var(--teal-bg)" stroke="var(--teal)"/>
+          <text x="450" y="48" text-anchor="middle">🔄 gemini アダプタ</text>
+          <text x="450" y="66" text-anchor="middle" font-size="10.5" font-weight="400" fill="var(--muted)">双方向変換・空parts保証</text>
+          <rect x="690" y="24" width="200" height="70" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="790" y="48" text-anchor="middle">Gemini API 形式</text>
+          <text x="790" y="66" text-anchor="middle" font-size="10.5" font-weight="400" fill="var(--muted)">functionDeclarations / functionCall</text>
+        </g>
+        <path d="M210 50 L 326 50" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#d2a)"/>
+        <path d="M570 50 L 686 50" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#d2a)"/>
+        <path d="M686 76 L 570 76" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#d2a)"/>
+        <path d="M326 76 L 210 76" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#d2a)"/>
+      </svg>
+      </div>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>P0-3 Optimistic UI の再設計 — doc ID 先行採番 + pending キュー</h4><span class="fixes">→ C-3 / H-2 / M-7</span></div>
+      <p><code>doc(collection(db,'chat_messages'))</code> で <b>ID を addDoc 前に確定</b>させ、pending Map に登録してから <code>setDoc</code>。onSnapshot はサーバ配列と pending をマージ表示し、空 snapshot でも pending があれば welcome にリセットしない。<b>一時IDとサーバIDの乖離が構造的に消える</b>ため、フィードバックの messageId 問題 (H-2) も同時に解決する。</p>
+      <div class="svgbox" style="margin-top:12px">
+      <svg viewBox="0 0 900 200" role="img" aria-label="P0-3 pendingマージ設計図">
+        <defs><marker id="d3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+        <g font-size="11.5" font-weight="700" fill="var(--txt)">
+          <rect x="10" y="20" width="190" height="56" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="105" y="43" text-anchor="middle">✍️ handleSend</text>
+          <text x="105" y="60" text-anchor="middle" font-size="10" font-weight="400" fill="var(--muted)">msgRef = doc() ← ID先行採番</text>
+          <rect x="280" y="20" width="190" height="56" rx="12" fill="var(--teal-bg)" stroke="var(--teal)"/>
+          <text x="375" y="43" text-anchor="middle">📥 pending Map</text>
+          <text x="375" y="60" text-anchor="middle" font-size="10" font-weight="400" fill="var(--muted)">{id: msgRef.id, pending:true}</text>
+          <rect x="550" y="20" width="150" height="56" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="625" y="43" text-anchor="middle">🔥 setDoc</text>
+          <text x="625" y="60" text-anchor="middle" font-size="10" font-weight="400" fill="var(--muted)">serverTimestamp</text>
+          <rect x="770" y="20" width="120" height="56" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="830" y="43" text-anchor="middle">📡 snapshot</text>
+          <rect x="280" y="122" width="420" height="56" rx="12" fill="var(--accent-bg)" stroke="var(--accent)"/>
+          <text x="490" y="145" text-anchor="middle">🧮 merge = [...server, ...pending] → createdAt 昇順</text>
+          <text x="490" y="162" text-anchor="middle" font-size="10" font-weight="400" fill="var(--muted)">server に同じ ID が来たら pending から除去 / 空 snapshot でも pending は保持</text>
+        </g>
+        <path d="M200 48 L 276 48" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#d3a)"/>
+        <path d="M470 48 L 546 48" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#d3a)"/>
+        <path d="M700 48 L 766 48" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#d3a)"/>
+        <path d="M830 76 C 830 110, 730 132, 704 140" stroke="var(--muted)" stroke-width="1.8" fill="none" marker-end="url(#d3a)"/>
+        <path d="M375 76 L 375 118" stroke="var(--teal)" stroke-width="1.8" marker-end="url(#d3a)"/>
+      </svg>
+      </div>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>P0-4 onSnapshot エラーハンドリング標準化</h4><span class="fixes">→ H-1</span></div>
+      <p>3購読すべてにエラーコールバックを追加し、<code>failed-precondition</code>（インデックス構築中）と権限エラーを区別した再試行ボタン付きバナー <code>ListenerErrorBanner</code> を共通コンポーネント化する。P1 のインデックス追加デプロイ時の保険にもなる。</p>
+    </div>
+  </div>
+
+  <!-- P1 -->
+  <div class="ph">
+    <div class="ph-head"><span class="b p1">P1 次スプリント</span><h3>主要機能の欠損解消</h3><span class="eff">6〜8人日</span></div>
+
+    <div class="design">
+      <div class="top"><h4>P1-1 フィードバック系の再設計</h4><span class="fixes">→ H-2 / H-3 / M-15</span></div>
+      <ul>
+        <li><b>自然キー化</b>: <code>chat_feedback</code> の doc ID を <code>messageId</code> に固定し <code>setDoc(merge)</code> で再評価は上書き — 重複増殖を根絶</li>
+        <li><b>クエリ修正</b>: <code>orderBy('createdAt','desc') + limit(20)</code> に変更し、<code>(uid ASC, createdAt DESC)</code> の複合インデックスを追加</li>
+        <li><b>rules</b>: chat_feedback に所有者の update / delete を許可</li>
+        <li><b>DPO用</b>: <code>systemPromptSnapshot</code> の空文字固定をやめ実プロンプトを保存</li>
+      </ul>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>P1-2 トピック管理のクロスプラットフォーム化</h4><span class="fixes">→ H-4 / H-5 / M-5</span></div>
+      <ul>
+        <li><b>TopicActionSheet</b> 新設: OS ネイティブ Alert を全廃し、RN Modal ベースのボトムシート + 入力モーダルで全プラットフォーム同一実装に</li>
+        <li><b>並び順</b>: <code>isPinned 降順 → updatedAt 降順</code> のクライアントソート</li>
+        <li><b>カスケード削除</b>: 配下の chat_messages / chat_feedback を 400件ずつバッチ削除（将来はバックエンド onDelete トリガへ移行）</li>
+      </ul>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>P1-3 P2P画像の Storage アップロード実装</h4><span class="fixes">→ H-8</span></div>
+      <div class="svgbox">
+      <svg viewBox="0 0 900 110" role="img" aria-label="P1-3 画像アップロードフロー">
+        <defs><marker id="d4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+        <g font-size="11.5" font-weight="700" fill="var(--txt)">
+          <rect x="10" y="24" width="150" height="60" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="85" y="47" text-anchor="middle">🖼️ ImagePicker</text>
+          <text x="85" y="65" text-anchor="middle" font-size="10" font-weight="400" fill="var(--muted)">リサイズ 1600px</text>
+          <rect x="220" y="24" width="180" height="60" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="310" y="47" text-anchor="middle">⏫ uploadBytes</text>
+          <text x="310" y="65" text-anchor="middle" font-size="10" font-weight="400" fill="var(--muted)">chat_images/{roomId}/{msgId}.jpg</text>
+          <rect x="460" y="24" width="180" height="60" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+          <text x="550" y="47" text-anchor="middle">🔗 getDownloadURL</text>
+          <text x="550" y="65" text-anchor="middle" font-size="10" font-weight="400" fill="var(--muted)">恒久URL取得</text>
+          <rect x="700" y="24" width="190" height="60" rx="12" fill="var(--teal-bg)" stroke="var(--teal)"/>
+          <text x="795" y="47" text-anchor="middle">🔥 batch.set</text>
+          <text x="795" y="65" text-anchor="middle" font-size="10" font-weight="400" fill="var(--muted)">imageUrl = downloadURL</text>
+        </g>
+        <path d="M160 54 L 216 54" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#d4a)"/>
+        <path d="M400 54 L 456 54" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#d4a)"/>
+        <path d="M640 54 L 696 54" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#d4a)"/>
+      </svg>
+      </div>
+      <p>Storage ルールは participants のみ read/write 可・5MB 上限・<code>image/*</code> 限定。失敗時は「再送」ボタン付きエラーバブルに変える。</p>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>P1-4 未読・既読の一貫設計</h4><span class="fixes">→ M-11 / M-12 / M-1 / M-2</span></div>
+      <ul>
+        <li>未読の単一情報源を <code>users/{uid}/unread_chats</code> に統一。FAB バッジは notifications 購読をやめ <b>UnreadContext.totalUnread</b> を参照（ログインタイミング問題も同時解消）</li>
+        <li>メッセージ単位の isRead を廃止し、ルーム単位の <b>lastReadAt 方式</b>へ移行（rules は readReceipts のみ participants に更新許可）</li>
+        <li>入室中の新着は <code>useIsFocused</code> + debounce で自動リセット</li>
+      </ul>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>P1-5 バックエンドAPI認証</h4><span class="fixes">→ H-7 / L-6</span></div>
+      <p><b><code>authorizedFetch</code></b> ヘルパーを新設し、Firebase ID トークンを <code>Authorization: Bearer</code> で送付 + 30秒タイムアウト。Dart 側にトークン検証ミドルウェアを追加し、<b>uid はトークンから導出</b>（ボディの userId 自己申告を廃止）。</p>
+    </div>
+  </div>
+
+  <!-- P2 -->
+  <div class="ph">
+    <div class="ph-head"><span class="b p2">P2 品質向上</span><h3>セキュリティ・保守性</h3><span class="eff">3〜4人日</span></div>
+    <div class="design">
+      <div class="tblwrap" style="margin-top:4px">
+      <table class="p2tbl" style="min-width:640px">
+        <thead><tr><th>対象</th><th>改善内容</th></tr></thead>
+        <tbody>
+          <tr><td>H-6</td><td>ログを <code>__DEV__</code> ガード + APIキー/本文マスキング。gemini はヘッダ認証 (<code>x-goog-api-key</code>) へ移行しキーをURLに載せない</td></tr>
+          <tr><td>M-3</td><td>履歴フィルタを <code>!m.id.startsWith('welcome')</code> に変更</td></tr>
+          <tr><td>M-4</td><td>tool_calls をループ処理し、確認要のツールが混在する場合は確認カード優先</td></tr>
+          <tr><td>M-6</td><td>「実行 → 成功時のみ確認メッセージ削除」へ順序入替。失敗時は Toast 通知</td></tr>
+          <tr><td>M-8</td><td>reasoning フォールバックを削除（think:false 前提、ChatLM.md 4.2 準拠）</td></tr>
+          <tr><td>M-10</td><td><code>setDoc(merge:true)</code> + 空更新の早期 return</td></tr>
+          <tr><td>M-13</td><td>ensureRoom の catch で not-found 以外は rethrow</td></tr>
+          <tr><td>M-14</td><td><code>chat_rooms.blockedBy</code> フィールド + rules 検証によるブロック貫徹</td></tr>
+          <tr><td>L-1〜L-7</td><td>モックModal削除・難読化演算子の一括置換・isLocal判定の厳密化・スキーマ統一・removed 反映ほか</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7. ROADMAP ================= -->
+<section id="roadmap">
+  <div class="sec-head"><span class="no">07</span><h2>実装ロードマップとテスト計画</h2></div>
+
+  <div class="svgwide">
+  <svg viewBox="0 0 960 240" role="img" aria-label="実装ロードマップ タイムライン">
+    <g font-size="12" fill="var(--txt)">
+      <line x1="40" y1="190" x2="920" y2="190" stroke="var(--line)" stroke-width="1.5"/>
+      <!-- P0 -->
+      <rect x="60" y="60" width="200" height="96" rx="14" fill="var(--red-bg)" stroke="var(--red)"/>
+      <text x="160" y="84" text-anchor="middle" font-weight="800" fill="var(--red)">P0 即時修正</text>
+      <text x="160" y="104" text-anchor="middle" font-size="11" fill="var(--muted)">ルート登録 / gemini tools</text>
+      <text x="160" y="120" text-anchor="middle" font-size="11" fill="var(--muted)">消失対策 / エラーハンドラ</text>
+      <text x="160" y="142" text-anchor="middle" font-weight="700">3〜4人日</text>
+      <circle cx="160" cy="190" r="6" fill="var(--red)"/>
+      <!-- P1 -->
+      <rect x="380" y="60" width="220" height="96" rx="14" fill="var(--orange-bg)" stroke="var(--orange)"/>
+      <text x="490" y="84" text-anchor="middle" font-weight="800" fill="var(--orange)">P1 次スプリント</text>
+      <text x="490" y="104" text-anchor="middle" font-size="11" fill="var(--muted)">feedback / トピック管理 / 画像</text>
+      <text x="490" y="120" text-anchor="middle" font-size="11" fill="var(--muted)">未読統一 / API認証</text>
+      <text x="490" y="142" text-anchor="middle" font-weight="700">6〜8人日</text>
+      <circle cx="490" cy="190" r="6" fill="var(--orange)"/>
+      <!-- P2 -->
+      <rect x="720" y="60" width="180" height="96" rx="14" fill="var(--teal-bg)" stroke="var(--teal)"/>
+      <text x="810" y="84" text-anchor="middle" font-weight="800" fill="var(--teal)">P2 品質向上</text>
+      <text x="810" y="104" text-anchor="middle" font-size="11" fill="var(--muted)">ログ秘匿 / ブロック貫徹</text>
+      <text x="810" y="120" text-anchor="middle" font-size="11" fill="var(--muted)">保守性クリーンアップ</text>
+      <text x="810" y="142" text-anchor="middle" font-weight="700">3〜4人日</text>
+      <circle cx="810" cy="190" r="6" fill="var(--teal)"/>
+      <path d="M166 190 L 484 190" stroke="var(--muted)" stroke-width="2"/>
+      <path d="M496 190 L 804 190" stroke="var(--muted)" stroke-width="2"/>
+      <text x="325" y="215" text-anchor="middle" font-size="11" fill="var(--muted)">Critical解消を確認後</text>
+      <text x="650" y="215" text-anchor="middle" font-size="11" fill="var(--muted)">rules / indexes デプロイ後</text>
+      <text x="480" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="var(--accent)">合計 12〜16 人日</text>
+    </g>
+  </svg>
+  </div>
+
+  <div class="duo">
+    <div class="panel">
+      <h3>🧪 テスト計画</h3>
+      <ul class="ok-list">
+        <li><b>単体 (jest)</b>: 全プロバイダ × tools のボディ生成スナップショット / 初回送信の表示維持 / feedback doc ID = message ID / TopicList ソート</li>
+        <li><b>ルール (emulator)</b>: chat_feedback の所有者 update・delete / readReceipts の participants 限定 / Storage の participants 限定 read</li>
+        <li><b>E2E (playwright, Web)</b>: FAB → TalkList → P2P 送受信 / 初回送信 → 評価 → リロード後保持 / トピック CRUD が Web で成立</li>
+        <li><b>実機 (iOS/Android)</b>: 画像の相互表示 / プッシュ通知 (chat_trigger_service)</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>✅ 調査で確認できた正常動作</h3>
+      <ul class="ok-list">
+        <li>chat_messages の複合インデックス (uid, topicId, createdAt) は定義済みでクエリと整合</li>
+        <li>escapeNonAscii のマルチバイト対策は ChatLM.md 4.1 の知見どおり実装済み</li>
+        <li>Ollama アダプタの tool_calls 正規化 (object→string) は適切</li>
+        <li>chat_rooms / unread_chats の participants ベース読み取り制御は概ね妥当</li>
+        <li>chat_trigger_service.dart のプッシュ通知フローは妥当（pushToken 未登録時は正常スキップ）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="notice">
+    <div>⚠️</div>
+    <div><b>リリース手順の注意:</b> chat_feedback の複合インデックスは<b>コード修正より先にデプロイ</b>すること（H-3 修正クエリが failed-precondition になるため）。firestore.rules の変更はクライアント修正と同一リリースで適用。gemini のヘッダ認証移行は .env 変更不要（キーの渡し方のみ変更）。</div>
+  </div>
+</section>
+
+<div class="foot">
+  原本レポート: <a href="https://github.com/yama-0t0k0/forAgent/blob/same/docs/Chat/Chat_bug_investigation_and_improvement_design.md">forAgent/docs/Chat/Chat_bug_investigation_and_improvement_design.md（same ブランチ）</a><br>
+  調査対象: Agent ブランチ @ a7d815a ／ 調査日: 2026-07-24 ／ 公開: GitHub Pages（<a href="https://github.com/yama-0t0k0/artifacts">yama-0t0k0/artifacts</a>）
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ---------- table filter ----------
+(function(){
+  var sev = 'all', cat = 'all';
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#bugTable tbody tr'));
+  var count = document.getElementById('fcount');
+  function apply(){
+    var n = 0;
+    rows.forEach(function(r){
+      var ok = (sev === 'all' || r.dataset.sev === sev) && (cat === 'all' || r.dataset.cat === cat);
+      r.classList.toggle('hid', !ok);
+      if (ok) n++;
+    });
+    count.textContent = n + ' / 33 件';
+  }
+  function bind(id, set){
+    var box = document.getElementById(id);
+    box.addEventListener('click', function(e){
+      var btn = e.target.closest('.fbtn');
+      if (!btn) return;
+      box.querySelectorAll('.fbtn').forEach(function(b){ b.classList.remove('on'); });
+      btn.classList.add('on');
+      set(btn.dataset.f);
+      apply();
+    });
+  }
+  bind('sevFilters', function(v){ sev = v; });
+  bind('catFilters', function(v){ cat = v; });
+})();
+
+// ---------- nav highlight ----------
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav a'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function onScroll(){
+    var y = window.scrollY + 100, idx = 0;
+    secs.forEach(function(s, i){ if (s && s.offsetTop <= y) idx = i; });
+    links.forEach(function(a, i){ a.classList.toggle('on', i === idx); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>

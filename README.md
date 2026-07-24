@@ -13,6 +13,7 @@
 | 🧩 個別アプリ共通化調査 — apps × shared 監査 | https://yama-0t0k0.github.io/artifacts/reports/apps-shared-audit/ | 🔒 |
 | ⚙️ GitHub Actions 失敗調査 — forAgent CI/CD 監査 | https://yama-0t0k0.github.io/artifacts/reports/github-actions-failure-audit/ | 🔒 |
 | 🎛️ Adminダッシュボード 機能ギャップ調査 | https://yama-0t0k0.github.io/artifacts/reports/admin-app-feature-gaps/ | なし |
+| 💬 チャット機能 不具合調査 & 改善詳細設計 | https://yama-0t0k0.github.io/artifacts/reports/chat-bug-investigation/ | なし |
 | 🗺️ forAgent アプリ全体構造マップ | https://yama-0t0k0.github.io/artifacts/docs/foragent-structure-map/ | 🔒 |
 | 📤 AdminApp ファイルアップロード → プロフ予測入力 詳細設計 | https://yama-0t0k0.github.io/artifacts/docs/admin-fileupload-profile-prediction/ | なし |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | なし |
@@ -31,8 +32,10 @@ artifacts/
 │   │   └── index.html               個別アプリ共通化調査 — apps × shared 監査（🔒）
 │   ├── github-actions-failure-audit/
 │   │   └── index.html               GitHub Actions 失敗調査 — forAgent CI/CD 監査（🔒）
-│   └── admin-app-feature-gaps/
-│       └── index.html               Adminダッシュボード 機能ギャップ調査（保護なし・平文）
+│   ├── admin-app-feature-gaps/
+│   │   └── index.html               Adminダッシュボード 機能ギャップ調査（保護なし・平文）
+│   └── chat-bug-investigation/
+│       └── index.html               チャット機能 不具合調査 & 改善詳細設計（保護なし・平文）
 ├── docs/                            リファレンス・設計ドキュメント
 │   ├── foragent-structure-map/
 │   │   └── index.html               forAgent アプリ全体構造マップ（🔒）
