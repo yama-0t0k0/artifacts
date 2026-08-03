@@ -15,6 +15,7 @@
 | 🎛️ Adminダッシュボード 機能ギャップ調査 | https://yama-0t0k0.github.io/artifacts/reports/admin-app-feature-gaps/ | なし |
 | 💬 チャット機能 不具合調査 & 改善詳細設計 | https://yama-0t0k0.github.io/artifacts/reports/chat-bug-investigation/ | なし |
 | ✅ チャット機能 改善結果 検証レポート | https://yama-0t0k0.github.io/artifacts/reports/chat-improvement-verification/ | なし |
+| 🔁 チャット機能 改善結果 検証レポート（第2ラウンド） | https://yama-0t0k0.github.io/artifacts/reports/chat-improvement-verification-r2/ | なし |
 | 🗺️ forAgent アプリ全体構造マップ | https://yama-0t0k0.github.io/artifacts/docs/foragent-structure-map/ | 🔒 |
 | 📤 AdminApp ファイルアップロード → プロフ予測入力 詳細設計 | https://yama-0t0k0.github.io/artifacts/docs/admin-fileupload-profile-prediction/ | なし |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | なし |
@@ -38,8 +39,11 @@ artifacts/
 │   ├── chat-bug-investigation/
 │   │   ├── index.html               チャット機能 不具合調査 & 改善詳細設計（保護なし・平文）
 │   │   └── screenshots/             イシュー貼り付け用スクリーンショット
-│   └── chat-improvement-verification/
-│       ├── index.html               チャット機能 改善結果 検証レポート（保護なし・平文）
+│   ├── chat-improvement-verification/
+│   │   ├── index.html               チャット機能 改善結果 検証レポート（保護なし・平文）
+│   │   └── screenshots/             イシュー貼り付け用スクリーンショット
+│   └── chat-improvement-verification-r2/
+│       ├── index.html               チャット機能 改善結果 検証レポート 第2ラウンド（保護なし・平文）
 │       └── screenshots/             イシュー貼り付け用スクリーンショット
 ├── docs/                            リファレンス・設計ドキュメント
 │   ├── foragent-structure-map/

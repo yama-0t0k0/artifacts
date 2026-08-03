@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>チャット機能 改善結果 検証レポート（第2ラウンド） — インフォグラフィック</title>
+<style>
+:root{
+  --bg:#16171a; --bg2:#1e2025; --card:#23262c; --card2:#282c33;
+  --txt:#e9eaec; --muted:#9aa1ab; --line:rgba(255,255,255,.1);
+  --accent:#6aa6ff; --teal:#7ee0c0; --red:#ff8080; --orange:#ffb46a; --yellow:#ffd76a; --grey:#a8b0bb; --purple:#c9a6ff;
+  --red-bg:rgba(255,128,128,.12); --orange-bg:rgba(255,180,106,.12); --yellow-bg:rgba(255,215,106,.10);
+  --teal-bg:rgba(126,224,192,.12); --accent-bg:rgba(106,166,255,.14); --grey-bg:rgba(168,176,187,.10); --purple-bg:rgba(201,166,255,.12);
+  --code:#1a1c21;
+}
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#f6f7f5; --bg2:#fff; --card:#fff; --card2:#f2f4f7;
+    --txt:#1b1d21; --muted:#5f656e; --line:rgba(0,0,0,.12);
+    --accent:#1f6fe0; --teal:#0e9a78; --red:#d64545; --orange:#d97e1f; --yellow:#b8931a; --grey:#6b7280; --purple:#7c4fd0;
+    --red-bg:rgba(214,69,69,.10); --orange-bg:rgba(217,126,31,.10); --yellow-bg:rgba(184,147,26,.10);
+    --teal-bg:rgba(14,154,120,.10); --accent-bg:rgba(31,111,224,.10); --grey-bg:rgba(107,114,128,.10); --purple-bg:rgba(124,79,208,.10);
+    --code:#f0f2f5;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);line-height:1.7;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Noto Sans JP",sans-serif;}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px 90px;}
+a{color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;
+  background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;}
+pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+  overflow-x:auto;font-size:12.8px;line-height:1.6;margin:12px 0 0;}
+pre code{background:none;border:none;padding:0;}
+
+/* ---------- hero ---------- */
+.hero{padding:48px 36px 40px;border-radius:24px;margin-top:34px;border:1px solid var(--line);background:
+  radial-gradient(120% 130% at 0% 0%, rgba(255,128,128,.16), transparent 55%),
+  radial-gradient(110% 120% at 100% 20%, rgba(106,166,255,.18), transparent 55%),
+  radial-gradient(90% 120% at 60% 110%, rgba(126,224,192,.12), transparent 60%), var(--bg2);}
+.eyebrow{font-size:12px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;font-weight:700;}
+h1{font-size:clamp(26px,4.4vw,38px);margin:10px 0 10px;font-weight:800;letter-spacing:-.5px;line-height:1.3;}
+.hero .lead{max-width:760px;color:var(--muted);margin:0 0 20px;font-size:15.5px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{font-size:12.5px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--muted);}
+.chip b{color:var(--txt);font-weight:600;}
+.verdict{margin-top:22px;display:flex;gap:14px;align-items:flex-start;background:var(--red-bg);
+  border:1px solid var(--line);border-left:4px solid var(--red);border-radius:14px;padding:16px 18px;}
+.verdict .vi{font-size:24px;line-height:1.2;}
+.verdict p{margin:0;font-size:14.5px;}
+.verdict b{color:var(--red);}
+
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin:26px -20px 0;padding:0 20px;}
+nav .in{max-width:1060px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:10px 0;}
+nav a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:13.5px;font-weight:600;
+  padding:7px 14px;border-radius:999px;border:1px solid transparent;}
+nav a:hover{color:var(--txt);}
+nav a.on{color:var(--accent);background:var(--accent-bg);border-color:var(--line);}
+
+/* ---------- sections ---------- */
+section{margin-top:56px;scroll-margin-top:72px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
+.sec-head h2{font-size:22px;margin:0;font-weight:800;letter-spacing:-.3px;}
+.sec-head .no{font-size:13px;color:var(--accent);font-weight:700;letter-spacing:2px;}
+.sec-lead{color:var(--muted);font-size:14.5px;margin:0 0 20px;max-width:840px;}
+
+/* ---------- stat tiles ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;}
+.stat .n{font-size:34px;font-weight:800;line-height:1.1;}
+.stat .l{font-size:12.5px;color:var(--muted);margin-top:4px;}
+.stat.crit .n{color:var(--red)} .stat.high .n{color:var(--orange)}
+.stat.med .n{color:var(--yellow)} .stat.low .n{color:var(--grey)} .stat.total .n{color:var(--accent)}
+
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;}
+@media (max-width:760px){.duo{grid-template-columns:1fr;}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;}
+.panel h3{margin:0 0 8px;font-size:15.5px;}
+.panel .sub{font-size:12.5px;color:var(--muted);margin:0 0 12px;}
+.svgbox{width:100%;overflow-x:auto;}
+.svgbox svg{display:block;max-width:100%;height:auto;}
+.svgwide{width:100%;overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;}
+.svgwide svg{display:block;min-width:860px;height:auto;}
+
+/* ---------- badges ---------- */
+.b{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 10px;line-height:1.6;white-space:nowrap;}
+.b.crit{color:var(--red);background:var(--red-bg);border:1px solid var(--red);}
+.b.high{color:var(--orange);background:var(--orange-bg);border:1px solid var(--orange);}
+.b.med{color:var(--yellow);background:var(--yellow-bg);border:1px solid var(--yellow);}
+.b.low{color:var(--grey);background:var(--grey-bg);border:1px solid var(--grey);}
+.b.p0{color:var(--red);background:var(--red-bg);border:1px solid var(--red);}
+.b.p1{color:var(--orange);background:var(--orange-bg);border:1px solid var(--orange);}
+.b.p2{color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal);}
+
+/* ---------- critical cards ---------- */
+.crit-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+.crit-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:16px;padding:22px;}
+.crit-card .top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;}
+.crit-card h3{margin:0;font-size:17px;}
+.crit-card .desc{font-size:14px;color:var(--muted);margin:6px 0 0;max-width:900px;}
+.crit-card .desc b{color:var(--txt);}
+.crit-card .fig{margin-top:14px;}
+.kv{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.kv span{font-size:11.5px;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;color:var(--muted);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+
+/* ---------- filter + table ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px;}
+.fbtn{cursor:pointer;font-size:12.5px;font-weight:600;padding:6px 14px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card);color:var(--muted);}
+.fbtn.on{color:var(--accent);background:var(--accent-bg);border-color:var(--accent);}
+.fcount{font-size:12.5px;color:var(--muted);margin-left:auto;align-self:center;}
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--card);}
+table{border-collapse:collapse;width:100%;min-width:900px;font-size:13px;}
+th{position:sticky;top:0;text-align:left;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--muted);background:var(--card2);padding:10px 14px;border-bottom:1px solid var(--line);}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td.id{font-weight:700;white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+td .loc{display:block;margin-top:5px;font-size:11.5px;color:var(--muted);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+td .cause{display:block;margin-top:4px;color:var(--muted);font-size:12.3px;}
+tr.hid{display:none;}
+
+/* ---------- root cause cards ---------- */
+.rc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
+.rc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;}
+.rc .ic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:12px;background:var(--accent-bg);font-size:20px;}
+.rc h3{margin:0 0 6px;font-size:15.5px;}
+.rc p{margin:0;font-size:13px;color:var(--muted);}
+
+/* ---------- design cards ---------- */
+.ph{margin-top:26px;}
+.ph-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.ph-head h3{margin:0;font-size:18px;}
+.ph-head .eff{font-size:12.5px;color:var(--muted);}
+.design{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-top:14px;}
+.design .top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.design h4{margin:0;font-size:15.5px;}
+.design .fixes{font-size:11.5px;color:var(--muted);}
+.design p{font-size:13.5px;color:var(--muted);margin:8px 0 0;}
+.design p b{color:var(--txt);}
+.design ul{font-size:13.5px;color:var(--muted);margin:8px 0 0;padding-left:20px;}
+.design li{margin-top:4px;}
+.design li b{color:var(--txt);}
+details{margin-top:10px;}
+summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--accent);}
+.p2tbl td:first-child{white-space:nowrap;font-weight:700;font-family:ui-monospace,Menlo,monospace;}
+
+/* ---------- roadmap ---------- */
+.notice{margin-top:16px;display:flex;gap:12px;align-items:flex-start;background:var(--yellow-bg);
+  border:1px solid var(--line);border-left:4px solid var(--yellow);border-radius:14px;padding:14px 16px;font-size:13.5px;}
+.notice b{color:var(--yellow);}
+.ok-list{margin:8px 0 0;padding-left:20px;font-size:13.5px;color:var(--muted);}
+.ok-list li{margin-top:4px;}
+
+.foot{margin-top:60px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:13px;}
+.foot a{color:var(--accent);text-decoration:none;}
+</style>
+</head>
+<body>
+<style>
+.b.ok{color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal);}
+.b.part{color:var(--yellow);background:var(--yellow-bg);border:1px solid var(--yellow);}
+.b.ng{color:var(--red);background:var(--red-bg);border:1px solid var(--red);}
+.b.new{color:var(--purple);background:var(--purple-bg);border:1px solid var(--purple);}
+.stat.ok .n{color:var(--teal)} .stat.part .n{color:var(--yellow)} .stat.ng .n{color:var(--red)} .stat.new .n{color:var(--purple)}
+.crit-card.newbug{border-left-color:var(--purple);}
+.crit-card.newbug .b.crit{}
+.verdict.good{background:var(--teal-bg);border-left-color:var(--teal);}
+.verdict.good b{color:var(--teal);}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 14px;font-size:12.5px;color:var(--muted);}
+.legend span b{color:var(--txt);}
+.ba{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:18px;}
+.ba .cell{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;}
+.ba .cell .t{font-size:12.5px;color:var(--muted);}
+.ba .cell .v{font-size:26px;font-weight:800;margin-top:4px;}
+.quote{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-top:12px;font-size:13px;color:var(--muted);}
+.quote b{color:var(--txt);}
+</style>
+<div class="wrap">
+
+<div class="hero">
+  <div class="eyebrow">forAgent / chat — verification round 2</div>
+  <h1>チャット改善「2回目の答え合わせ」<br>15項目中6件は完全解消。しかし今のまま出すと、AIチャットは<u>本番で必ず止まります</u>。</h1>
+  <p class="lead">
+    Issue #701 で「Issue #700 の全指摘を修正した」と報告された15項目を、コミットメッセージではなく<b>実コードと実行結果だけ</b>を根拠に1件ずつ検証しました。
+    前回いちばん深刻だった「新しいチャットが必ず落ちる」問題（N-1）は、確かに直っています。
+    ただし、その代わりに<b>設定漏れ1行</b>と<b>無認証のまま放置された権限変更API</b>という、より重い問題が残っています。
+  </p>
+  <div class="chips">
+    <span class="chip">対象 <b>Issue #701 / commit d8bbe66</b></span>
+    <span class="chip">ブランチ <b>Agent（same にマージ済み）</b></span>
+    <span class="chip">検証日 <b>2026-08-03</b></span>
+    <span class="chip">判定 <b>完全6 / 部分6 / 未解消3</b></span>
+    <span class="chip">新規検出 <b>13件</b></span>
+  </div>
+  <div class="verdict">
+    <div class="vi">🚨</div>
+    <p><b>結論から2つだけ。</b>①「認証を強くした」結果、その認証が参照する設定値がデプロイに書かれておらず、<b>AIコンシェルジュは本番で全リクエストが 401 で失敗</b>します（V-1）。②その一方で、<b>誰でも自分を管理者に昇格できる API が無認証のまま公開</b>されています（V-2）。どちらも修正は小さく、あわせて<b>1人日</b>です。</p>
+  </div>
+</div>
+
+<nav><div class="in">
+  <a href="#overview" class="on">検証サマリ</a>
+  <a href="#critical">致命的な2件</a>
+  <a href="#verify">15項目の判定</a>
+  <a href="#new">新規13件</a>
+  <a href="#design">改善の詳細設計</a>
+  <a href="#roadmap">ロードマップ</a>
+</div></nav>
+
+<!-- ==================== OVERVIEW ==================== -->
+<section id="overview">
+  <div class="sec-head"><span class="no">01</span><h2>検証サマリ</h2></div>
+  <p class="sec-lead">Issue #701 が「直した」と報告した15項目の判定です。半分弱はきちんと直っており、直し方の質も高いものが含まれます。一方で「直したつもりだが動かない」ものが残りました。</p>
+
+  <div class="stats">
+    <div class="stat total"><div class="n">15</div><div class="l">検証した項目</div></div>
+    <div class="stat"><div class="n" style="color:var(--teal)">6</div><div class="l">✅ 完全に解消</div></div>
+    <div class="stat"><div class="n" style="color:var(--yellow)">6</div><div class="l">⚠️ 部分的に解消</div></div>
+    <div class="stat"><div class="n" style="color:var(--red)">3</div><div class="l">❌ 解消していない</div></div>
+    <div class="stat"><div class="n" style="color:var(--purple)">13</div><div class="l">🆕 新たに見つかった問題</div></div>
+  </div>
+
+  <div class="duo">
+    <div class="panel">
+      <h3>15項目の判定内訳</h3>
+      <p class="sub">「部分解消」は、直った部分と残った部分が同居している状態です。</p>
+      <div class="svgbox">
+        <svg viewBox="0 0 380 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="判定内訳ドーナツ">
+          <g transform="translate(110,120)">
+            <circle r="72" fill="none" stroke="var(--teal)"   stroke-width="34" stroke-dasharray="181 271" transform="rotate(-90)"/>
+            <circle r="72" fill="none" stroke="var(--yellow)" stroke-width="34" stroke-dasharray="181 271" stroke-dashoffset="-181" transform="rotate(-90)"/>
+            <circle r="72" fill="none" stroke="var(--red)"    stroke-width="34" stroke-dasharray="90 362"  stroke-dashoffset="-362" transform="rotate(-90)"/>
+            <text x="0" y="-4" text-anchor="middle" font-size="30" font-weight="800" fill="var(--txt)">15</text>
+            <text x="0" y="17" text-anchor="middle" font-size="11" fill="var(--muted)">項目</text>
+          </g>
+          <g font-size="12.5" fill="var(--txt)">
+            <rect x="215" y="62"  width="12" height="12" rx="3" fill="var(--teal)"/>  <text x="235" y="72">完全に解消　6件</text>
+            <rect x="215" y="92"  width="12" height="12" rx="3" fill="var(--yellow)"/><text x="235" y="102">部分的に解消　6件</text>
+            <rect x="215" y="122" width="12" height="12" rx="3" fill="var(--red)"/>   <text x="235" y="132">解消していない　3件</text>
+          </g>
+          <text x="215" y="162" font-size="11.5" fill="var(--muted)">＋ 新たに検出した問題　13件</text>
+          <text x="215" y="180" font-size="11.5" fill="var(--muted)">（うち Critical 2 / High 3）</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>テストは通っているのか</h3>
+      <p class="sub">Issue #701 は「183スイート / 562テスト PASS、3回連続でフレーキー無し」と報告しています。本検証では再現しませんでした。</p>
+      <div class="tblwrap" style="border-radius:12px">
+        <table style="min-width:0">
+          <thead><tr><th>範囲</th><th>結果</th><th>判断</th></tr></thead>
+          <tbody>
+            <tr><td>全スイート</td><td>202中 <b style="color:var(--red)">78 失敗</b></td><td class="cause">大半は<b>環境要因</b>。react-native の型構文を解釈できない既存のツールチェーン非互換で、今回の変更が原因ではありません</td></tr>
+            <tr><td>チャット関連</td><td>15中 <b style="color:var(--orange)">5 失敗</b></td><td class="cause">4件は上記の環境要因。<b>1件は本物</b></td></tr>
+            <tr><td>LLMService 単体</td><td><b style="color:var(--red)">2 失敗</b> / 21 成功</td><td class="cause">他スイートの影響を完全に排除しても落ちる。<b>N-6 は未解消</b></td></tr>
+            <tr><td>Dart バックエンド</td><td><b style="color:var(--teal)">解析・ビルド成功</b></td><td class="cause">Issue #701 が「dart SDK が無く未検証」とした部分を、本検証で実際に通しました</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:12.8px;color:var(--muted);margin:14px 0 0">
+        ⚠️ 環境要因で動かない4スイートには、<b style="color:var(--txt)">今回 N-2 の回帰テストとして追加された2件が含まれます</b>。つまり N-2 の修正は、この環境では一度も自動検証されていません。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CRITICAL ==================== -->
+<section id="critical">
+  <div class="sec-head"><span class="no">02</span><h2>致命的な2件 — ここだけは今すぐ</h2></div>
+  <p class="sec-lead">13件の新規検出のうち、経営判断が必要なのはこの2件です。どちらも原因は単純で、修正も小さく済みます。</p>
+
+  <div class="crit-grid">
+
+    <div class="crit-card">
+      <div class="top">
+        <span class="b crit">Critical</span><span class="b p0">P0</span>
+        <h3>V-1 — 認証に必要な設定値が、デプロイに書かれていない</h3>
+      </div>
+      <p class="desc">
+        今回「認証を強化した」2つのAPI（<b>AIコンシェルジュ</b>と<b>メモからのプロフィール自動生成</b>）は、動作に <code>FIREBASE_API_KEY</code> という設定値を必要とします。
+        ところが本番環境（Cloud Run）へのデプロイ手順には、<b>この設定値を渡す記述が一行もありません</b>。
+        結果、サーバはすべてのリクエストを「本人確認できない」と判断し、<b>全ユーザー・全リクエストで拒否（401）</b>します。
+        しかもアプリ側は「申し訳ございません。エラーが発生しました。」としか表示しないため、<b>原因が誰にも分かりません</b>。
+      </p>
+      <div class="fig">
+        <div class="svgwide">
+          <svg viewBox="0 0 980 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="V-1 の失敗経路">
+            <defs><marker id="ar1" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="var(--muted)"/></marker></defs>
+            <g font-size="12.5" fill="var(--txt)" text-anchor="middle">
+              <rect x="10"  y="60" width="150" height="56" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+              <text x="85" y="83">ユーザー</text><text x="85" y="101" font-size="11" fill="var(--muted)">「相談したい」</text>
+
+              <rect x="200" y="60" width="160" height="56" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+              <text x="280" y="83">アプリ</text><text x="280" y="101" font-size="11" fill="var(--muted)">本人確認トークンを添付</text>
+
+              <rect x="400" y="60" width="170" height="56" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+              <text x="485" y="83">サーバ（Cloud Run）</text><text x="485" y="101" font-size="11" fill="var(--muted)">トークンを検証しようとする</text>
+
+              <rect x="610" y="52" width="180" height="72" rx="12" fill="var(--red-bg)" stroke="var(--red)"/>
+              <text x="700" y="78" fill="var(--red)" font-weight="700">設定値が無い</text>
+              <text x="700" y="96" font-size="11" fill="var(--muted)">FIREBASE_API_KEY</text>
+              <text x="700" y="112" font-size="11" fill="var(--muted)">が未設定 → 検証不能</text>
+
+              <rect x="830" y="60" width="140" height="56" rx="12" fill="var(--red-bg)" stroke="var(--red)"/>
+              <text x="900" y="83" fill="var(--red)" font-weight="700">401 拒否</text>
+              <text x="900" y="101" font-size="11" fill="var(--muted)">全リクエスト</text>
+            </g>
+            <g stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ar1)" fill="none">
+              <path d="M162 88 H196"/><path d="M362 88 H396"/><path d="M572 88 H606"/><path d="M792 88 H826"/>
+            </g>
+            <text x="490" y="172" text-anchor="middle" font-size="12" fill="var(--muted)">アプリ側の表示は「申し訳ございません。エラーが発生しました。」だけ ── 何が起きているか分からない</text>
+          </svg>
+        </div>
+      </div>
+      <div class="kv">
+        <span>.github/workflows/deploy-backend-app.yml — --set-env-vars 無し</span>
+        <span>auth_service.dart:100 — FIREBASE_API_KEY 必須</span>
+        <span>影響: /api/v1/agent/chat, /api/v1/compile-context</span>
+        <span>修正: 0.5人日</span>
+      </div>
+    </div>
+
+    <div class="crit-card">
+      <div class="top">
+        <span class="b crit">Critical</span><span class="b p0">P0</span>
+        <h3>V-2 — 権限を書き換えるAPIが、誰でも叩ける状態のまま</h3>
+      </div>
+      <p class="desc">
+        今回チャットの2つのAPIには本人確認が付きました。しかし<b>すぐ隣にある「ユーザーの権限（ロール）を変更するAPI」には、本人確認が一切ありません</b>。
+        このサーバはインターネットに公開されているため、<b>URL を知っている人なら誰でも、任意のアカウントを管理者に昇格できます</b>。
+        チャット改善の範囲外ではありますが、同じサーバの同じファイルにあり、修正は数十行です。<b>チャットとは独立に、単独で先に出せます</b>。
+      </p>
+      <div class="fig">
+        <div class="svgwide">
+          <svg viewBox="0 0 980 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="V-2 の権限昇格経路">
+            <defs><marker id="ar2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="var(--red)"/></marker></defs>
+            <g font-size="12.5" fill="var(--txt)" text-anchor="middle">
+              <rect x="10" y="50" width="180" height="60" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+              <text x="100" y="76">インターネット上の誰か</text><text x="100" y="94" font-size="11" fill="var(--muted)">ログイン不要</text>
+
+              <rect x="250" y="42" width="300" height="76" rx="12" fill="var(--red-bg)" stroke="var(--red)"/>
+              <text x="400" y="68" font-family="ui-monospace,Menlo,monospace" font-size="12">POST /api/v1/auth/set-role</text>
+              <text x="400" y="88" font-size="11.5" fill="var(--muted)">{"uid":"任意のID","role":"admin"}</text>
+              <text x="400" y="106" font-size="11" fill="var(--red)">認証チェック：なし</text>
+
+              <rect x="620" y="50" width="180" height="60" rx="12" fill="var(--card2)" stroke="var(--line)"/>
+              <text x="710" y="76">Firebase</text><text x="710" y="94" font-size="11" fill="var(--muted)">カスタムクレーム書き込み</text>
+
+              <rect x="850" y="50" width="120" height="60" rx="12" fill="var(--red-bg)" stroke="var(--red)"/>
+              <text x="910" y="76" fill="var(--red)" font-weight="700">管理者化</text><text x="910" y="94" font-size="11" fill="var(--muted)">完了</text>
+            </g>
+            <g stroke="var(--red)" stroke-width="1.8" marker-end="url(#ar2)" fill="none">
+              <path d="M192 80 H246"/><path d="M552 80 H616"/><path d="M802 80 H846"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="kv">
+        <span>apps/backend/bin/server.dart:49, 100</span>
+        <span>Cloud Run は --allow-unauthenticated で公開</span>
+        <span>修正: 0.5人日</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== VERIFY TABLE ==================== -->
+<section id="verify">
+  <div class="sec-head"><span class="no">03</span><h2>15項目の判定一覧</h2></div>
+  <p class="sec-lead">ボタンで絞り込めます。判定はすべて、実ファイルの該当行を確認したうえで付けています。</p>
+
+  <div class="filters" id="sevFilters">
+    <button class="fbtn on" data-f="all">すべて</button>
+    <button class="fbtn" data-f="ok">✅ 完全解消</button>
+    <button class="fbtn" data-f="part">⚠️ 部分解消</button>
+    <button class="fbtn" data-f="ng">❌ 未解消</button>
+    <span class="fcount" id="fcount">15 / 15 件</span>
+  </div>
+
+  <div class="tblwrap">
+    <table id="bugTable">
+      <thead><tr><th style="width:78px">ID</th><th style="width:96px">判定</th><th>内容と根拠</th></tr></thead>
+      <tbody>
+        <tr data-sev="ok" data-cat="cc"><td class="id">N-1</td><td><span class="b" style="color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal)">完全解消</span></td>
+          <td>「新しいチャット」が必ず落ちる原因だった未定義の関数呼び出しが解消。<b>単に import し直すのではなく、ID を先に採番して保存する形に統一</b>されており、設計として正しい選択です。
+            <span class="cause">実ビルド相当に変換して AST 解析した結果、チャット配下22ファイルで<b>実在する未定義参照は0件</b>。</span>
+            <span class="loc">ConciergeChat.js:238 / :505</span></td></tr>
+        <tr data-sev="ok" data-cat="llm"><td class="id">N-4</td><td><span class="b" style="color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal)">完全解消</span></td>
+          <td>開発用ログのフラグがグローバル変数を覆い隠していた問題を解消。マスキング関数も公開され、単体テスト2件が通っています。<span class="loc">LLMService.js:23</span></td></tr>
+        <tr data-sev="ok" data-cat="cc"><td class="id">N-9</td><td><span class="b" style="color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal)">完全解消</span></td>
+          <td>トピック操作メニューが二重に存在していた問題を解消。TopicList 側に一本化され、名前変更・削除・ピン留めの配線も正しく通っています。<span class="loc">ConciergeChat.js / components/TopicList.js</span></td></tr>
+        <tr data-sev="ok" data-cat="llm"><td class="id">L-4</td><td><span class="b" style="color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal)">完全解消</span></td>
+          <td>タイマー解除処理が散らばっていた問題を <code>finally</code> で1箇所に集約。<span class="loc">LLMService.js sendChatMessage</span></td></tr>
+        <tr data-sev="ok" data-cat="be"><td class="id">M-9</td><td><span class="b" style="color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal)">完全解消</span></td>
+          <td>アプリ側の指示文（システムプロンプト）がバックエンドに届いていなかった問題を解消。<b>Dart の静的解析とビルドを本検証で実際に通し、成功を確認</b>しています。<span class="loc">server.dart:303- / agent_executor_service.dart:54</span></td></tr>
+        <tr data-sev="ok" data-cat="be"><td class="id">認証ラッパ</td><td><span class="b" style="color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal)">完全解消</span></td>
+          <td>未ログイン時は明示的に失敗させる形に変更。前回指摘した「再試行のたびに同じ中断シグナルを使い回して2回目以降が即失敗する」問題も、<b>再試行ごとに作り直す形で正しく解消</b>されています。<span class="loc">authorizedFetch.js</span></td></tr>
+
+        <tr data-sev="part" data-cat="cc"><td class="id">N-2</td><td><span class="b" style="color:var(--yellow);background:var(--yellow-bg);border:1px solid var(--yellow)">部分解消</span></td>
+          <td>他トピックのメッセージが混ざる表示バグは解消。ただし<b>「新しいチャット」ボタン経由ではメモリ上の一時領域がクリアされず</b>、少しずつ溜まり続けます（表示は正しい）。
+            <span class="loc">ConciergeChat.js:544-556</span></td></tr>
+        <tr data-sev="part" data-cat="llm"><td class="id">N-3</td><td><span class="b" style="color:var(--yellow);background:var(--yellow-bg);border:1px solid var(--yellow)">部分解消</span></td>
+          <td>Gemini が受け付けない形式で送っていた問題は解消。ただし<b>ツールを複数同時に呼んだ場合に、Gemini が拒否しうる並びになる</b>ほか、ツールの返り値が数値や配列だと 400 になります。
+            <span class="loc">LLMService.js toGeminiContents</span></td></tr>
+        <tr data-sev="part" data-cat="rules"><td class="id">N-5</td><td><span class="b" style="color:var(--yellow);background:var(--yellow-bg);border:1px solid var(--yellow)">部分解消</span></td>
+          <td>サーバ側のブロック判定の向きは正しくなりました。ただし<b>①既存のブロックデータが移行されず全部無効になる ②アプリ側の判定は旧向きのままで「ブロックした本人」が送信できない ③解除する手段が存在しない</b>。
+            <span class="loc">firestore.rules:261-273 / P2PChatScreen.js:210-228, 341-384</span></td></tr>
+        <tr data-sev="part" data-cat="cc"><td class="id">N-7</td><td><span class="b" style="color:var(--yellow);background:var(--yellow-bg);border:1px solid var(--yellow)">部分解消</span></td>
+          <td>一括削除の件数上限は回避されました。ただし報告にある「400件ずつ読む」ではなく<b>全件を一度に読み込んでから分割</b>しており、大量メッセージのトピックで負荷と課金が跳ねます。途中失敗すると中途半端な状態が残ります。
+            <span class="loc">ConciergeChat.js:551-590</span></td></tr>
+        <tr data-sev="part" data-cat="cc"><td class="id">N-8</td><td><span class="b" style="color:var(--yellow);background:var(--yellow-bg);border:1px solid var(--yellow)">部分解消</span></td>
+          <td>エラー応答に👍👎が出ないようにはなりました。しかし<b>見た目は通常の回答とまったく同じ</b>で、元の指摘「エラーと正常が見分けられない」は未解決です。
+            <span class="loc">ChatBubble.js:38, :148</span></td></tr>
+        <tr data-sev="part" data-cat="unread"><td class="id">M-12</td><td><span class="b" style="color:var(--yellow);background:var(--yellow-bg);border:1px solid var(--yellow)">部分解消</span></td>
+          <td>画面を見ているときだけ既読にする制御が入りました。ただし判定に使っている仕組みは<b>アプリを裏に回したことを検知できない</b>ため、チャット画面を開いたままアプリを閉じている間に届いたメッセージが、見ていないのに既読になります。
+            <span class="loc">P2PChatScreen.js:53-65</span></td></tr>
+
+        <tr data-sev="ng" data-cat="test"><td class="id">N-6</td><td><span class="b" style="color:var(--red);background:var(--red-bg);border:1px solid var(--red)">未解消</span></td>
+          <td><b>報告された原因は真因ではありませんでした。</b>テストは<b>そのファイル単体で実行しても2件失敗</b>します。真因は「テストの環境変数リセットがビルド時に消されて無効になる」というリポジトリ全体に効く罠（V-4）。CI はレッドのままです。
+            <span class="loc">core/services/LLMService.test.js</span></td></tr>
+        <tr data-sev="ng" data-cat="be"><td class="id">H-7</td><td><span class="b" style="color:var(--red);background:var(--red-bg);border:1px solid var(--red)">実質未解消</span></td>
+          <td>コード自体は正しく、ビルドも通ります。しかし<b>V-1（設定値の未投入）により本番では常に401</b>、<b>V-3（CORS未設定）によりWeb版からは到達すらできません</b>。「認証が効くようになった」のではなく「機能が止まった」状態です。
+            <span class="loc">server.dart:73-93 / auth_service.dart:91-131</span></td></tr>
+        <tr data-sev="ng" data-cat="unread"><td class="id">M-11</td><td><span class="b" style="color:var(--red);background:var(--red-bg);border:1px solid var(--red)">未解消</span></td>
+          <td>相手の既読表示は未実装（Issue #701 自身が「後回し」と明記）。加えて、代わりに導入された <code>lastReadAt</code> は<b>書かれるだけで、リポジトリ内のどこからも読まれていません</b>。「単一情報源にした」という説明は実態を伴っていません。
+            <span class="loc">UnreadContext.js:74</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== NEW ISSUES ==================== -->
+<section id="new">
+  <div class="sec-head"><span class="no">04</span><h2>新たに検出した13件</h2></div>
+  <p class="sec-lead">今回の修正そのものや、その周辺の設定・運用を確認する過程で見つかった問題です。</p>
+
+  <div class="svgwide" style="margin-bottom:18px">
+    <svg viewBox="0 0 900 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="新規13件の重大度分布">
+      <g font-size="12.5" fill="var(--txt)">
+        <text x="0" y="24" font-size="13" font-weight="700">重大度の分布</text>
+
+        <text x="0" y="60" fill="var(--muted)">Critical</text>
+        <rect x="90" y="46" width="120" height="20" rx="5" fill="var(--red-bg)" stroke="var(--red)"/>
+        <text x="222" y="61" font-weight="700" fill="var(--red)">2件</text>
+        <text x="270" y="61" font-size="11.5" fill="var(--muted)">V-1 設定値未投入 ／ V-2 権限変更APIが無認証</text>
+
+        <text x="0" y="92" fill="var(--muted)">High</text>
+        <rect x="90" y="78" width="180" height="20" rx="5" fill="var(--orange-bg)" stroke="var(--orange)"/>
+        <text x="282" y="93" font-weight="700" fill="var(--orange)">3件</text>
+        <text x="330" y="93" font-size="11.5" fill="var(--muted)">V-3 CORS未設定 ／ V-4 テスト後始末が無効 ／ V-5 ブロック情報の移行なし</text>
+
+        <text x="0" y="124" fill="var(--muted)">Medium</text>
+        <rect x="90" y="110" width="300" height="20" rx="5" fill="var(--yellow-bg)" stroke="var(--yellow)"/>
+        <text x="402" y="125" font-weight="700" fill="var(--yellow)">5件</text>
+        <text x="450" y="125" font-size="11.5" fill="var(--muted)">V-6〜V-10（ブロックUI・解除・検証コスト・他API無認証・再試行課金）</text>
+
+        <text x="0" y="156" fill="var(--muted)">Low</text>
+        <rect x="90" y="142" width="180" height="20" rx="5" fill="var(--grey-bg)" stroke="var(--grey)"/>
+        <text x="282" y="157" font-weight="700" fill="var(--grey)">3件</text>
+        <text x="330" y="157" font-size="11.5" fill="var(--muted)">V-11〜V-13（開発環境の破損・重複テスト・死んだコード）</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="tblwrap">
+    <table>
+      <thead><tr><th style="width:64px">ID</th><th style="width:88px">重大度</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td class="id">V-1</td><td><span class="b crit">Critical</span></td><td><b>認証に必要な設定値がデプロイに書かれていない</b> → AIチャットとプロフィール自動生成が本番で常に401。<span class="loc">deploy-backend-app.yml / auth_service.dart:100</span></td></tr>
+        <tr><td class="id">V-2</td><td><span class="b crit">Critical</span></td><td><b>権限変更APIが完全に無認証で公開</b> → 誰でも任意アカウントを管理者化できる。<span class="loc">server.dart:49, 100</span></td></tr>
+        <tr><td class="id">V-3</td><td><span class="b high">High</span></td><td><b>CORS 設定が存在しない</b> → Web版アプリからは、本人確認ヘッダを付けた時点でブラウザに遮断される。しかも認証エラーが「ネットワークエラー」に見えて原因究明ができない。<span class="loc">server.dart:656</span></td></tr>
+        <tr><td class="id">V-4</td><td><span class="b high">High</span></td><td><b>テストの環境変数リセットがビルド時に削除されて無効化される</b>（<code>delete process.env.EXPO_PUBLIC_*</code> → <code>delete undefined</code>）。N-6 の真因であり、<b>リポジトリ全体のテストに効く罠</b>。<span class="loc">ツールチェーン全体</span></td></tr>
+        <tr><td class="id">V-5</td><td><span class="b high">High</span></td><td><b>ブロック情報のデータ移行が行われていない</b> → 前回リリースで実施済みのブロックが、今回の変更ですべて無効になる。<span class="loc">firestore.rules:261-273</span></td></tr>
+        <tr><td class="id">V-6</td><td><span class="b med">Medium</span></td><td>アプリ側のブロック判定が旧仕様のまま。<b>ブロックした本人</b>が送信できず「ブロックされています」と表示される。<span class="loc">P2PChatScreen.js:210-228</span></td></tr>
+        <tr><td class="id">V-7</td><td><span class="b med">Medium</span></td><td><b>ブロック解除の手段が存在しない</b>。また関連データが無いとブロック処理そのものが失敗する。<span class="loc">P2PChatScreen.js:341-384</span></td></tr>
+        <tr><td class="id">V-8</td><td><span class="b med">Medium</span></td><td>トークン検証が毎回2往復の通信を行い、キャッシュもクライアント再利用もない。認証方式の選択も用途と噛み合っておらず、特定環境では認証が丸ごと落ちる。<span class="loc">auth_service.dart:91-131</span></td></tr>
+        <tr><td class="id">V-9</td><td><span class="b med">Medium</span></td><td>AI・検索系の他エンドポイント（7本）は<b>無認証のまま</b>。呼び出し側も素の通信のまま。<span class="loc">server.dart:50-60 / SemanticSearchService.js</span></td></tr>
+        <tr><td class="id">V-10</td><td><span class="b med">Medium</span></td><td>通信の自動再試行が既定2回のままLLM呼び出しに適用され、<b>不調時に最大3回課金</b>される。<span class="loc">ActionExecutor.js:190, 271</span></td></tr>
+        <tr><td class="id">V-11</td><td><span class="b low">Low</span></td><td>Dart のプロジェクト構成定義が壊れており、リポジトリ全体で依存解決が失敗する。<b>これが「dart SDK が無いので未検証」と誤認された原因</b>。<span class="loc">pubspec.yaml:8</span></td></tr>
+        <tr><td class="id">V-12</td><td><span class="b low">Low</span></td><td>LLMService のテストファイルが2つ重複して存在する。</td></tr>
+        <tr><td class="id">V-13</td><td><span class="b low">Low</span></td><td>環境変数を読む二段構えのコードが、テスト実行時は第一段が必ず死ぬ（V-4 の副産物）。<span class="loc">LLMService.js 全域</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== DESIGN ==================== -->
+<section id="design">
+  <div class="sec-head"><span class="no">05</span><h2>改善の詳細設計</h2></div>
+  <p class="sec-lead">実装者がそのまま着手できる粒度で記載しています。詳細なコードは <a href="https://github.com/yama-0t0k0/forAgent/blob/same/docs/Chat/Chat_improvement_verification_report_round2.md">Markdown 原本</a> に収録しています。</p>
+
+  <div class="ph">
+    <div class="ph-head"><span class="b p0">P0</span><h3>最優先 — これを入れないとリリースできません</h3><span class="eff">合計 2人日</span></div>
+
+    <div class="design">
+      <div class="top"><h4>5.1　Cloud Run に設定値を渡し、無ければ起動を失敗させる</h4><span class="fixes">V-1 / H-7</span></div>
+      <p>デプロイコマンドに <code>--set-secrets "FIREBASE_API_KEY=firebase-web-api-key:latest"</code> を追加し、Secret Manager に値を登録します。あわせて<b>サーバ起動時に必須設定値を検証し、無ければ起動そのものを失敗させます</b>。現在のように「起動はするが全リクエストが401」は、障害として最も気づきにくい最悪の形です。</p>
+      <p style="color:var(--muted);font-size:12.8px">検証: トークン無しで 401、有効なトークン付きで 200 が返ること。<b>0.5人日</b></p>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>5.2　権限変更APIを管理者限定にする</h4><span class="fixes">V-2</span></div>
+      <p>本人確認ミドルウェアの後段に<b>管理者判定</b>を追加し、<code>/api/v1/auth/set-role</code> を保護します。最初の管理者を作る経路が塞がるため、Secret Manager 管理の一時トークンによるブートストラップ経路を用意し、初期化後に削除します。</p>
+      <p style="color:var(--muted);font-size:12.8px"><b>バックエンドのみの変更で、アプリの再ビルドは不要です。単独で先行リリースできます。</b> 0.5人日</p>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>5.3　CORS ミドルウェアの追加</h4><span class="fixes">V-3</span></div>
+      <p>許可リスト方式（ワイルドカードは使わない）で CORS を実装し、<b>パイプラインの最外側</b>に配置します。最外側に置かないと、認証エラー(401)にCORSヘッダーが付かず、ブラウザ上では原因不明の「ネットワークエラー」に化けます。</p>
+      <p style="color:var(--muted);font-size:12.8px">0.5人日</p>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>5.4　テストの環境変数リセットを是正し、CIゲートを設ける</h4><span class="fixes">N-6 / V-4 / V-13</span></div>
+      <p><code>delete</code> はビルド時に消えるため、<b>削除ではなく空文字を代入</b>する方式に統一します。あわせて全テスト共通の環境変数スナップショット復元を仕込み、規約ドキュメントにも明記します。<b>テストが赤いままリリース工程に進める状態そのものを止める CI ゲート</b>を追加します。</p>
+      <p style="color:var(--muted);font-size:12.8px">0.5人日</p>
+    </div>
+  </div>
+
+  <div class="ph">
+    <div class="ph-head"><span class="b p1">P1</span><h3>機能として正しく動かすために</h3><span class="eff">合計 3.5人日</span></div>
+
+    <div class="design">
+      <div class="top"><h4>5.5　トークン検証のキャッシュ化と構成是正</h4><span class="fixes">V-8</span></div>
+      <p>毎回の外部通信をやめ、<b>検証結果をメモリにキャッシュ（TTL 5分・ハッシュキー・LRU上限）</b>します。さらに軽くするなら、Google の公開鍵をキャッシュして<b>ローカルで署名検証</b>すれば往復ゼロになります。現在ゼロ件のバックエンド認証テストも追加します。<span style="color:var(--muted)">1人日</span></p>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>5.6　ブロック機能の一貫化</h4><span class="fixes">N-5 / V-5 / V-6 / V-7</span></div>
+      <p>現状は<b>「サーバは新方式・アプリは旧方式・既存データは旧方式」の三重にズレた状態</b>です。①既存データの移行スクリプト（実行前に dry-run で件数を確認）②アプリ側判定を新方式に置換し「自分がブロックされている / 自分がブロックしている」を出し分け ③解除導線の追加 ④関連データが無くてもブロックが成立するよう堅牢化 — の4点をセットで行います。<span style="color:var(--muted)">1.5人日</span></p>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>5.7　未読リセットの正確化</h4><span class="fixes">M-12 / M-11</span></div>
+      <p>画面フォーカス判定に<b>アプリの前面/背面状態</b>を併用し、裏に回っている間は既読にしません。復帰時には改めて既読化します。誰も読んでいない <code>lastReadAt</code> は、既読表示を実装するか、いったん削除するかを決めます（<b>推奨は削除</b>）。<span style="color:var(--muted)">0.5人日</span></p>
+    </div>
+
+    <div class="design">
+      <div class="top"><h4>5.8　Gemini マルチツールの整合</h4><span class="fixes">N-3</span></div>
+      <p>複数のツール結果を<b>1つのまとまりに畳み込んで</b>同一種別の連続を避けます。あわせてツールの返り値を必ずオブジェクトに正規化し、数値・配列でも 400 にならないようにします。<span style="color:var(--muted)">0.5人日</span></p>
+    </div>
+  </div>
+
+  <div class="ph">
+    <div class="ph-head"><span class="b p2">P2</span><h3>保守性と再発防止</h3><span class="eff">合計 4人日</span></div>
+    <div class="design">
+      <div class="top"><h4>5.9　残りの改善</h4><span class="fixes">N-7 / N-8 / N-2 / V-9〜V-12</span></div>
+      <p>削除処理を分割読み込みに変更、エラーバブルの視覚的な区別と「再試行」ボタン、残る7本のAPIの認証、自動再試行の既定値是正、Dart 構成定義の修復と <code>dart analyze</code> の CI 追加、重複テストの削除。
+      あわせて<b>前回からの積み残しである「未定義参照の静的検査を CI 必須化」</b>と、<b>ConciergeChat 系4スイートを塞いでいるツールチェーン非互換の解消</b>を行います。後者が直るまで、今回追加された N-2 の回帰テストは動きません。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ROADMAP ==================== -->
+<section id="roadmap">
+  <div class="sec-head"><span class="no">06</span><h2>ロードマップと判断材料</h2></div>
+  <p class="sec-lead">合計 9.5人日。ただし、まず必要なのは最初の2人日だけです。</p>
+
+  <div class="svgwide">
+    <svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ロードマップ">
+      <g font-size="12.5" fill="var(--txt)">
+        <line x1="120" y1="34" x2="880" y2="34" stroke="var(--line)"/>
+        <g font-size="11" fill="var(--muted)">
+          <text x="120" y="24">0</text><text x="280" y="24">2人日</text><text x="560" y="24">5.5人日</text><text x="860" y="24">9.5人日</text>
+        </g>
+
+        <text x="0" y="72" font-weight="700" fill="var(--red)">P0</text>
+        <text x="34" y="72" font-size="11.5" fill="var(--muted)">最優先</text>
+        <rect x="120" y="56" width="160" height="26" rx="7" fill="var(--red-bg)" stroke="var(--red)"/>
+        <text x="200" y="74" text-anchor="middle" font-size="11.5" fill="var(--red)" font-weight="700">2人日</text>
+        <text x="296" y="74" font-size="11.5" fill="var(--muted)">設定値投入・権限API保護・CORS・テスト是正</text>
+
+        <text x="0" y="118" font-weight="700" fill="var(--orange)">P1</text>
+        <text x="34" y="118" font-size="11.5" fill="var(--muted)">機能</text>
+        <rect x="280" y="102" width="280" height="26" rx="7" fill="var(--orange-bg)" stroke="var(--orange)"/>
+        <text x="420" y="120" text-anchor="middle" font-size="11.5" fill="var(--orange)" font-weight="700">3.5人日</text>
+        <text x="576" y="120" font-size="11.5" fill="var(--muted)">トークン検証・ブロック一貫化・未読・Gemini</text>
+
+        <text x="0" y="164" font-weight="700" fill="var(--teal)">P2</text>
+        <text x="34" y="164" font-size="11.5" fill="var(--muted)">保守</text>
+        <rect x="560" y="148" width="320" height="26" rx="7" fill="var(--teal-bg)" stroke="var(--teal)"/>
+        <text x="720" y="166" text-anchor="middle" font-size="11.5" fill="var(--teal)" font-weight="700">4人日</text>
+
+        <text x="120" y="204" font-size="12" fill="var(--muted)">※ P0 のうち「設定値投入」「権限API保護」はバックエンドのみの変更で、アプリの再ビルド不要。先行してデプロイできます。</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="duo" style="margin-top:22px">
+    <div class="panel" style="border-left:4px solid var(--red)">
+      <h3>🚫 P0 を入れずにリリースしてはいけません</h3>
+      <p style="font-size:13.5px;color:var(--muted);margin:0">
+        現状のコードをそのまま本番に出すと、<b style="color:var(--txt)">認証を強化した結果として AIコンシェルジュとプロフィール自動生成が完全に停止</b>します。
+        「直したのに前より動かない」という、利用者から見て最も納得しづらい形になります。
+        逆に言えば、<b style="color:var(--txt)">2人日を先に投じるだけで、この2ラウンドで直した多くの改善がようやくユーザーに届きます</b>。
+      </p>
+    </div>
+    <div class="panel">
+      <h3>🔬 今回の検証のやり方</h3>
+      <ul class="ok-list">
+        <li>コミットメッセージではなく<b>実コードのみ</b>を根拠に、15項目を1件ずつ照合</li>
+        <li>実ビルド相当に変換して<b>未定義参照を AST で機械的に列挙</b>（前回 N-1 を発見した手法。今回は0件）</li>
+        <li><code>jest</code> を全体・チャット限定・単体・テスト名指定の4段階で実行し、<b>環境要因と本物の失敗を分離</b></li>
+        <li>Babel の変換結果を直接検査し、N-6 の<b>真因</b>を特定</li>
+        <li>Dockerfile と同じ手順を再現して <b><code>dart analyze</code> と <code>dart compile exe</code> を実際に実行</b></li>
+        <li>デプロイ定義と、バックエンドが読む環境変数の全参照を突合（V-1 の発見手段）</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="foot">
+  <p>forAgent — チャット機能 改善結果 検証レポート（第2ラウンド）／ 検証日 2026-08-03 ／ 対象 Agent @ <code>d8bbe66</code></p>
+  <p>原本（Markdown・same ブランチ）: <a href="https://github.com/yama-0t0k0/forAgent/blob/same/docs/Chat/Chat_improvement_verification_report_round2.md">docs/Chat/Chat_improvement_verification_report_round2.md</a></p>
+  <p>関連: <a href="../chat-bug-investigation/">第0ラウンド 不具合調査＆改善設計</a>　／　<a href="../chat-improvement-verification/">第1ラウンド 検証レポート</a></p>
+</div>
+
+</div>
+
+<script>
+// ---------- table filter ----------
+(function(){
+  var sev = 'all';
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#bugTable tbody tr'));
+  var count = document.getElementById('fcount');
+  function apply(){
+    var n = 0;
+    rows.forEach(function(r){
+      var ok = (sev === 'all' || r.dataset.sev === sev);
+      r.classList.toggle('hid', !ok);
+      if (ok) n++;
+    });
+    count.textContent = n + ' / 15 件';
+  }
+  var box = document.getElementById('sevFilters');
+  box.addEventListener('click', function(e){
+    var btn = e.target.closest('.fbtn');
+    if (!btn) return;
+    box.querySelectorAll('.fbtn').forEach(function(b){ b.classList.remove('on'); });
+    btn.classList.add('on');
+    sev = btn.dataset.f;
+    apply();
+  });
+})();
+
+// ---------- nav highlight ----------
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav a'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function onScroll(){
+    var y = window.scrollY + 100, idx = 0;
+    secs.forEach(function(s, i){ if (s && s.offsetTop <= y) idx = i; });
+    links.forEach(function(a, i){ a.classList.toggle('on', i === idx); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>
