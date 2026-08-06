@@ -19,6 +19,7 @@
 | 🗺️ forAgent アプリ全体構造マップ | https://yama-0t0k0.github.io/artifacts/docs/foragent-structure-map/ | 🔒 |
 | 📤 AdminApp ファイルアップロード → プロフ予測入力 詳細設計 | https://yama-0t0k0.github.io/artifacts/docs/admin-fileupload-profile-prediction/ | なし |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | なし |
+| 🗓️ 2026年8月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー | https://yama-0t0k0.github.io/artifacts/calendars/2026-08-lat-ceo-meeting-calendar/ | なし |
 
 ## 構成
 
@@ -53,6 +54,9 @@ artifacts/
 ├── tools/                           操作パネル・ツール類
 │   └── screenshot-audit-launcher/
 │       └── index.html               forAgent スクリーンショット撮影パネル（保護なし・平文）
+├── calendars/                        個人スケジュール系カレンダー（レポート/ドキュメント/ツールとは別カテゴリ）
+│   └── 2026-08-lat-ceo-meeting-calendar/
+│       └── index.html               2026年8月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー（保護なし・平文）
 ├── scripts/
 │   └── build_infographic_gate.js    平文HTMLを暗号化しゲートを生成するビルドスクリプト
 └── .github/workflows/deploy-pages.yml  GitHub Actions による Pages デプロイ

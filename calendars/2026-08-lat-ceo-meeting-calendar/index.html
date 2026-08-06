@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>2026年8月 カレンダー</title>
+<style>
+  :root{
+    --bg: #f7f4ee;
+    --card: #ffffff;
+    --ink: #2e2a24;
+    --sub: #8a8378;
+    --line: #e7e1d6;
+    --accent: #c96a4f;
+    --sun: #d8654f;
+    --sat: #4f7fc9;
+    --holiday-bg: #fbeae6;
+    --phone: #4f9c6c;
+    --online: #4f7fc9;
+    --off: #a8a29b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    padding:40px 20px;
+    background: var(--bg);
+    font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", -apple-system, sans-serif;
+    color: var(--ink);
+    display:flex;
+    justify-content:center;
+  }
+  .wrap{
+    width:100%;
+    max-width:920px;
+  }
+  .card{
+    background: var(--card);
+    border-radius: 24px;
+    padding: 40px 44px 32px;
+    box-shadow: 0 12px 36px rgba(60,50,30,0.08);
+    border: 1px solid var(--line);
+  }
+  .header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom: 8px;
+  }
+  .title{
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .title .en{
+    font-size: 14px;
+    color: var(--sub);
+    font-weight: 400;
+    margin-top: 4px;
+  }
+  .badge{
+    font-size: 12px;
+    color: var(--accent);
+    background: #fbe9e2;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+    white-space:nowrap;
+  }
+  .subnote{
+    font-size: 13px;
+    color: var(--sub);
+    margin: 10px 0 26px;
+    line-height: 1.7;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  .subnote b{ color: var(--ink); }
+
+  table{
+    width:100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  th{
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sub);
+    padding-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  th.sun{ color: var(--sun); }
+  th.sat{ color: var(--sat); }
+
+  td{
+    vertical-align: top;
+    border: 1px solid var(--line);
+    height: 108px;
+    padding: 8px;
+    position: relative;
+  }
+  td.empty{
+    background: #fbfaf7;
+    border: 1px solid var(--line);
+  }
+  td.other-month{
+    color: #cfc9bc;
+  }
+  td.holiday{
+    background: var(--holiday-bg);
+  }
+  td.today{
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  .daynum{
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .sun-num{ color: var(--sun); }
+  .sat-num{ color: var(--sat); }
+  .holiday-label{
+    font-size: 10px;
+    color: var(--accent);
+    margin-top: 2px;
+    font-weight: 600;
+  }
+  .note-line{
+    margin-top: 10px;
+    height: 22px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .tag{
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 7px;
+  }
+  .tag .dot{ width: 8px; height: 8px; border-radius: 50%; }
+  .tag.phone{ background: #e5f3ea; color: #3d7a52; }
+  .tag.online{ background: #e7eef9; color: #3d5f96; }
+  .tag.off{ background: #f0efec; color: #75706a; }
+  .tag-note{
+    font-size: 10px;
+    color: var(--sub);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  .legend{
+    display:flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    align-items:center;
+  }
+  .legend-title{
+    font-size: 12px;
+    color: var(--sub);
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .legend-item{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .dot{
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    display:inline-block;
+  }
+  .dot.phone{ background: var(--phone); }
+  .dot.online{ background: var(--online); }
+  .dot.off{ background: var(--off); }
+
+  .footer{
+    margin-top: 22px;
+    font-size: 11px;
+    color: var(--sub);
+    text-align:right;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="header">
+      <div class="title">2026年8月<div class="en">AUGUST 2026</div></div>
+      <div class="badge">山川CEO(株式会社Lat) 打ち合わせスケジュール</div>
+    </div>
+
+    <div class="subnote">
+      <b>株式会社Lat 山川CEO</b>との打ち合わせ方法（電話 / オンライン / お休み）を記載しています。打ち合わせは毎日10:00〜12:00の予定です。Outlookの勤務地表示（緑=ICC/千里オフィス勤務→電話、黄=在宅勤務→オンライン、赤=計画有休・夏季休暇・公休→お休み）をもとに振り分けています。
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th class="sun">日</th>
+          <th>月</th>
+          <th>火</th>
+          <th>水</th>
+          <th>木</th>
+          <th>金</th>
+          <th class="sat">土</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="other-month"><div class="daynum">26</div></td>
+          <td class="other-month"><div class="daynum">27</div></td>
+          <td class="other-month"><div class="daynum">28</div></td>
+          <td class="other-month"><div class="daynum">29</div></td>
+          <td class="other-month"><div class="daynum">30</div></td>
+          <td class="other-month"><div class="daynum">31</div></td>
+          <td><div class="daynum sat-num">1</div><div class="note-line"></div></td>
+        </tr>
+        <tr>
+          <td><div class="daynum sun-num">2</div><div class="note-line"></div></td>
+          <td><div class="daynum">3</div><div class="tag phone"><span class="dot"></span>電話</div></td>
+          <td><div class="daynum">4</div><div class="tag online"><span class="dot"></span>オンライン</div><div class="tag-note">※緊急対応のため10:20開始</div></td>
+          <td><div class="daynum">5</div><div class="tag online"><span class="dot"></span>オンライン</div></td>
+          <td><div class="daynum">6</div><div class="tag off"><span class="dot"></span>お休み</div></td>
+          <td><div class="daynum">7</div><div class="tag online"><span class="dot"></span>オンライン</div></td>
+          <td><div class="daynum sat-num">8</div><div class="note-line"></div></td>
+        </tr>
+        <tr>
+          <td><div class="daynum sun-num">9</div><div class="note-line"></div></td>
+          <td><div class="daynum">10</div><div class="tag phone"><span class="dot"></span>電話</div></td>
+          <td class="holiday"><div class="daynum">11</div><div class="holiday-label">山の日</div><div class="tag off"><span class="dot"></span>お休み</div></td>
+          <td><div class="daynum">12</div><div class="tag online"><span class="dot"></span>オンライン</div></td>
+          <td><div class="daynum">13</div><div class="tag online"><span class="dot"></span>オンライン</div></td>
+          <td><div class="daynum">14</div><div class="tag online"><span class="dot"></span>オンライン</div></td>
+          <td><div class="daynum sat-num">15</div><div class="note-line"></div></td>
+        </tr>
+        <tr>
+          <td><div class="daynum sun-num">16</div><div class="note-line"></div></td>
+          <td><div class="daynum">17</div><div class="tag phone"><span class="dot"></span>電話</div></td>
+          <td><div class="daynum">18</div><div class="tag online"><span class="dot"></span>オンライン</div></td>
+          <td><div class="daynum">19</div><div class="tag phone"><span class="dot"></span>電話</div></td>
+          <td><div class="daynum">20</div><div class="tag online"><span class="dot"></span>オンライン</div></td>
+          <td><div class="daynum">21</div><div class="tag online"><span class="dot"></span>オンライン</div></td>
+          <td><div class="daynum sat-num">22</div><div class="note-line"></div></td>
+        </tr>
+        <tr>
+          <td><div class="daynum sun-num">23</div><div class="note-line"></div></td>
+          <td><div class="daynum">24</div><div class="tag phone"><span class="dot"></span>電話</div></td>
+          <td><div class="daynum">25</div><div class="tag online"><span class="dot"></span>オンライン</div></td>
+          <td><div class="daynum">26</div><div class="tag online"><span class="dot"></span>オンライン</div></td>
+          <td><div class="daynum">27</div><div class="tag off"><span class="dot"></span>お休み</div></td>
+          <td><div class="daynum">28</div><div class="tag online"><span class="dot"></span>オンライン</div></td>
+          <td><div class="daynum sat-num">29</div><div class="note-line"></div></td>
+        </tr>
+        <tr>
+          <td><div class="daynum sun-num">30</div><div class="note-line"></div></td>
+          <td><div class="daynum">31</div><div class="tag phone"><span class="dot"></span>電話</div></td>
+          <td class="other-month"><div class="daynum">1</div></td>
+          <td class="other-month"><div class="daynum">2</div></td>
+          <td class="other-month"><div class="daynum">3</div></td>
+          <td class="other-month"><div class="daynum">4</div></td>
+          <td class="other-month"><div class="daynum">5</div></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="legend">
+      <span class="legend-title">打ち合わせ方法の凡例</span>
+      <span class="legend-item"><span class="dot phone"></span>電話</span>
+      <span class="legend-item"><span class="dot online"></span>オンライン</span>
+      <span class="legend-item"><span class="dot off"></span>お休み</span>
+    </div>
+
+    <div class="footer">作成日: 2026年8月6日</div>
+  </div>
+</div>
+</body>
+</html>
