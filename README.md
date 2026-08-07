@@ -20,7 +20,7 @@
 | 📤 AdminApp ファイルアップロード → プロフ予測入力 詳細設計 | https://yama-0t0k0.github.io/artifacts/docs/admin-fileupload-profile-prediction/ | なし |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | なし |
 <!-- CALENDAR_ROW:lat-ceo-meeting-calendar -->
-| 🗓️ 2026年8月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー | https://yama-0t0k0.github.io/artifacts/calendars/2026-08-lat-ceo-meeting-calendar/ | なし |
+| 🗓️ 2026年9月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー | https://yama-0t0k0.github.io/artifacts/calendars/2026-09-lat-ceo-meeting-calendar/ | なし |
 <!-- /CALENDAR_ROW:lat-ceo-meeting-calendar -->
 
 ## 構成
@@ -58,8 +58,8 @@ artifacts/
 │       └── index.html               forAgent スクリーンショット撮影パネル（保護なし・平文）
 ├── calendars/                        個人スケジュール系カレンダー（レポート/ドキュメント/ツールとは別カテゴリ）
 <!-- CALENDAR_TREE:lat-ceo-meeting-calendar -->
-│   └── 2026-08-lat-ceo-meeting-calendar/
-│       └── index.html               2026年8月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー（保護なし・平文）
+│   └── 2026-09-lat-ceo-meeting-calendar/
+│       └── index.html               2026年9月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー（保護なし・平文）
 <!-- /CALENDAR_TREE:lat-ceo-meeting-calendar -->
 ├── scripts/
 │   └── build_infographic_gate.js    平文HTMLを暗号化しゲートを生成するビルドスクリプト
