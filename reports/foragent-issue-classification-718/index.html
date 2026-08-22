@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>forAgent Issue 機能分類マップ — #718 以降</title>
+<meta name="description" content="forAgent リポジトリ Agent ブランチの Issue #718 以降を、アプリ・レイヤー区分・関連ドキュメントで分類したマップ。">
+<style>
+:root{
+  --bg:#16171a; --bg2:#1e2025; --card:#23262c; --card2:#292d34;
+  --txt:#e9eaec; --muted:#9aa1ab; --line:rgba(255,255,255,.11);
+  --accent:#6aa6ff; --a2:#7ee0c0; --warn:#ffb454; --danger:#ff7a7a; --violet:#b99cff;
+  --chip:rgba(255,255,255,.06);
+}
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#f6f7f5; --bg2:#fff; --card:#fff; --card2:#f2f4f7;
+    --txt:#1b1d21; --muted:#5f656e; --line:rgba(0,0,0,.12);
+    --accent:#1f6fe0; --a2:#0f8f70; --warn:#b7791f; --danger:#c0392b; --violet:#6d4bd6;
+    --chip:rgba(0,0,0,.05);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Noto Sans JP",sans-serif;
+  line-height:1.75;-webkit-text-size-adjust:100%;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 90px;}
+a{color:var(--accent);}
+.hero{padding:48px 34px;border-radius:24px;margin-top:36px;border:1px solid var(--line);background:
+  radial-gradient(120% 120% at 0% 0%, rgba(106,166,255,.18), transparent 55%),
+  radial-gradient(120% 120% at 100% 30%, rgba(126,224,192,.16), transparent 55%), var(--bg2);}
+.eyebrow{font-size:12px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;font-weight:700;}
+h1{font-size:clamp(26px,4.2vw,36px);margin:10px 0 14px;font-weight:800;letter-spacing:-.5px;line-height:1.3;}
+.hero p{max-width:760px;color:var(--muted);margin:0;font-size:15px;}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:26px;}
+.metric{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
+.metric b{display:block;font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.2;}
+.metric span{font-size:11.5px;color:var(--muted);}
+h2{font-size:13px;letter-spacing:2.2px;text-transform:uppercase;color:var(--accent);margin:52px 0 6px;font-weight:700;}
+h2 + .lead{color:var(--muted);font-size:14px;margin:0 0 20px;max-width:820px;}
+h3{font-size:17px;margin:30px 0 8px;font-weight:700;}
+figure{margin:22px 0 8px;padding:20px 16px 12px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow-x:auto;}
+figure svg{display:block;max-width:100%;min-width:860px;height:auto;margin:0 auto;color:var(--txt);}
+figcaption{margin-top:14px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6;}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:18px 0;}
+.panel p{margin:0 0 10px;font-size:14px;}
+.panel p:last-child{margin-bottom:0;}
+ul.tight{margin:6px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
+ul.tight li{margin-bottom:6px;}
+ul.tight b{color:var(--txt);}
+code{background:var(--chip);padding:1px 5px;border-radius:5px;font-size:12.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0 6px;}
+.controls .grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.controls .lbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-right:4px;font-weight:700;}
+button.f{background:var(--chip);color:var(--txt);border:1px solid var(--line);border-radius:999px;
+  padding:5px 13px;font-size:12.5px;cursor:pointer;font-family:inherit;transition:.14s;}
+button.f:hover{border-color:var(--accent);}
+button.f[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;}
+#count{font-size:12.5px;color:var(--muted);margin:10px 0 0;}
+.tbl-scroll{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:16px;background:var(--card);}
+table{border-collapse:collapse;width:100%;min-width:1080px;font-size:13px;}
+thead th{position:sticky;top:0;background:var(--card2);text-align:left;padding:12px 12px;
+  font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--line);white-space:nowrap;font-weight:700;z-index:2;}
+tbody td{padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.65;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:var(--chip);}
+td.num a{font-weight:800;text-decoration:none;white-space:nowrap;}
+td.what{min-width:330px;}
+td.note{min-width:270px;color:var(--muted);font-size:12.5px;}
+td.docs{min-width:190px;}
+td.docs a{display:block;font-size:12px;text-decoration:none;margin-bottom:3px;word-break:break-word;}
+td.docs a:hover{text-decoration:underline;}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;margin:0 3px 3px 0;
+  white-space:nowrap;border:1px solid transparent;font-weight:600;}
+.t-app{background:rgba(106,166,255,.16);color:var(--accent);border-color:rgba(106,166,255,.3);}
+.t-fe{background:rgba(126,224,192,.16);color:var(--a2);border-color:rgba(126,224,192,.32);}
+.t-be{background:rgba(255,180,84,.16);color:var(--warn);border-color:rgba(255,180,84,.32);}
+.t-shared{background:rgba(185,156,255,.18);color:var(--violet);border-color:rgba(185,156,255,.34);}
+.t-data{background:rgba(255,122,122,.15);color:var(--danger);border-color:rgba(255,122,122,.3);}
+.t-ops{background:var(--chip);color:var(--muted);border-color:var(--line);}
+.t-doc{background:var(--chip);color:var(--muted);border-color:var(--line);}
+.badge{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:6px;
+  background:rgba(255,180,84,.2);color:var(--warn);border:1px solid rgba(255,180,84,.4);margin-right:6px;}
+.badge.sec{background:rgba(255,122,122,.16);color:var(--danger);border-color:rgba(255,122,122,.36);}
+.foot{margin-top:56px;border-top:1px solid var(--line);padding-top:22px;color:var(--muted);font-size:13px;}
+.foot a{text-decoration:none;}
+@media (max-width:640px){ .hero{padding:34px 22px;} .wrap{padding:0 14px 60px;} figure{padding:14px 10px 10px;} }
+
+/* diagram accents — light/dark 両方で読める値に切り替える */
+:root{ --d-blue:#6aa6ff; --d-green:#7ee0c0; --d-orange:#ffb454; --d-red:#ff7a7a; --d-violet:#b99cff; }
+@media (prefers-color-scheme: light){
+  :root{ --d-blue:#1f6fe0; --d-green:#0b7f63; --d-orange:#a4640b; --d-red:#c0392b; --d-violet:#5c3bc4; }
+}
+.fb{fill:var(--d-blue)} .sb{stroke:var(--d-blue)}
+.fg{fill:var(--d-green)} .sg{stroke:var(--d-green)}
+.fo{fill:var(--d-orange)} .so{stroke:var(--d-orange)}
+.fr{fill:var(--d-red)} .sr{stroke:var(--d-red)}
+.fv{fill:var(--d-violet)} .sv{stroke:var(--d-violet)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <div class="eyebrow">forAgent · Agent branch</div>
+  <h1>Issue 機能分類マップ — #718 以降</h1>
+  <p>
+    <a href="https://github.com/yama-0t0k0/forAgent">yama-0t0k0/forAgent</a> の <code>Agent</code> ブランチに起票された
+    Issue <b>#718 〜 #785</b> を対象に、どのアプリの・どのレイヤーの・何をした変更なのかを分類したマップです。
+    「chore: Agent ブランチ最新化と same へのマージ・main 最新化」（<b>#721 / #743 / #769 / #783</b>）は
+    ブランチ同期作業のため除外しています。
+  </p>
+  <div class="metrics">
+    <div class="metric"><b id="m-total">–</b><span>分類対象 Issue</span></div>
+    <div class="metric"><b id="m-apps">–</b><span>関与アプリ／モジュール</span></div>
+    <div class="metric"><b id="m-sec">–</b><span>セキュリティ関連</span></div>
+    <div class="metric"><b id="m-open">–</b><span>要判断・未対応</span></div>
+    <div class="metric"><b>2026-08-23</b><span>集計日</span></div>
+  </div>
+</div>
+
+<h2>1. 分類の軸</h2>
+<p class="lead">
+  forAgent は Modular Monolith（Monorepo）で、アプリ実体は <code>apps/</code> だけに閉じていません。
+  Issue 本文の「変更ファイル」節に列挙されたパスを実際のディレクトリ構造へ突き合わせ、次の 6 レイヤーへ分類しています。
+</p>
+
+<figure>
+<svg viewBox="0 0 1080 520" role="img" aria-label="forAgent のリポジトリ構造とレイヤー区分。apps 配下の 6 アプリのフロントエンドは shared/common_frontend を共有し、バックエンドは Cloud Functions と Dart Cloud Run に分かれ、両者は infrastructure の Firestore とセキュリティルールを介して同じデータ層に接続する。">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+    </marker>
+    <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="fb"/>
+    </marker>
+  </defs>
+
+  <!-- Frontend layer -->
+  <text x="24" y="30" font-size="12" font-weight="700" class="fg" letter-spacing="1.5">FRONTEND — apps/*/expo_frontend</text>
+  <g font-size="12" text-anchor="middle">
+    <rect x="24"  y="44" width="158" height="52" rx="9" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+    <text x="103" y="66">Admin App</text><text x="103" y="83" font-size="10.5" opacity=".65">管理・審査</text>
+    <rect x="196" y="44" width="158" height="52" rx="9" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+    <text x="275" y="66">Individual App</text><text x="275" y="83" font-size="10.5" opacity=".65">個人エンジニア</text>
+    <rect x="368" y="44" width="158" height="52" rx="9" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+    <text x="447" y="66">Corporate App</text><text x="447" y="83" font-size="10.5" opacity=".65">企業・採用</text>
+    <rect x="540" y="44" width="158" height="52" rx="9" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+    <text x="619" y="66">Job Description</text><text x="619" y="83" font-size="10.5" opacity=".65">求人票</text>
+    <rect x="712" y="44" width="158" height="52" rx="9" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+    <text x="791" y="66">FMJS</text><text x="791" y="83" font-size="10.5" opacity=".65">選考・手数料</text>
+    <rect x="884" y="44" width="172" height="52" rx="9" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+    <text x="970" y="66">LP App</text><text x="970" y="83" font-size="10.5" opacity=".65">集客・遷移ゲート</text>
+  </g>
+
+  <!-- arrows down to shared -->
+  <g class="sb" stroke-width="1.4" marker-end="url(#arA)" opacity=".85">
+    <line x1="103" y1="96" x2="103" y2="140"/>
+    <line x1="275" y1="96" x2="275" y2="140"/>
+    <line x1="447" y1="96" x2="447" y2="140"/>
+    <line x1="619" y1="96" x2="619" y2="140"/>
+    <line x1="791" y1="96" x2="791" y2="140"/>
+    <line x1="970" y1="96" x2="970" y2="140"/>
+  </g>
+  <text x="540" y="128" font-size="11" text-anchor="middle" class="fb">画面・サービスの大半を @shared から import</text>
+
+  <!-- shared -->
+  <rect x="24" y="144" width="1032" height="88" rx="12" fill="none" class="sv" stroke-width="1.8"/>
+  <text x="40" y="167" font-size="12" font-weight="700" class="fv" letter-spacing="1.2">共通モジュール — shared/</text>
+  <g font-size="11" text-anchor="middle">
+    <rect x="40"  y="180" width="190" height="38" rx="8" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+    <text x="135" y="197">common_frontend</text><text x="135" y="211" font-size="9.5" opacity=".65">UI / core / features</text>
+    <rect x="244" y="180" width="176" height="38" rx="8" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+    <text x="332" y="197">common_logic</text><text x="332" y="211" font-size="9.5" opacity=".65">payment / mapping</text>
+    <rect x="434" y="180" width="176" height="38" rx="8" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+    <text x="522" y="197">domain_models</text><text x="522" y="211" font-size="9.5" opacity=".65">Dart モデル</text>
+    <rect x="624" y="180" width="176" height="38" rx="8" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+    <text x="712" y="197">domain_logic</text><text x="712" y="211" font-size="9.5" opacity=".65">heatmap_engine</text>
+    <rect x="814" y="180" width="226" height="38" rx="8" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+    <text x="927" y="197">common_backend / ironclaw_core</text><text x="927" y="211" font-size="9.5" opacity=".65">Dart 共通 / 自律エージェント</text>
+  </g>
+
+  <!-- backend -->
+  <text x="24" y="272" font-size="12" font-weight="700" class="fo" letter-spacing="1.5">BACKEND</text>
+  <g font-size="12" text-anchor="middle">
+    <rect x="24"  y="286" width="330" height="66" rx="10" fill="none" class="so" stroke-width="1.6"/>
+    <text x="189" y="310">Cloud Functions — apps/functions</text>
+    <text x="189" y="330" font-size="10.5" opacity=".7">passkey / adminOperations / suppression</text>
+    <text x="189" y="345" font-size="10.5" opacity=".7">feedbackReminders / autoCompleteInterviews</text>
+    <rect x="368" y="286" width="330" height="66" rx="10" fill="none" class="so" stroke-width="1.6"/>
+    <text x="533" y="310">Dart Cloud Run — apps/backend</text>
+    <text x="533" y="330" font-size="10.5" opacity=".7">backend-app（LP の CMS 配信）</text>
+    <text x="533" y="345" font-size="10.5" opacity=".7">agent-backend（保守バッチ）</text>
+    <rect x="712" y="286" width="344" height="66" rx="10" fill="none" stroke="currentColor" stroke-opacity=".4" stroke-dasharray="5 4"/>
+    <text x="884" y="310" opacity=".75">apps/admin_app/node_backend</text>
+    <text x="884" y="332" font-size="10.5" opacity=".6">Express + Cloud Run（未デプロイのまま）</text>
+    <text x="884" y="347" font-size="10.5" class="fr">#771 で Callable へ移植し撤去</text>
+  </g>
+
+  <!-- arrows to data -->
+  <g stroke="currentColor" stroke-width="1.3" stroke-opacity=".55" marker-end="url(#ar)">
+    <line x1="189" y1="352" x2="189" y2="396"/>
+    <line x1="533" y1="352" x2="533" y2="396"/>
+    <line x1="135" y1="218" x2="135" y2="396"/>
+  </g>
+  <text x="330" y="384" font-size="11" text-anchor="middle" opacity=".75">クライアント SDK / Admin SDK</text>
+
+  <!-- data layer -->
+  <rect x="24" y="400" width="1032" height="88" rx="12" fill="none" class="sr" stroke-width="1.8"/>
+  <text x="40" y="423" font-size="12" font-weight="700" class="fr" letter-spacing="1.2">データ層 — infrastructure/firebase</text>
+  <g font-size="11" text-anchor="middle">
+    <rect x="40"  y="436" width="240" height="38" rx="8" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+    <text x="160" y="453">firestore.rules</text><text x="160" y="467" font-size="9.5" opacity=".65">750行超・唯一の認可境界</text>
+    <rect x="294" y="436" width="240" height="38" rx="8" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+    <text x="414" y="453">public_profile / private_info</text><text x="414" y="467" font-size="9.5" opacity=".65">PII の物理隔離</text>
+    <rect x="548" y="436" width="240" height="38" rx="8" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+    <text x="668" y="453">selection_events / _feedback</text><text x="668" y="467" font-size="9.5" opacity=".65">ODI Phase 0 で新設</text>
+    <rect x="802" y="436" width="238" height="38" rx="8" fill="none" stroke="currentColor" stroke-opacity=".4"/>
+    <text x="921" y="453">company / FeeMgmtAndJobStatDB</text><text x="921" y="467" font-size="9.5" opacity=".65">DynamoDB 移行由来</text>
+  </g>
+</svg>
+<figcaption>
+  分類の土台になる依存関係。<b>6 アプリのフロントエンドは画面実装の大半を <code>shared/common_frontend</code> に置いている</b>ため、
+  「アプリ横断で効く変更」の多くは <code>apps/</code> ではなく <code>shared/</code> に現れる。
+  一方でバックエンドは Cloud Functions と Dart Cloud Run の 2 系統に分かれ、両者は <code>firestore.rules</code> という単一の認可境界を共有する。
+</figcaption>
+</figure>
+
+<div class="panel">
+  <p><b>レイヤー区分の定義</b>（1 Issue が複数レイヤーに跨がることは普通にある）</p>
+  <ul class="tight">
+    <li><b><span class="tag t-fe">フロントエンド</span></b> — <code>apps/*/expo_frontend</code>、<code>apps/lp_app</code> の画面・配線</li>
+    <li><b><span class="tag t-be">バックエンド</span></b> — <code>apps/functions</code>（Cloud Functions）、<code>apps/backend</code>（Dart / Cloud Run）、<code>apps/admin_app/node_backend</code></li>
+    <li><b><span class="tag t-shared">共通モジュール</span></b> — <code>shared/</code> 配下。フロント共通コンポーネント・ドメインサービス・共通ロジック</li>
+    <li><b><span class="tag t-data">データ層</span></b> — <code>infrastructure/firebase/firestore/firestore.rules</code>、インデックス定義、スキーマ移行</li>
+    <li><b><span class="tag t-ops">CI・リリース基盤</span></b> — <code>scripts/</code>、<code>githooks/</code>、<code>.github/workflows</code>、<code>tests/</code>、ビルド設定</li>
+    <li><b><span class="tag t-doc">ドキュメント・仕様</span></b> — <code>docs/</code>、<code>spec/</code>、<code>.claude/skills/</code></li>
+  </ul>
+</div>
+
+<h2>2. 8 つの作業テーマと、その連鎖</h2>
+<p class="lead">
+  #718 以降の 64 件は独立したタスクの寄せ集めではなく、<b>ひとつの修正が次の問題を露出させる連鎖</b>になっています。
+  どのアプリの Issue かを読むときは、この連鎖のどこに位置するかを併せて見ると背景が掴めます。
+</p>
+
+<figure>
+<svg viewBox="0 0 1080 470" role="img" aria-label="8 つの作業テーマの連鎖図。agent-operator 基盤の構築がパスキー統一を呼び、その修復デプロイが LP 本番障害を引き起こし、そこから progressive delivery 基盤の構築、docs 整備、Firestore の PII 隔離、ODI Phase 0 の実装、スキーマ負債の解消、spec の正典化へと繋がる。">
+  <defs>
+    <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <g font-size="12.5" text-anchor="middle">
+    <!-- row 1 -->
+    <rect x="16" y="40" width="238" height="86" rx="11" fill="none" class="sr" stroke-width="1.7"/>
+    <text x="135" y="30" font-size="11" font-weight="700" class="fr">#718 – #720 ／ 3件</text>
+    <text x="135" y="64" font-weight="700">agent-operator 基盤</text>
+    <text x="135" y="84" font-size="10.5" opacity=".72">本番 Firestore の AI 操作経路を新設</text>
+    <text x="135" y="100" font-size="10.5" opacity=".72">IAM・シークレットの不具合 8 件を修正</text>
+    <text x="135" y="116" font-size="10" class="fo">Cloud Functions / Dart backend</text>
+
+    <rect x="294" y="40" width="238" height="86" rx="11" fill="none" class="sr" stroke-width="1.7"/>
+    <text x="413" y="30" font-size="11" font-weight="700" class="fr">#719 / #722 – #725 ／ 5件</text>
+    <text x="413" y="64" font-weight="700">パスキー統一と LP 本番障害</text>
+    <text x="413" y="84" font-size="10.5" opacity=".72">拡張機能が 6ヶ月 ERRORED だった</text>
+    <text x="413" y="100" font-size="10.5" opacity=".72">修復デプロイで LP が白画面に</text>
+    <text x="413" y="116" font-size="10" class="fv">shared / LP App</text>
+
+    <rect x="572" y="40" width="238" height="86" rx="11" fill="none" stroke="currentColor" stroke-opacity=".5"/>
+    <text x="691" y="30" font-size="11" font-weight="700" opacity=".8">#726 – #734 ／ 9件</text>
+    <text x="691" y="64" font-weight="700">Progressive Delivery 基盤</text>
+    <text x="691" y="84" font-size="10.5" opacity=".72">カナリア / プレビュー / ガード付きデプロイ</text>
+    <text x="691" y="100" font-size="10.5" opacity=".72">12日間未デプロイの認可修正を検出</text>
+    <text x="691" y="116" font-size="10" opacity=".7">CI・リリース基盤</text>
+
+    <rect x="850" y="40" width="214" height="86" rx="11" fill="none" stroke="currentColor" stroke-opacity=".5"/>
+    <text x="957" y="30" font-size="11" font-weight="700" opacity=".8">#735 – #742 ／ 8件</text>
+    <text x="957" y="64" font-weight="700">docs 整備とスキル化</text>
+    <text x="957" y="84" font-size="10.5" opacity=".72">反映・棚卸し・Postmortem</text>
+    <text x="957" y="100" font-size="10.5" opacity=".72">手順を 3 スキルへ固定</text>
+    <text x="957" y="116" font-size="10" opacity=".7">ドキュメント・仕様</text>
+  </g>
+
+  <!-- row1 arrows -->
+  <g stroke="currentColor" stroke-width="1.5" marker-end="url(#ar2)" opacity=".7">
+    <line x1="254" y1="83" x2="290" y2="83"/>
+    <line x1="532" y1="83" x2="568" y2="83"/>
+    <line x1="810" y1="83" x2="846" y2="83"/>
+  </g>
+  <text x="272" y="74" font-size="9.5" text-anchor="middle" opacity=".8">波及</text>
+  <text x="550" y="74" font-size="9.5" text-anchor="middle" opacity=".8">再発防止</text>
+  <text x="828" y="74" font-size="9.5" text-anchor="middle" opacity=".8">記録</text>
+
+  <!-- connector down -->
+  <path d="M957 126 L957 158 L100 158 L100 190" fill="none" stroke="currentColor" stroke-width="1.5"
+        stroke-opacity=".7" marker-end="url(#ar2)"/>
+  <text x="530" y="151" font-size="10.5" text-anchor="middle" opacity=".8">整備した基盤の上で、本番データそのものの調査へ</text>
+
+  <g font-size="12.5" text-anchor="middle">
+    <!-- row 2 -->
+    <rect x="16" y="194" width="238" height="86" rx="11" fill="none" class="sr" stroke-width="1.7"/>
+    <text x="135" y="184" font-size="11" font-weight="700" class="fr">#744 – #750 ／ 7件</text>
+    <text x="135" y="218" font-weight="700">PII の物理隔離と CI 復旧</text>
+    <text x="135" y="238" font-size="10.5" opacity=".72">カード番号・CVV・平文パスワードが</text>
+    <text x="135" y="253" font-size="10.5" opacity=".72">公開コレクションに残存していた</text>
+    <text x="135" y="270" font-size="10" class="fr">データ層 / 共通モジュール</text>
+
+    <rect x="294" y="194" width="238" height="86" rx="11" fill="none" class="sg" stroke-width="1.7"/>
+    <text x="413" y="184" font-size="11" font-weight="700" class="fg">#751 – #768 ／ 17件</text>
+    <text x="413" y="218" font-weight="700">ODI Phase 0（最大の塊）</text>
+    <text x="413" y="238" font-size="10.5" opacity=".72">selection_events / selection_feedback</text>
+    <text x="413" y="253" font-size="10.5" opacity=".72">相互フィードバックの同時開示</text>
+    <text x="413" y="270" font-size="10" class="fv">共通モジュール / Cloud Functions</text>
+
+    <rect x="572" y="194" width="238" height="86" rx="11" fill="none" stroke="currentColor" stroke-opacity=".5"/>
+    <text x="691" y="184" font-size="11" font-weight="700" opacity=".8">#770 – #777 ／ 7件</text>
+    <text x="691" y="218" font-weight="700">Admin 拡張とスキーマ負債</text>
+    <text x="691" y="238" font-size="10.5" opacity=".72">node_backend 撤去・招待権限・BAN 分離</text>
+    <text x="691" y="253" font-size="10.5" opacity=".72">Schema_Mapping §6 の 6 件を全解消</text>
+    <text x="691" y="270" font-size="10" class="fb">Admin App / Cloud Functions</text>
+
+    <rect x="850" y="194" width="214" height="86" rx="11" fill="none" stroke="currentColor" stroke-opacity=".5"/>
+    <text x="957" y="184" font-size="11" font-weight="700" opacity=".8">#778 – #785 ／ 8件</text>
+    <text x="957" y="218" font-weight="700">spec 正典化と shared 棚卸し</text>
+    <text x="957" y="238" font-size="10.5" opacity=".72">Spec 物理ガードレールを新設</text>
+    <text x="957" y="253" font-size="10.5" opacity=".72">shared の構造課題 4 件を起票</text>
+    <text x="957" y="270" font-size="10" opacity=".7">仕様 / 共通モジュール</text>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1.5" marker-end="url(#ar2)" opacity=".7">
+    <line x1="254" y1="237" x2="290" y2="237"/>
+    <line x1="532" y1="237" x2="568" y2="237"/>
+    <line x1="810" y1="237" x2="846" y2="237"/>
+  </g>
+  <text x="272" y="228" font-size="9.5" text-anchor="middle" opacity=".8">土台整備</text>
+  <text x="550" y="228" font-size="9.5" text-anchor="middle" opacity=".8">残課題</text>
+  <text x="828" y="228" font-size="9.5" text-anchor="middle" opacity=".8">仕組み化</text>
+
+  <!-- footer note band -->
+  <rect x="16" y="316" width="1048" height="132" rx="12" fill="none" stroke="currentColor" stroke-opacity=".28" stroke-dasharray="6 5"/>
+  <text x="40" y="342" font-size="11.5" font-weight="700" class="fo" letter-spacing="1">連鎖の実例 — 1 つの修正が次の障害を作った</text>
+  <g font-size="11.5" opacity=".82">
+    <text x="40" y="368">#719 パスキーを自前実装へ統一 → LP の Web ビルドが 6ヶ月ぶりに成功しデプロイ</text>
+    <text x="40" y="390">→ #722 これまで一度も実行されていなかった初期化順の欠陥が本番で顕在化し、latcoltd.net が白画面（本番停止）</text>
+    <text x="40" y="412">→ #729 「ビルドが通った＝デプロイ可能」と判断した手順そのものを是正するためプレビューチャネル運用を新設</text>
+    <text x="40" y="434">→ #731 その過程で自ら仕込んだ起動時クラッシュにより 9 関数が起動不能（全ユーザーがサインアップ不能）だったことを発見・自己申告</text>
+  </g>
+</svg>
+<figcaption>
+  テーマ間の矢印は「時系列」ではなく<b>因果</b>。四角の色は主要レイヤー（赤＝セキュリティ／データ層、緑＝新機能、紫＝共通モジュール、灰＝基盤・仕様）。
+</figcaption>
+</figure>
+
+<h2>3. ODI Phase 0 — 最大の実装塊（17件）</h2>
+<p class="lead">
+  #751〜#768 の 17 件は「相互フィードバックを同時開示する」というひとつの機能を PR-1〜PR-4 / PR-A〜PR-C に分解したものです。
+  どの Issue がどのホップを実装したかを追えるよう、データの流れに Issue 番号を重ねています。
+</p>
+
+<figure>
+<svg viewBox="0 0 1080 400" role="img" aria-label="ODI Phase 0 のデータフロー図。面談完了イベントを起点に、24/48/60 時間のリマインドと 168 時間の期限切れが走り、双方のフィードバックが揃った時点で運営レビューを経た公開文だけが同時に開示される。各ホップに実装した Issue 番号が付されている。">
+  <defs>
+    <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+    </marker>
+    <marker id="ar3g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="fg"/>
+    </marker>
+  </defs>
+
+  <!-- trigger -->
+  <g font-size="12" text-anchor="middle">
+    <rect x="20" y="96" width="176" height="72" rx="10" fill="none" class="sb" stroke-width="1.7"/>
+    <text x="108" y="122" font-weight="700">面談・面接の完了</text>
+    <text x="108" y="141" font-size="10.5" opacity=".72">手動確定 UI ＋ 予約日超過の自動確定</text>
+    <text x="108" y="159" font-size="10.5" class="fb">#761 (PR-A) / #763 (PR-C)</text>
+  </g>
+
+  <line x1="196" y1="132" x2="248" y2="132" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar3)" opacity=".75"/>
+  <text x="222" y="123" font-size="9.5" text-anchor="middle" opacity=".8">発火</text>
+
+  <!-- event log -->
+  <g font-size="12" text-anchor="middle">
+    <rect x="252" y="86" width="196" height="92" rx="10" fill="none" class="sv" stroke-width="1.8"/>
+    <text x="350" y="112" font-weight="700">selection_events</text>
+    <text x="350" y="131" font-size="10.5" opacity=".72">追記専用のイベントログ</text>
+    <text x="350" y="147" font-size="10.5" opacity=".72">update / delete は Admin も不可</text>
+    <text x="350" y="167" font-size="10.5" class="fv">#752 (PR-1) / #753 (PR-2)</text>
+  </g>
+
+  <!-- to scheduler -->
+  <path d="M448 112 L510 112 L510 60 L556 60" fill="none" stroke="currentColor" stroke-width="1.5"
+        marker-end="url(#ar3)" opacity=".75"/>
+  <text x="512" y="52" font-size="9.5" opacity=".8">経過時間を測る</text>
+
+  <g font-size="12" text-anchor="middle">
+    <rect x="560" y="24" width="212" height="76" rx="10" fill="none" class="so" stroke-width="1.7"/>
+    <text x="666" y="48" font-weight="700">リマインド / 期限切れ</text>
+    <text x="666" y="67" font-size="10.5" opacity=".72">24h · 48h · 60h 通知 → 168h で expired</text>
+    <text x="666" y="86" font-size="10.5" class="fo">#762 (PR-B) — Cloud Functions</text>
+  </g>
+
+  <!-- to feedback -->
+  <path d="M448 152 L510 152 L510 210 L556 210" fill="none" stroke="currentColor" stroke-width="1.5"
+        marker-end="url(#ar3)" opacity=".75"/>
+  <text x="512" y="204" font-size="9.5" opacity=".8">両者が提出</text>
+
+  <g font-size="12" text-anchor="middle">
+    <rect x="560" y="176" width="212" height="68" rx="10" fill="none" class="sr" stroke-width="1.7"/>
+    <text x="666" y="200" font-weight="700">selection_feedback_raw</text>
+    <text x="666" y="218" font-size="10.5" opacity=".72">原文 bodyRaw — 運営のみ読める</text>
+    <text x="666" y="236" font-size="10.5" class="fr">#754 (PR-3) / #756 で物理分離</text>
+  </g>
+
+  <line x1="666" y1="244" x2="666" y2="286" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar3)" opacity=".75"/>
+  <text x="676" y="270" font-size="9.5" opacity=".85">運営レビュー・表現の正規化</text>
+
+  <g font-size="12" text-anchor="middle">
+    <rect x="560" y="290" width="212" height="66" rx="10" fill="none" class="sg" stroke-width="1.8"/>
+    <text x="666" y="314" font-weight="700">selection_feedback</text>
+    <text x="666" y="332" font-size="10.5" opacity=".72">公開文 bodyPublished</text>
+    <text x="666" y="349" font-size="10.5" class="fg">#757 設問定義 / #759 (PR-4) UI</text>
+  </g>
+
+  <line x1="772" y1="322" x2="828" y2="322" class="sg" stroke-width="1.8" marker-end="url(#ar3g)"/>
+  <text x="800" y="313" font-size="9.5" text-anchor="middle" class="fg">同時開示</text>
+
+  <g font-size="12" text-anchor="middle">
+    <rect x="832" y="288" width="228" height="70" rx="10" fill="none" class="sg" stroke-width="1.8"/>
+    <text x="946" y="312" font-weight="700">求職者 ⇄ 企業 の双方へ</text>
+    <text x="946" y="331" font-size="10.5" opacity=".72">片方だけが先に読むことはできない</text>
+    <text x="946" y="349" font-size="10.5" opacity=".72">＝ 情報優位と迎合バイアスを排除</text>
+  </g>
+
+  <!-- blocked path -->
+  <g>
+    <path d="M666 176 L666 150 L900 150 L900 200" fill="none" class="sr" stroke-width="1.6"
+          stroke-dasharray="6 5" opacity=".9"/>
+    <line x1="884" y1="184" x2="916" y2="216" class="sr" stroke-width="2.4"/>
+    <line x1="916" y1="184" x2="884" y2="216" class="sr" stroke-width="2.4"/>
+    <text x="946" y="240" font-size="11" text-anchor="middle" class="fr" font-weight="700">#755 で封鎖した経路</text>
+    <text x="946" y="258" font-size="10.5" text-anchor="middle" opacity=".78">未レビューの原文が LLM 要約経由で候補者へ届いていた</text>
+  </g>
+
+  <!-- left label -->
+  <text x="20" y="30" font-size="11.5" font-weight="700" class="fb" letter-spacing="1.3">起点</text>
+  <text x="252" y="30" font-size="11.5" font-weight="700" class="fv" letter-spacing="1.3">イベントログ（追記専用）</text>
+  <text x="20" y="212" font-size="11" opacity=".62">#766 でエミュレータ統合テストと</text>
+  <text x="20" y="230" font-size="11" opacity=".62">SCHEDULER_DRY_RUN の安全弁を追加</text>
+  <text x="20" y="256" font-size="11" opacity=".62">#751 で PR-1〜PR-5 に分解した計画、</text>
+  <text x="20" y="274" font-size="11" opacity=".62">#760 / #765 / #768 で docs へ反映</text>
+</svg>
+<figcaption>
+  この機能が <code>shared/common_frontend</code>（サービス層・UI）と <code>apps/functions</code>（スケジューラ）と
+  <code>firestore.rules</code>（追記専用・開示範囲）の 3 レイヤーに跨がるため、17 件が 1 つのアプリに属さない。
+</figcaption>
+</figure>
+
+<h2>4. 分布</h2>
+<p class="lead">アプリ／モジュール別、レイヤー区分別の件数。1 Issue が複数に該当するため合計は 64 を超えます。</p>
+<figure id="charts"></figure>
+
+<h2>5. Issue 一覧（64件）</h2>
+<p class="lead">
+  アプリ／レイヤーのボタンで絞り込めます。<b>行っている内容</b>は Issue 本文の目的・結果から要約したもので、
+  <b>特記事項</b>には本番影響・実害の有無・申し送りを記載しています。
+</p>
+
+<div class="controls">
+  <div class="grp"><span class="lbl">アプリ</span><span id="fapp"></span></div>
+</div>
+<div class="controls">
+  <div class="grp"><span class="lbl">区分</span><span id="flayer"></span></div>
+</div>
+<p id="count"></p>
+
+<div class="tbl-scroll">
+<table>
+  <thead><tr>
+    <th>Issue</th><th>アプリ／モジュール</th><th>区分</th><th>関連ドキュメント</th><th>行っている内容</th><th>特記事項</th>
+  </tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+</div>
+
+<h2>6. 要判断・未対応の 4 件</h2>
+<p class="lead">
+  #781 / #782 / #784 / #785 は修正コミットを伴わない<b>調査報告と方針提案</b>です。いずれも <code>shared/</code> の構造課題で、
+  spec/ の正典化（#778）で仕様を書き起こす過程で表面化しました。
+</p>
+<div class="panel">
+  <ul class="tight">
+    <li><b>#781 passkeyLinking.tsx</b> — モックのチャレンジとハードコード <code>rp.id</code> のまま。実経路からは呼ばれておらず実害はないが、<b>「実装済みの関数がある」と誤認して配線すると事故になる</b>。削除するか、実経路の実装へ置き換えるかの判断待ち。</li>
+    <li><b>#782 core/utils のドメインサービス混在</b> — <code>MatchingService</code> や <code>SelectionStateMachine</code> といった中核ルールが <code>utils</code> という名前に埋もれ、新規ファイルの置き場所を決められない。再編は影響範囲が広くリスクだけがあるため、当面は仕様側で区分を明示する案。</li>
+    <li><b>#784 NotificationService の 2 実装併存</b> — 宛先フィールドが <code>uid</code> と <code>userId</code> で食い違い、<b>通知が届かない経路が生じうる</b>。認可が <code>node_backend</code> と <code>adminGuard</code> の 2 系統あった問題（#771 で解消）と同型。実データの分布調査が先行して必要。</li>
+    <li><b>#785 shared/utils の削除提案</b> — 0 行の空ファイルとテスト用ダミーのみで参照ゼロ。実体の無いモジュールが <code>spec/coverage-map.json</code> の分母に入り、仕様網羅率が実態を表さなくなる。</li>
+  </ul>
+</div>
+
+<h2>7. この分類の作り方</h2>
+<div class="panel">
+  <p>Issue 番号を変えて同じ集計を繰り返せるよう、判定は次の順序で機械的に行っています。</p>
+  <ul class="tight">
+    <li><b>① 対象の抽出</b> — <code>gh issue list --repo yama-0t0k0/forAgent --state all --json number,title,labels,body</code> で取得し、指定番号以降を対象にする。タイトルが <code>chore: Agent ブランチ最新化と same へのマージ・main 最新化</code> で始まるものはブランチ同期作業として除外。</li>
+    <li><b>② パス抽出</b> — Issue 本文の「変更ファイル」節に列挙されたパスを取り出す（節が無い場合は本文全体から）。</li>
+    <li><b>③ アプリ／レイヤー判定</b> — <code>apps/&lt;app&gt;/expo_frontend</code> → そのアプリのフロントエンド、<code>apps/functions</code> → Cloud Functions、<code>shared/**</code> → 共通モジュール、<code>infrastructure/firebase</code> と <code>tests/security_rules</code> → データ層、<code>scripts/</code>・<code>githooks/</code>・<code>.github/</code> → CI・リリース基盤、<code>docs/</code>・<code>spec/</code> → ドキュメント・仕様、という先頭一致で写像する。</li>
+    <li><b>④ 人手での検証</b> — ③だけでは「変更ファイル節が無い Issue」「調査報告のみで変更を伴わない Issue」「撤去済みディレクトリ（<code>apps/admin_app/node_backend</code>）を指す Issue」を取りこぼすため、全件の本文を読んで補正する。</li>
+  </ul>
+</div>
+
+<div class="foot">
+  対象リポジトリ: <a href="https://github.com/yama-0t0k0/forAgent">yama-0t0k0/forAgent</a>（<code>Agent</code> ブランチ）／
+  集計対象: Issue #718 – #785（同期 chore 4 件を除く 64 件）／ 集計日: 2026-08-23 ・
+  <a href="../../">artifacts トップへ</a>
+</div>
+
+</div>
+
+<script>
+const GH = 'https://github.com/yama-0t0k0/forAgent';
+const DOC = {
+  AI:['security/AI_Agent_Production_Access.md','AI Agent 本番アクセス'],
+  AUTH:['security/Authentication_Authorization.md','認証・認可'],
+  PASSKEY:['security/Passkey_Domain_Consolidation_Plan.md','パスキードメイン統合'],
+  DART:['CodingConventions/CodingConventions_Dart.md','Dart コーディング規約'],
+  TESTC:['CodingConventions/CodingConventions_Testing.md','テスト規約'],
+  DDBACK:['App_Specific_Docs/designdocument_backend_app.md','backend 設計書'],
+  HOST:['Infrastructure_and_Setup/Hosting.md','Hosting'],
+  DDLP:['App_Specific_Docs/designdocument_lp_app.md','LP App 設計書'],
+  MCMS:['Infrastructure_and_Setup/microcms_setup.md','microCMS セットアップ'],
+  LPCMS:['security/LPmicroCMSWithFirebaseAuth.md','LP × microCMS 認証'],
+  GCPSEC:['security/GCP_SecurityProcedures.md','GCP セキュリティ手順'],
+  CICD:['Infrastructure_and_Setup/CICD&BuildDeploy.md','CI/CD・ビルド/デプロイ'],
+  RULES:['Database/Security_Rules_and_Authorization.md','セキュリティルールと認可'],
+  EVENTARC:['security/Eventarc_And_Auth_Triggers.md','Eventarc / Auth トリガー'],
+  PM:['reports/Postmortem.md','Postmortem'],
+  SCHEMA:['Database/Schema_Mapping.md','スキーマ対応表'],
+  ODI:['Database/ODI.md','ODI（データ基盤）'],
+  PLAN:['Development_Plans/selection_events_implementation_plan.md','selection_events 実装計画'],
+  DDFMJS:['App_Specific_Docs/designdocument_fmjs.md','FMJS 設計書'],
+  DDADMIN:['App_Specific_Docs/designdocument_admin_app.md','Admin App 設計書'],
+  REQ:['ProjectOverview/requirements.md','要件定義'],
+  TREE:['Architecture_and_Design/project_tree_structure.md','プロジェクト構成'],
+  CONTRIB:['CONTRIBUTING.md','CONTRIBUTING'],
+  COST:['AutonomousAI_architecture/AutonomousSystem_CostSave.md','自律AI コスト設計'],
+  SURVEY:['Database/External_Integrations_and_Surveys.md','外部連携・サーベイ'],
+  E2EPLAN:['QA_and_Test/planningE2E.md','E2E 計画'],
+  DDSHARED:['App_Specific_Docs/designdocument_shared.md','shared 設計書']
+};
+const SPEC = {
+  SP3:['shared/003-authentication/spec.md','仕様: 認証（パスキー）'],
+  SP7:['shared/007-domain-services-and-hooks/spec.md','仕様: ドメインサービス'],
+  SP8:['shared/008-notification/spec.md','仕様: 通知'],
+  SPCOV:['coverage-map.json','仕様カバレッジマップ']
+};
+const APP = {
+  admin:'Admin App', individual:'Individual App', corporate:'Corporate App',
+  jd:'Job Description', fmjs:'FMJS', lp:'LP App',
+  functions:'Cloud Functions', backend:'Backend (Dart)',
+  shared:'共通モジュール', infra:'データ層／インフラ', cross:'横断（CI・docs・spec）'
+};
+const LAY = { fe:['フロントエンド','t-fe'], be:['バックエンド','t-be'], sh:['共通モジュール','t-shared'],
+  data:['データ層','t-data'], ops:['CI・リリース基盤','t-ops'], doc:['ドキュメント・仕様','t-doc'] };
+
+const DATA = [
+{n:718,apps:['functions','cross'],lay:['be','ops'],docs:['AI','AUTH'],sec:1,
+ what:'開発 AI が本番 Firestore の <code>isTestData</code> 範囲を操作するための <code>mintAgentSession</code> セッション基盤（TTL 上限 240 分）を構築。過程で IAM・シークレット・実行時ロジックに跨る本番不具合 8 件を発見して修正し、<code>configValidation.js</code> でシークレットの形式検証を fail closed 化。デプロイ後スモーク 11 項目と日次 CI を新設。',
+ note:'修正内容に「Cloud Run invoker 欠落による 403」「<code>rateLimiter</code> の <code>.exists()</code> 誤用」「<code>PASSKEY_RP_ID</code> への貼り付け事故」「<code>MICROCMS_WEBHOOK_SECRET</code> 未設定で Webhook 署名検証が実質無効」を含む。#719 以降すべての起点。'},
+{n:719,apps:['shared','functions','lp'],lay:['fe','be'],docs:['AUTH','PASSKEY'],sec:1,
+ what:'拡張機能 <code>firebase-web-authn</code> が 2026-02 のインストール時から ERRORED 状態で、<b>約 6 ヶ月パスキーログインが機能していなかった</b>。Web 分岐を標準 WebAuthn API 直呼びの自前実装へ統一し、共有の <code>authService.signInWithPasskey</code> も同経路へ集約。チャレンジ消費を <code>runTransaction</code> で原子化し、<code>userVerification</code> を required 化。',
+ note:'副次的に <code>shared/common_frontend/babel.config.js</code> の <code>@shared</code> エイリアスが相対パス深さ 3 固定で、2 階層の <code>apps/lp_app</code> ではリポジトリ外を指していたバグを発見。LP の Web ビルドが構造的に不可能だった原因。'},
+{n:720,apps:['backend','cross'],lay:['be','ops'],docs:['DART','TESTC','DDBACK'],
+ what:'<code>always_use_package_imports</code> を有効化し相対 import 13 箇所を修正。<code>structured_logger.dart</code> を新設し <code>lib/src/services</code> の 56 箇所を Cloud Logging 互換の 1 行 JSON へ移行。手動 CLI ツール 3 本は <code>bin/</code> → <code>tool/</code> へ移設し、配置でカテゴリを表現する方針に。',
+ note:'規約チェッカー 3 本を自分自身に適用したところ、<code>check_testing_conventions.dart</code> がコンパイルエラーで<b>一度も実行できていなかった</b>等の不具合が判明（除外ロジックの誤り・正規表現の誤爆を含む）。修正後、local_ci の 2 チェッカーを non-blocking から必須へ格上げ。'},
+{n:722,apps:['lp','infra'],lay:['fe','ops'],docs:['HOST','DDLP'],sec:0,
+ what:'#719 のデプロイで latcoltd.net が白画面になり<b>本番停止</b>。<code>config.js</code> がモジュール読み込み時に <code>getApp()</code> を直接実行しており、<code>inlineRequires</code> による評価順の不定性で <code>app/no-app</code> が発生していた。<code>auth.app</code> を辿る形へ変更。併せて <code>firebase.json</code> の lp-domain リライト先を存在しない <code>backend</code> から <code>backend-app</code> へ是正。',
+ note:'このコード自体は以前からあったが、babel の階層固定バグで LP の Web ビルドが不可能だったため一度もデプロイされておらず、#719 の修復で初めて本番実行され顕在化した。回帰テストとして「<code>getApp()</code> が呼ばれたら throw する」モックを設置。'},
+{n:723,apps:['backend'],lay:['be'],docs:['MCMS','LPCMS'],sec:1,
+ what:'Dart の <code>CmsService</code> が <code>?? \'dummy-webhook-secret\'</code> 等にフォールバックしており、リポジトリに書かれた既知文字列で HMAC を計算＝<b>Webhook の署名検証が実質的に機能していなかった</b>。<code>_requireEnv()</code> で未設定なら即座に失敗する fail closed へ変更。',
+ note:'<code>/api/v1/cms/lp-content</code> が本番で常時 500 だった原因でもある（設定漏れがエラーから読み取れなかった）。コード修正とは別に backend-app へ Secret Manager 参照を設定し、200 + 実データを確認。#718 の functions 側と同種の不具合。'},
+{n:724,apps:['cross'],lay:['ops'],docs:['GCPSEC'],sec:1,
+ what:'#718 で自作したスモークの「ERRORED 状態の拡張機能が存在しない」検査が、存在しない <code>gcloud ext list</code> を呼んで毎回例外へ落ち、catch 節で「スキップ」として ✅ を表示していた。Firebase Extensions REST API の直接照会へ変更し、照会失敗も「判定不能」として失敗させる fail closed に。',
+ note:'<b>検査していないのに成功と表示するのは、検査が無いより悪い</b>。修正直後に実在した <code>firebase-web-authn(ERRORED)</code> を正しく検出して失敗することを確認してからコミットしている。'},
+{n:725,apps:['infra','cross'],lay:['ops'],docs:['HOST'],
+ what:'<code>.firebaserc</code> に対応するマッピングが無く到達不能だった <code>admin-app</code> 重複ターゲットを削除（<code>firebase deploy --only hosting</code> が常に失敗する状態だった）。併せて「hosting ターゲットが <code>.firebaserc</code> に定義されているか」「本番の拡張機能がすべて <code>firebase.json</code> に宣言されているか」の 2 検査をスモークへ追加。',
+ note:'個別事象を直すだけでは同じ経路で再発するため、<b>検知の仕組みまで含めて</b>対応した例。宣言的定義が無いリソースは正規の手段（<code>firebase ext:uninstall</code>）で管理できなくなる。'},
+{n:726,apps:['backend','cross'],lay:['be','ops'],docs:['CICD','AUTH'],sec:1,
+ what:'配信先を問わず同じ基準で振る舞いを検証する <code>scripts/release/verify_target.mjs</code> を新設。動作確認のため本番へ初回実行したところ、<code>/api/v1/knowledge/maintenance</code> が<b>鍵無しで HTTP 200 を返し保守処理が実際に実行される</b>等の認可バイパスを検出。',
+ note:'原因は稼働中リビジョンのイメージが 2026-08-03 のもので、8/6 の認可修正（Issue #703 V-2）が<b>約 12 日間デプロイされていなかった</b>こと。ソースにコミットされ Issue も閉じられていたが本番へ届いていなかった。'},
+{n:727,apps:['backend','cross'],lay:['be','ops'],docs:['CICD','AUTH'],sec:1,
+ what:'#726 で検出した認可バイパスを、即時 100% 切り替えではなく 0% デプロイ → 検証 → 10% → 50% → 100% のカナリアで解消。<code>/auth/set-role</code> は 400（ガード素通り）→ 401、<code>/knowledge/maintenance</code> は 200 → 503（fail-closed）へ。',
+ note:'作業中に、Cloud Scheduler の宛先である <code>agent-backend</code> にも同じ脆弱性が残っていることを新たに発見（同一コードベース・別デプロイ経路）。当初計画の backend-app のみでは塞ぎ切れていなかった。本番トラフィックへの影響はゼロ。'},
+{n:728,apps:['cross'],lay:['ops'],docs:['CICD'],
+ what:'#726/#727 で手動実施した手順を <code>scripts/release/backend_canary.mjs</code> として自動化。ビルド → 0% デプロイ → 契約検証 → 段階昇格 → 失敗時はデプロイ前の安定リビジョンへ自動ロールバック。',
+ note:'開発中に 2 件のバグを発見。gcloud の候補 URL は stdout ではなく <b>stderr</b> に出るためテキスト解析が常に失敗していた件と、既知理由の advisory な失敗で自動昇格が止まっていた件（<code>advisory</code> フラグを導入して区別）。'},
+{n:729,apps:['cross','lp'],lay:['ops','fe'],docs:['CICD','HOST'],
+ what:'<code>scripts/release/frontend_preview.mjs</code> を新設し、フロントエンドの「デプロイ」と「リリース（本番反映）」を分離。プレビューチャネルへデプロイ → 静的検証 → 目視確認 → <code>firebase hosting:clone</code> で本番へ複製。',
+ note:'#722 の LP 白画面障害（ビルドが通ったことをデプロイ可能と判断してそのまま本番へ出した）の再発防止が目的。<code>hosting:clone</code> が hosting target 名ではなく siteId を要求する点でハマり、<code>.firebaserc</code> から解決する処理を追加。'},
+{n:730,apps:['infra','lp','cross'],lay:['data','ops'],docs:['RULES'],sec:1,
+ what:'<code>invitationCodes</code> の get が <code>isHumanAuthenticated()</code> を要求しており、<b>未認証で行う LP 登録 Step 1 の招待コード検証が必ず弾かれていた＝本番で新規登録が完全停止</b>していた。ルールを戻して本番反映。併せてルールテストの並列フレークを解消し、<code>local_ci.sh</code> に差分検知でルールテストを走らせるゲートを新設。',
+ note:'git 履歴上、元は <code>allow get: if true</code> だったが admin/agent-operator のセキュリティ強化（<code>12350e3</code>）で無関係だったこのルールが巻き込まれて認証必須化されていた。他の変更には意図のコメントがあるのにこの変更だけ理由の記載が無かった。ブラウザ実機で復旧を確認。'},
+{n:731,apps:['functions','cross'],lay:['be','ops'],docs:['EVENTARC','CICD'],sec:1,
+ what:'本セッションで自ら追加した起動時コンフィグ検証を <code>passkey.js</code> のモジュールトップレベルに置いていたため、<code>PASSKEY_RP_ID</code> を持たない<b>9 関数が起動不能</b>になっていた。検証をハンドラ実行時（メモ化）へ移動。併せてリージョン未指定による孤児関数 3 件を削除してトリガーの二重発火を解消し、<code>functions_guarded_deploy.mjs</code> を新設。',
+ note:'起動不能の中に <code>beforeUserCreatedSetRole</code>（Identity Platform のブロッキング関数）が含まれており、<b>全ユーザーがサインアップ不能</b>な状態だった。自己申告として記載されている。'},
+{n:732,apps:['infra','cross'],lay:['ops'],docs:['AI','GCPSEC'],sec:1,
+ what:'<code>agent-backend</code> の Cloud Run 環境変数に平文設定されていた真の共有シークレット 2 件（<code>MAINTENANCE_API_KEY</code> / <code>INTERNAL_WEBHOOK_API_KEY</code>）を Secret Manager へ移行し、平文を削除。',
+ note:'<code>run.viewer</code> 権限があれば誰でも <code>gcloud run services describe</code> で値を閲覧できる状態だった。Firebase Web API キーは設計上公開前提のため対象外。ローテーションは Cloud Scheduler 2 ジョブとの同時更新リスクを避けて見送り。リポジトリ内のコード変更を伴わない。'},
+{n:733,apps:['functions'],lay:['be'],docs:['PASSKEY','AUTH'],sec:1,
+ what:'環境変数 <code>EXPECTED_ORIGINS</code> が設定されているとコード内の許可リスト全体が無視される構造により、<b>本番の許可オリジンがコードのどこにも現れず</b>設定ドリフトが誰にも検知されないまま蓄積していた。許可リストの真実を trunk へ一本化し、環境変数上書きは break-glass 手段としてのみ残した。',
+ note:'検出したドリフト 3 件 — dev 用オリジンが本番で許可されていた／<b>実在しないホストが残存</b>（Firebase の site 名は先着順のため第三者が同名サイトを取得すると信頼済みオリジンを与えることになる）／必要な admin オリジンが欠落。許可オリジンは公開情報であり秘密として注入すべきではない。'},
+{n:734,apps:['cross'],lay:['ops'],docs:['CICD','PM'],sec:1,
+ what:'#733 の修正をデプロイし 13 関数の検証が全て成功したのに、本番ログの許可リストは古いままだった。原因はセッション前半の URL 構築バグで誤発動した自動ロールバックが<b>トラフィックを特定リビジョンに固定</b>していたこと。<code>--to-latest</code> で復旧し、検証の前に配信先が最新であることを保証する <code>ensureServingLatest</code> を追加。',
+ note:'検証スクリプトが「配信中の古いリビジョン」を叩いて全項目成功と報告していた偽陽性。過去の記録「戻り先が直前の正常リビジョンだったため実害なし」が誤りだったことを訂正して記録している。'},
+{n:735,apps:['cross'],lay:['doc'],docs:[],
+ what:'毎回上書きされる <code>reference_information_fordev/walkthrough.md</code> を #733 / #734 の内容で更新。「origin を 1 件追加するだけ」の作業から始まり、より深刻な 2 つの問題の発見・解消に至った経緯と根本原因を、次に触る人間／エージェントへ引き継げる形で記録。',
+ note:'訂正記録（誤ロールバックを「実害なし」と書いたのが誤りだったこと、検証の成功を検証対象を確かめずに信じたこと）を明記している。'},
+{n:736,apps:['cross'],lay:['doc'],docs:['CICD','HOST','AUTH','GCPSEC','EVENTARC','RULES','AI'],
+ what:'Issue #722〜#735 の内容を docs 7 ファイルへ反映。単なる転記ではなく実態を確認した結果、<b>3 件の既存記述が現行実装と矛盾していた</b>ため訂正（ブロッキング関数のリージョン誤記載、撤回済みの staging 環境導入計画、存在しない <code>tests/run_e2e.sh</code> の案内）。',
+ note:'CI/CD ドキュメントは 2026-06-17 が最終更新で、その後に整備したリリース基盤が丸ごと欠落していた。docs のサブディレクトリ化以降に壊れていた相対リンク 24 件も併せて修正。'},
+{n:737,apps:['cross'],lay:['ops','doc'],docs:[],
+ what:'<code>.claude/skills/sync-docs-from-issues/</code> を新設。「追記」ではなく「<b>訂正</b>」を中心に据えた手順（Issue 本文を真実として転記せず実態を確認する／変更したものの名前で docs 全体を検索する／訂正した事実と理由を残す）と、相対リンクの実在を検証する <code>check_doc_links.mjs</code> を同梱。',
+ note:'この作業で見つかった最も危険な問題は書き漏れではなく「かつて正しかった記述が誤りになっていたもの」だった、という実体験に基づく設計。同梱スクリプトの実行でスコープ外から 12 件のリンク切れを検出。'},
+{n:738,apps:['cross'],lay:['ops'],docs:[],
+ what:'<code>.claude/skills/sync-docs-and-push/</code> を新設。ロジックを持たない薄いオーケストレーターで、<code>sync-docs-from-issues</code> → <code>push-walkthrough-workflow</code> を固定順序で呼ぶだけ。',
+ note:'逆順にすると walkthrough が「反映前の状態」を報告してしまい、docs 更新コミットの対象範囲も曖昧になるため順序を固定した。'},
+{n:739,apps:['cross'],lay:['doc'],docs:['PM','CONTRIB'],
+ what:'docs 配下の棚卸し。未記入テンプレート・生成ツールの空出力・生ログ等 7 件を削除、現行と矛盾する旧セキュリティ文書 2 件を統合削除、重複していた <code>E2E_TestResultReport.md</code> を整理（実行ログ 50 件で 1228 行まで肥大化していたものをテンプレート 121 行へ）、4 行の <code>quality_standards.md</code> を CONTRIBUTING へ統合。計 18 ファイル変更（削除 12・更新 6）。',
+ note:'削除した <code>security/Firestore _SecRules.md</code> は 2026-02 時点の内容で「開発環境の一時的な全許可ルール」という<b>今読むと危険な記述</b>を含んでいた。判断が分かれるものは AskUserQuestion で確認し、現状維持と判断したものも理由付きで記録。'},
+{n:740,apps:['cross'],lay:['ops'],docs:[],
+ what:'<code>.claude/skills/consolidate-docs/</code> を新設。「行数やタイトルの類似だけで機械的に処理しない」ことを中心に据え、計画書はチェックリストの完了率で、テンプレートは見出しの繰り返し回数で陳腐化を疑う等の判断手順を固定。',
+ note:'最も重要だった判断（危険な旧セキュリティ記述の削除）は、ファイルが短かったからではなく内容を読んで現行実装と矛盾すると分かったから下せたもの、という反省を手順へ落としている。'},
+{n:741,apps:['cross'],lay:['doc'],docs:['PM'],
+ what:'#722〜#735 と docs 整理から得た教訓を <code>docs/reports/Postmortem.md</code> へ記録。「5. リリース・デプロイ運用」「6. ドキュメント・設定管理」の 2 カテゴリを新設し、計 6 件のエントリを追加。',
+ note:'「<code>--dry-run</code> の成功を実デプロイ成功の根拠として扱った誤り」「<code>-yama</code> という命名から実態を誤推測したこと」「ドキュメントの陳腐化は詳細な記述が実装の変化に取り残される形でも起きる」等を根本原因として明記。'},
+{n:742,apps:['cross'],lay:['doc'],docs:[],
+ what:'walkthrough.md を、docs 反映・docs 整理・スキル化 3 件・Postmortem 記録の 6 トピックで更新。',
+ note:'docs 整理で見つかったがスコープ外として手を付けなかった点（非推奨テストアカウントの使用、CONTRIBUTING の記載矛盾、ベンダー文書のリンク切れ）を申し送りとして明記。'},
+{n:744,apps:['infra','shared'],lay:['data','sh'],docs:['RULES','SCHEMA','ODI'],sec:1,
+ what:'認証済みなら誰でも全件読める <code>public_profile</code> に、<b>クレジットカード番号・CVV・有効期限・銀行口座番号・ブラックリスト</b>が残存していた（31 件中 10 件に値あり）。さらに <code>private_info.基本情報.パスワード</code> に平文パスワードが存在し、マッチ企業からも読めうる構造だった。根本原因の <code>User.splitData()</code> を修正。併せてルールが存在せず機能していなかった 3 コレクション（<code>admin_individual_notes</code> / <code>platform_settings</code> / <code>relationships</code>）を解消。',
+ note:'CVV の保存は PCI DSS で明確に禁止されている。<code>platform_settings</code> は機密の <code>feeRate</code> と全クライアントが読む <code>maintenanceMode</code> が同一ドキュメントにあり、Firestore はフィールド単位の読み取り制限ができないため public / admin の 2 ドキュメントへ分離した。'},
+{n:745,apps:['shared','admin','corporate'],lay:['sh','fe','be'],docs:['EVENTARC','SCHEMA'],sec:0,
+ what:'実コレクション名とコードの参照名の不一致により、既定拒否のまま<b>静かに機能していなかった</b>経路を修正。<code>companies</code> → <code>company</code>（企業の請求情報一覧が常に空／企業登録の書き込み先が存在しないコレクション）、<code>invitation_codes</code> → <code>invitationCodes</code>（node_backend の 2 エンドポイント）。',
+ note:'招待コードは <code>invitationCodes</code> / <code>invitation_codes</code> / <code>InviteCodes</code> の 3 つの名前が並存していた。<code>onCompanyCreated</code> が <code>companies</code> を購読して一度も発火していない件は、単純に直すと <code>createdBy</code> を信頼した権限昇格経路が開くため本 Issue では変更していない。'},
+{n:746,apps:['cross','shared','individual','corporate','jd'],lay:['ops','fe'],docs:['CICD'],
+ what:'Homebrew が Intel 版（99 パッケージ）と ARM 版（4）の二重構成で、arm64 マシンで x86_64 ライブラリをリンクしていた構造的原因を解消。Node を非 LTS の v25 から <b>v24.19.0 LTS</b> へ固定（<code>.nvmrc</code> / <code>engines</code> / <code>packageManager</code>）、<code>firebase-tools</code> を 15.27.0 に固定。併せてタイムスタンプ命名を camelCase へ統一。',
+ note:'<code>npx -y firebase-tools@latest</code> と書かれていたため、firebase-tools 側のリリース（Java 21 要求の追加）で<b>コミット無しにテストが壊れた</b>。JDK は用途で 2 つ必要（Android ビルドは 17、firebase-tools 15 系は 21 以上）で 1 つに統一できない。'},
+{n:747,apps:['cross'],lay:['doc'],docs:['ODI','SCHEMA','RULES','DDFMJS','CICD'],
+ what:'<code>docs/Database/ODI.md</code> を新設し、実装との乖離を訂正。主要コレクション一覧からの 3 行漏れ（<code>company_private</code> / <code>relationships</code> / <code>platform_settings</code>）、<code>public_profile</code> の「誰でも閲覧可能」という誤解を招く表現、ルールテスト件数 92 → 119 の実態などを是正。',
+ note:'<code>designdocument_fmjs.md</code> の RBAC マトリクスが「個人 ◯／法人 ◎」という<b>構造的に企業側が有利な非対称</b>を規定していたため、情報の非対称を無くす方針に沿って変更理由付きで訂正した（理由が無いと元の設計に揺り戻されるため）。'},
+{n:748,apps:['cross'],lay:['ops'],docs:['CICD'],
+ what:'<code>verify.yml</code> に JDK 21 セットアップと <code>npm run test:rules</code> を追加し、Node 指定を <code>.nvmrc</code> 参照へ変更。着手すると 1 つ直すたびに次の障害が現れる状態で、Flutter SDK 不在・<code>babel.config.js</code> のゼロ幅スペース・eslint の <code>dist/**</code> パターンの穴・<code>apps/functions</code> の依存インストール漏れ等 5 件を連鎖的に解消し、<b>初めて success に到達</b>。',
+ note:'直近 5 回の実行がすべて failure だったのは、手前のステップで止まって後段の問題が見えていなかっただけだった。eslint の ignore が浅い階層にしか効かず、ローカルでは過去のビルド成果物が lint 対象に入り 3024 errors を出していた。'},
+{n:749,apps:['cross'],lay:['ops'],docs:[],
+ what:'<code>UnreadContext.test.js</code> の間欠失敗を解消。<code>@firebase-web-authn/browser</code> が <code>firebase/auth</code> の別物理コピーを持つため、テストファイルによって異なるコピーが解決され <code>jest.mock</code> が効かない場合があった。<code>jest.config.js</code> の <code>moduleNameMapper</code> で単一コピーを強制。',
+ note:'<code>firebase/firestore</code> には既に同じ対策と理由コメントがあったが <code>firebase/auth</code> は漏れていた。単体実行では常に成功しフルスイート並列実行時にだけ失敗する典型的なフレーク。'},
+{n:750,apps:['cross'],lay:['doc'],docs:['SCHEMA','ODI','SURVEY'],
+ what:'#747 で「<code>surveys</code> コレクションは未実装」と記録したのが誤りで、<code>SurveyService.js</code> が呼び出し経路もテストも揃って<b>完全に実装済み</b>だったことを訂正。',
+ note:'本番に入社確定（<code>JOINED_BILLING</code>）まで到達した案件が無く <code>scheduleSurveys()</code> が一度も発火していないだけだった。<b>「本番にコレクションが存在しない」は「未実装」の証拠にならない</b>、という教訓を記録。'},
+{n:751,apps:['cross','fmjs'],lay:['doc'],docs:['PLAN','ODI'],
+ what:'ODI.md §4.3〜§4.5 の <code>selection_events</code> / <code>selection_feedback</code> 設計を PR-1〜PR-5 に分解した実装計画を新規作成。',
+ note:'調査中に着手前提として 2 件を発見。①未レビューの生フィードバックが既に候補者へ露出している（#755 で修正）②既存の <code>InterviewFeedbackModal</code> が既にポジネガ軸で評価を収集しており、ゼロから作らず拡張すべき。'},
+{n:752,apps:['shared','infra'],lay:['sh','data'],docs:['ODI','PLAN'],
+ what:'追記専用イベントログ <code>selection_events</code> と <code>SelectionEventService</code> を新規実装（PR-1）。可変ドキュメント内のネスト配列だったフェーズ履歴を独立コレクションへ切り出し、<code>update</code> / <code>delete</code> を Admin も含め誰にも許可しないルールで append-only を強制。',
+ note:'同時開示制御・所要時間計測・リマインド駆動・定着予測すべての土台。<b>イベント記録の失敗が業務操作そのものを失敗させてはならない</b>ため、書き込み失敗時も例外を投げず <code>{success:false}</code> を返す設計にしている。'},
+{n:753,apps:['shared'],lay:['sh'],docs:['PLAN'],
+ what:'既存の書き込み経路（<code>applyForJob</code> / <code>transitionPhase</code> / <code>requestCareerMeeting</code>）からのイベント発行を追加し、<code>completeInterview()</code> を新規実装（PR-2）。節目フェーズには <code>PHASE_TRANSITIONED</code> とは別に <code>OFFER_ACCEPTED</code> / <code>JOINED</code> / <code>RESIGNED</code> も記録。',
+ note:'従来 <code>career_meetings</code> のレコードは <code>status: \'requested\'</code> のまま更新されず、<b>面談が完了したかを判定する手段が存在しなかった</b>。定着予測とファネル分析のため、payload を解釈せず直接クエリできる形を用意している。'},
+{n:754,apps:['shared','infra'],lay:['sh','data'],docs:['ODI','PLAN'],
+ what:'<code>selection_feedback</code> と同時開示ロジックを実装（PR-3）。双方の提出が出揃うまで何も公開しない <code>publishIfBothSubmitted()</code>、原文 <code>bodyRaw</code>（運営のみ）と公開文 <code>bodyPublished</code>（相手へ開示）の 2 表現を導入。',
+ note:'逐次開示だと後から提出する側が相手の内容を読んでから書けるため<b>情報優位と迎合バイアス</b>が生まれる。運営が承認した「原文 → 変換文」の対がそのまま将来の LLM 自動変換の評価データになる（リリース後 3〜6 ヶ月は運営レビューゲート）。'},
+{n:755,apps:['shared'],lay:['sh'],docs:['ODI','PLAN'],sec:1,
+ what:'<code>DecisionSupportService.analyzeFeedbackTrends()</code> が、企業側の書いた生テキスト（<code>interview_feedback</code> / <code>rejection_reason</code>）を<b>一切のレビューなしに LLM へ渡し、その要約を候補者本人へ表示していた</b>経路を是正。',
+ note:'#751 で「着手前に必ず解消する既存の矛盾」として記録していた問題。PR-4 のうち独立して価値のある部分を先に切り出した。要約というフィルタは挟まっているが、LLM は入力の趣旨を保つため原文の否定的表現は残る。'},
+{n:756,apps:['shared','infra'],lay:['sh','data'],docs:['ODI','RULES'],
+ what:'PR-3 では原文と公開文が同一ドキュメントにあり「相手への読み取り許可がそのまま原文の開示になる」制約で、公開後も相手が読めない状態だった。原文を <code>selection_feedback_raw</code> へ物理分離し、公開側を当事者双方へ開示可能にした。',
+ note:'Firestore がフィールド単位の読み取り制限を持たないことに起因する制約への対処。同種の判断は <code>platform_settings</code>（#744）や決済情報（#776）でも繰り返し現れている。'},
+{n:757,apps:['shared'],lay:['sh'],docs:['ODI'],
+ what:'フィードバック設問体系を <code>shared/common_frontend/definitions/feedback_taxonomy.json</code> へ宣言的に外出しし、フラットなフォームキーと <code>ratings</code> 構造を相互変換する <code>FeedbackTaxonomy</code> を新設（PR-4 準備）。',
+ note:'<code>axes</code> のキー（<code>ability</code> / <code>orientation</code>）は <b>MatchingHeatmap の 2 軸に対応</b>させており、ヒートマップの予測スコアと面接後の実評価を突き合わせる検証ループの前提になる。配置は <code>@shared</code> の解決先に合わせて <code>common_frontend/definitions/</code>。'},
+{n:758,apps:['cross','infra'],lay:['ops','data'],docs:[],
+ what:'<code>verify.yml</code> のルールテストで 153 件中 130 件が一斉失敗。750 行超まで成長した <code>firestore.rules</code> のコンパイルが GitHub Actions ランナーで Jest 既定の 5 秒を超えることがあった。<code>jest.config.rules.js</code> に <code>testTimeout: 30000</code> を追加。',
+ note:'直前のコミットでは同一のルールに対して success していたためルール自体の問題ではないと判断できた。同じ <code>initializeTestEnvironment</code> を beforeAll で呼ぶ 3 ファイルを、個別ではなく設定側 1 箇所でまとめて保護している。'},
+{n:759,apps:['shared','individual','corporate','admin'],lay:['sh','fe'],docs:['PLAN'],
+ what:'相互フィードバック UI を実装（PR-4）。共通フック <code>useFeedbackSubmission</code> と、求職者 → 企業の <code>IndividualFeedbackModal</code> を新設し、企業側 <code>InterviewFeedbackModal</code> の保存先を <code>selection_feedback</code> へ切り替え。',
+ note:'旧 <code>FMJSService.addInterviewFeedback()</code> を廃止し <code>recordEvaluation()</code> へ置換。#755 で読み取り側のみ是正した「生テキストが候補者へ届く」問題の<b>書き込み側そのもの</b>をここで断った。全項目が空のままの提出は事前に止める。'},
+{n:760,apps:['cross'],lay:['doc'],docs:['DDFMJS','ODI','SCHEMA','RULES','PLAN','CICD'],
+ what:'Issue #743〜#759 を docs へ反映。「<code>selection_feedback</code> は未実装」「面談フィードバックは Google フォームで回収」「ルールテストは verify.yml で未実行」等の記述が実装の進行で誤りになっていたため訂正。ルールテスト件数を 119 → 153 へ更新。',
+ note:'<code>Schema_Mapping.md</code> の主要コレクション表と §1.3 で <code>surveys</code> の記載が自己矛盾していた点（#750 の訂正が片方にしか入っていなかった）も解消。'},
+{n:761,apps:['shared','corporate'],lay:['sh','fe'],docs:['PLAN'],
+ what:'<code>completeInterview()</code> は PR-2 で実装済みだったが<b>呼び出す UI が存在せず</b>（呼び出し元はテストのみ）、<code>INTERVIEW_COMPLETED</code> は本番で一度も記録されていなかった。<code>InterviewCompletionModal</code> を新設し、法人アプリの選考詳細画面へ配線（PR-A）。',
+ note:'発火しないトリガーの上にスケジューラ（PR-B）を載せる前に前提を解消した。「画面は作ったが結線していない」型の問題で、#781 の懸念（逆に、繋いではいけないものを繋ぐ）と対になる。'},
+{n:762,apps:['functions','shared','infra'],lay:['be','sh','data'],docs:['ODI'],
+ what:'<code>INTERVIEW_COMPLETED</code> を起点に経過時間を測り、未提出側へ 24h / 48h / 60h でリマインドを送り 168h で期限切れにするスケジューラ <code>feedbackReminders.js</code> を実装（PR-B）。閾値定義は functions 側と shared 側の双方に JSON で置き、パリティテストで一致を検証。',
+ note:'Firestore の複合インデックス定義（<code>firestore.indexes.json</code>）も併せて追加。'},
+{n:763,apps:['functions'],lay:['be'],docs:['PLAN'],
+ what:'予約日を過ぎた面談を自動的に完了扱いにして <code>INTERVIEW_COMPLETED</code> を発火させる <code>autoCompleteInterviews.js</code> を実装（PR-C）。',
+ note:'手動確定（PR-A）だけだと担当者の押し忘れでリマインドが永久に始まらない。計画が推奨した「(b) 自動確定をベースに (a) 手動確定で早期確定」のハイブリッドがこれで完成した。'},
+{n:764,apps:['functions','infra'],lay:['be','data'],docs:['ODI','RULES'],sec:1,
+ what:'<code>admin_individual_notes.isBanned</code> が Firebase Auth の UID をキーにしているため<b>別のメールアドレスで再登録すれば追従しない</b>問題に対し、識別子（メール／電話番号）のハッシュで再接触を永久禁止する <code>suppression_list</code> を実装。',
+ note:'スカウトはアウトバウンド行為であり、本人を指す識別子はログイン UID ではなくメールアドレス・電話番号である、という整理。ODI.md §4.6 / §6.2 に未解決課題として記録されていたもの。'},
+{n:765,apps:['cross'],lay:['doc'],docs:['ODI','SCHEMA','RULES','PLAN','CICD'],
+ what:'Issue #761〜#764 を docs へ反映。今回は「実装したこと」より、<b>リポジトリにあるのに本番で動いていないもの</b>の記録が中心。',
+ note:'記録が無いと、次に触る人（人間もエージェントも）が動作していると誤認する、という理由づけを明記している。'},
+{n:766,apps:['cross','functions'],lay:['ops','be'],docs:['AUTH','CICD'],
+ what:'Firestore を完全にモックしていた既存テストに代えて、本物の <code>firebase-admin</code> をエミュレータへ向けてハンドラを end-to-end で走らせる統合テスト 15 件を新設。併せて初回稼働の安全弁 <code>SCHEDULER_DRY_RUN</code> を追加し、<code>verify.yml</code> に <code>test:functions</code> を追加。',
+ note:'<code>apps/functions</code> が独自の node_modules を持つため <code>firebase-admin</code> が二重コピーになっていた（#749 と同型）。<b>エミュレータは複合インデックスを自動生成するためインデックス未定義は検出できない</b>点を明記。検証（機能が正しいか）と封じ込め（実データに何が起きるか）は別問題、という整理。'},
+{n:767,apps:['admin'],lay:['be','fe'],docs:['DDADMIN','AUTH'],sec:1,
+ what:'<code>node_backend</code> の <code>verifyAdmin</code> が <code>role</code> 以外に <code>admin</code> クレームでも通す第 2 の受け入れ経路を持っていたため <code>role</code> のみに統一。併せて<b>一度も実行されたことのないバグ 3 件</b>（<code>sendNotification</code> が <code>userId</code> で書く／<code>all_companies</code> が <code>\'Company\'</code> を参照／<code>updateTos</code> が存在しない <code>platform_settings/global</code> を update）を是正。フロントの localhost ハードコードも <code>BACKEND_API_URL</code> 経由へ。',
+ note:'node_backend 自体が未デプロイで呼び出し元も無かったため CI も通り続け、バグが検出されていなかった。<code>sendNotification</code> のバグは本番で呼べば<b>本人が一生読めない通知を作り続ける</b>状態だった。'},
+{n:768,apps:['cross'],lay:['doc'],docs:['CICD','PLAN','ODI','RULES'],
+ what:'Issue #766・#767 を docs へ反映。加えて、両 Issue の push 後にユーザー承認を得て実施した「Cloud Functions 4 関数の dry-run デプロイと初回実行ログの確認」という、Issue 本文には無い会話中のみの最新事実も併せて記録。',
+ note:'Issue に残らない「会話中のみの事実」を docs 側で受け止める運用。'},
+{n:770,apps:['shared','infra','cross'],lay:['sh','data'],docs:['SCHEMA','RULES'],sec:1,
+ what:'DynamoDB 移行時の残骸として<b>個人の現在の年収が <code>public_profile</code> のトップレベル <code>income</code> に混入</b>していた（31 件中 9 件）。決済・パスワードと同じ物理隔離方針を適用し <code>private_info</code> へ移送、ルールでも禁止した。',
+ note:'<code>public_profile</code> は <code>isHumanAuthenticated()</code> で全認証ユーザーが読める。企業の平均年収（求人条件の目安として公開情報）とは性質が異なる、という判断。'},
+{n:771,apps:['admin','functions'],lay:['be','fe'],docs:['DDADMIN','AUTH'],sec:1,
+ what:'<code>apps/admin_app/node_backend</code>（Express + Cloud Run）の 7 エンドポイントを Callable Functions へ移植し、ディレクトリごと撤去。認可ガードを <code>adminGuard.js</code> に集約し <code>suppression.js</code> も含めて 1 箇所へ統一。',
+ note:'移植時に、旧 <code>/api/admin/setClaims</code> が <code>req.body.role</code> を<b>無検証で</b> <code>setCustomUserClaims</code> へ渡していた権限昇格経路を <code>ASSIGNABLE_ROLES</code> ホワイトリストで封鎖（admin が自分や他人へ admin を付与できる状態だった）。招待コード生成も <code>Math.random()</code> から <code>crypto.randomBytes()</code> へ。未デプロイ・呼び出し元ゼロのため実害はなし。'},
+{n:772,apps:['cross'],lay:['doc'],docs:['CICD','RULES','SCHEMA','ODI','DDADMIN','AUTH'],
+ what:'Issue #770・#771 を docs へ反映。加えて push 後に実施した「Cloud Functions の dry-run 解除」も記録。',
+ note:'前回（#768）時点で「未デプロイ」「本番で動作していない」と記録していた事項が、その後のデプロイ・撤去によってすべて古くなっていたため、<b>訂正が中心</b>となった回。'},
+{n:773,apps:['admin','functions','infra'],lay:['fe','be','data'],docs:['DDADMIN','RULES','SCHEMA'],
+ what:'招待コードの発行を Admin 管理画面から行えるようにし、あわせて一般ユーザーへ<b>制限付きの招待発行権限</b>を委譲できるようにした（<code>IssueInvitationModal</code> / <code>InvitePermissionModal</code> を新設、<code>IndividualTab</code> へ配線）。',
+ note:'ODI Phase 0 完了後の残課題①。完全招待制プラットフォームの入口にあたる機能で、#730（招待コード検証が本番停止していた件）と #771（発行 API の Callable 移植）の続き。'},
+{n:774,apps:['functions','admin'],lay:['be','fe'],docs:['RULES','SCHEMA'],sec:1,
+ what:'<code>admin_individual_notes.isBanned</code> が<b>規約違反 BAN・削除請求・休会のいずれで停止したのか区別できない</b>問題を解消し、単一 boolean を分離して reasonCode 化。',
+ note:'ODI Phase 0 完了後の残課題②。<code>Security_Rules_and_Authorization.md</code> §2.5 に記録済みの既知課題で、#764 の <code>suppression_list</code> と対になる整理。'},
+{n:775,apps:['cross'],lay:['doc'],docs:['SCHEMA','RULES','AUTH','CICD'],
+ what:'Issue #773・#774 を docs へ反映。加えて push 後に実施した「gcloud / firebase CLI 認証の永続化（サービスアカウントへの切替）」の手順も記録。',
+ note:'#729 で作業中に遭遇した Firebase CLI のトークン期限切れに対する恒久対処にあたる。'},
+{n:776,apps:['shared','functions','infra','cross'],lay:['sh','be','data'],docs:['SCHEMA','RULES'],sec:1,
+ what:'<code>Schema_Mapping.md</code> §6 が「未着手」「未解決」としていたスキーマ課題 <b>6 件を全件解消</b>（会社概要の英日キー重複 112 件／手数料管理簿の併存／選考進捗の二重管理／<code>public_profile.基本情報</code> の 7 種類のキーセット／<code>company.currentUser</code> / <code>フィーバック</code> の誤字）。',
+ note:'副産物として決済経路に 3 バグが同居していた — <code>company.決済</code>（全ログインユーザーが読める）が正しくは <code>billing</code> サブコレクションだった／<code>CorporatePaymentInfoScreen</code> は既に正しいパスを読んでおり<b>請求情報が常に空</b>だった／決済 Webhook が一度も反映されていなかった。<code>company.currentUser</code> は「疑い」ではなく実害で、運営者のメールアドレスと adminId を全ログインユーザーへ露出していた。'},
+{n:777,apps:['cross'],lay:['doc'],docs:['ODI','DDFMJS','REQ'],
+ what:'#776 のスキーマ課題解消を ODI・FMJS 設計書・要件へ反映。「データ層は英語キー、UI 表示は日本語ラベル」という記録済み方針が<b>本番実態（company 117 件中 113 件が日本語キー）と逆だった</b>ため、方針そのものを訂正。',
+ note:'<code>designdocument_fmjs.md</code> の「選考進捗と手数料管理簿が同一ドキュメントにある限り 3 文書を同時に満たせない」という未解決 CAUTION を、分割の軸を「進捗 vs Fee」から<b>「読み手」</b>へ変えることで解消した。'},
+{n:778,apps:['cross'],lay:['doc','ops'],docs:['TREE','CONTRIB','COST'],
+ what:'「①実装計画 → ②spec 作成 → ③実装 → ④docs 反映」のうち<b>②だけに強制手段が無く善意頼み</b>だった非対称を解消。<code>scripts/check_spec_compliance.js</code> を新設し <code>safe_push.sh</code> の TDD ガードレール直前へ組み込み（既定は警告のみ、<code>SPEC_ENFORCE=1</code> でブロック）。spec/ を仕様と詳細設計の正典として再構築（86 ファイル / +1745 −734）。',
+ note:'<code>AutonomousSystem_CostSave.md</code> の「docs から spec を生成するブートストラップ」という運用方針は<b>依存の向きが逆で本件の元凶</b>にあたるため撤回。構成図の実在しないパス 4 件など、既存 docs の誤りも併せて訂正した。#781/#782/#784/#785 はこの作業で仕様を書き起こす過程で表面化している。'},
+{n:779,apps:['shared','infra'],lay:['sh','fe','data'],docs:['SCHEMA','RULES'],sec:1,
+ what:'<code>registrationService.createIndividualByAdmin</code> が <code>User.splitData</code> 用の <code>fullData</code> を組み立てながら<b>一度も使わず</b>、隣で <code>publicData</code> を手書きして実氏名・生年月日を <code>public_profile</code> へ直接書いていた経路を封鎖。分割を <code>splitData</code> へ一元化し、ルールでも禁止した。併せて表示名を同意ベース化（ハンドルネームは <code>private_info</code> に据え置き、同意に基づいて <code>name</code> へ射影）。',
+ note:'本番に該当経路で作られたデータは無く<b>実害はゼロ</b>。トップレベル <code>name</code> は「余剰」ではなく必須項目の欠落で、<code>public_profile</code> 31 件中 28 件で欠落していた（Admin SDK の seed とエージェント経路がルールを迂回するため）。'},
+{n:780,apps:['cross','infra'],lay:['ops','data'],docs:['SCHEMA','ODI','E2EPLAN'],sec:1,
+ what:'<code>EXPO_PUBLIC_USE_EMULATOR</code> がオプトインで <code>playwright.e2e.config.ts</code> に <code>webServer</code> も無かったため、環境変数を付けずに起動した dev server に E2E を回すと<b>画面は localhost でも書き込み先が本番 Firestore になる</b>状態だった。<code>webServer</code> の追加と <code>assertEmulatorTarget</code> の globalSetup 呼び出しで二重に封鎖。',
+ note:'#779 で「本人の入力が必要」として残した 2 件は E2E テストの残骸だった（説明が誤っていたことを訂正）。孤児判定は機械的に行わず本番の全コレクションを走査して参照数を数え、参照ゼロの 3 件のみ削除している。'},
+{n:781,apps:['shared'],lay:['sh','fe'],docs:[],spec:['SP3'],open:1,sec:1,
+ what:'<code>passkeyLinking.tsx</code> の <code>registerPasskey</code> が、①チャレンジがクライアント側リテラル ②<code>rp.id</code> がハードコード ③登録結果をサーバへ送らない、の 3 点で認証仕様に違反していることを報告。A. 削除 / B. 実経路の実装へ置き換え、の 2 案を提示。',
+ note:'<b>要判断・未対応。</b>参照元はテストのみで実経路は <code>PasskeyManagementSection</code> のため現時点で実害なし。ただし<b>このファイルを実経路へ配線するとモックのチャレンジで登録が走る</b>。「実装済みの関数がある」と誤認して繋ぐ事故が起きうる。'},
+{n:782,apps:['shared'],lay:['sh'],docs:[],spec:['SP7'],open:1,
+ what:'<code>shared/common_frontend/src/core/utils/</code> にユーティリティではなく<b>ドメインサービス 10 件</b>（<code>MatchingService</code> / <code>SelectionStateMachine</code> / <code>FeeCalculationService</code> 等）と React フック 2 件が混在しており、新規ファイルの置き場所を判断できない状態を報告。',
+ note:'<b>要判断・未対応。</b>A. <code>core/domain</code> / <code>core/hooks</code> / <code>core/utils</code> へ再編、B. 現状維持で仕様側に区分を明示、C. <code>core/services</code> へ寄せる、の 3 案。移動自体に機能的価値は無くリスクだけがあるため、当面 B で運用し大きめのリファクタ機会に C を合わせる案を提示。'},
+{n:784,apps:['shared','corporate','functions'],lay:['sh','fe'],docs:[],spec:['SP8'],open:1,
+ what:'<code>NotificationService</code> が <code>core/services/</code> と <code>features/notification/services/</code> に<b>別実装で併存し両方使われている</b>。さらに宛先ユーザーを指すフィールド名が <code>uid</code> と <code>userId</code> で食い違い、<code>useNotifications</code> のクエリと噛み合わない。',
+ note:'<b>要判断・未対応。</b>フィールド名の不一致により<b>通知が届かない経路が生じうる</b>。認可が <code>node_backend</code> と <code>adminGuard</code> の 2 系統あった問題（#771 で解消）と同型。<code>core/services</code> への一本化を推奨しつつ、実データの <code>uid</code>/<code>userId</code> 分布調査が先行して必要。'},
+{n:785,apps:['shared','cross'],lay:['sh'],docs:[],spec:['SPCOV'],open:1,
+ what:'<code>shared/utils/</code> が 0 行の空ファイル（<code>github_utils.py</code>）とテスト用ダミーのみで<b>参照ゼロ</b>、<code>tests/sandbox/</code> に同名ファイルが重複していることを報告し、ディレクトリごとの削除を提案。',
+ note:'<b>要判断・未対応。</b>実体の無いモジュールが <code>spec/coverage-map.json</code> の分母に入り、仕様網羅率が実態を表さなくなる。暫定的に <code>n/a</code> として記録済み。削除前に <code>scripts/</code> 配下からの参照を再確認したい、という留保付き。'}
+];
+
+/* ---------- render ---------- */
+const esc = s => s;
+const docLink = (base, tbl, k) => {
+  const [p, label] = tbl[k];
+  return `<a href="${base}${p}" target="_blank" rel="noopener">${label}</a>`;
+};
+function rowHtml(r){
+  const apps = r.apps.map(a => `<span class="tag t-app">${APP[a]}</span>`).join('');
+  const lays = r.lay.map(l => `<span class="tag ${LAY[l][1]}">${LAY[l][0]}</span>`).join('');
+  const dl = (r.docs||[]).map(k => docLink(GH + '/blob/Agent/docs/', DOC, k));
+  const sl = (r.spec||[]).map(k => docLink(GH + '/blob/Agent/spec/', SPEC, k));
+  const links = dl.concat(sl);
+  const badges = (r.open ? '<span class="badge">要判断</span>' : '') + (r.sec ? '<span class="badge sec">セキュリティ</span>' : '');
+  return `<tr data-apps="${r.apps.join(' ')}" data-lay="${r.lay.join(' ')}">
+    <td class="num"><a href="${GH}/issues/${r.n}" target="_blank" rel="noopener">#${r.n}</a></td>
+    <td>${apps}</td><td>${lays}</td>
+    <td class="docs">${links.length ? links.join('') : '<span style="opacity:.45">—</span>'}</td>
+    <td class="what">${badges}${esc(r.what)}</td>
+    <td class="note">${esc(r.note)}</td></tr>`;
+}
+let fApp = 'all', fLay = 'all';
+const tbody = document.getElementById('rows');
+function render(){
+  const vis = DATA.filter(r =>
+    (fApp === 'all' || r.apps.includes(fApp)) &&
+    (fLay === 'all' || r.lay.includes(fLay)));
+  tbody.innerHTML = vis.map(rowHtml).join('');
+  document.getElementById('count').textContent = `${vis.length} 件を表示中（全 ${DATA.length} 件）`;
+}
+function mkBtns(host, entries, cur, onPick){
+  host.innerHTML = '';
+  entries.forEach(([key, label, n]) => {
+    const b = document.createElement('button');
+    b.className = 'f'; b.type = 'button';
+    b.textContent = n == null ? label : `${label} ${n}`;
+    b.setAttribute('aria-pressed', String(cur() === key));
+    b.onclick = () => { onPick(key); syncBtns(); render(); };
+    host.appendChild(b);
+  });
+}
+const appCounts = k => DATA.filter(r => r.apps.includes(k)).length;
+const layCounts = k => DATA.filter(r => r.lay.includes(k)).length;
+const appEntries = [['all','すべて',DATA.length]].concat(
+  Object.keys(APP).map(k => [k, APP[k], appCounts(k)]).filter(e => e[2] > 0));
+const layEntries = [['all','すべて',DATA.length]].concat(
+  Object.keys(LAY).map(k => [k, LAY[k][0], layCounts(k)]));
+function syncBtns(){
+  mkBtns(document.getElementById('fapp'), appEntries, () => fApp, k => fApp = k);
+  mkBtns(document.getElementById('flayer'), layEntries, () => fLay, k => fLay = k);
+}
+syncBtns(); render();
+
+/* ---------- metrics ---------- */
+document.getElementById('m-total').textContent = DATA.length;
+document.getElementById('m-apps').textContent = appEntries.length - 1;
+document.getElementById('m-sec').textContent = DATA.filter(r => r.sec).length;
+document.getElementById('m-open').textContent = DATA.filter(r => r.open).length;
+
+/* ---------- charts (inline SVG, no libs) ---------- */
+function barChart(title, entries, color, w){
+  const rowH = 30, padT = 46, padL = 168, padR = 56;
+  const h = padT + entries.length * rowH + 18;
+  const max = Math.max(...entries.map(e => e[1]));
+  const bw = w - padL - padR;
+  let s = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${title}">`;
+  s += `<text x="16" y="26" font-size="12.5" font-weight="700" fill="currentColor" letter-spacing="1.2">${title}</text>`;
+  entries.forEach(([label, n], i) => {
+    const y = padT + i * rowH;
+    const len = Math.max(2, Math.round(bw * n / max));
+    s += `<text x="${padL - 12}" y="${y + 15}" font-size="12" text-anchor="end" fill="currentColor" opacity=".85">${label}</text>`;
+    s += `<rect x="${padL}" y="${y + 3}" width="${bw}" height="17" rx="4" fill="currentColor" opacity=".07"/>`;
+    s += `<rect x="${padL}" y="${y + 3}" width="${len}" height="17" rx="4" fill="${color}" opacity=".85"/>`;
+    s += `<text x="${padL + len + 9}" y="${y + 16}" font-size="12" font-weight="700" fill="currentColor" opacity=".9">${n}</text>`;
+  });
+  return s + '</svg>';
+}
+const appBars = Object.keys(APP).map(k => [APP[k], appCounts(k)])
+  .filter(e => e[1] > 0).sort((a, b) => b[1] - a[1]);
+const layBars = Object.keys(LAY).map(k => [LAY[k][0], layCounts(k)]).sort((a, b) => b[1] - a[1]);
+document.getElementById('charts').innerHTML =
+  barChart('アプリ／モジュール別 Issue 件数', appBars, 'var(--d-blue)', 1040) +
+  '<div style="height:14px"></div>' +
+  barChart('レイヤー区分別 Issue 件数', layBars, 'var(--d-green)', 1040) +
+  '<figcaption>1 つの Issue が複数のアプリ／レイヤーに跨がるため、合計は 64 を超えます。' +
+  '「共通モジュール」と「横断」が上位に来るのは、6 アプリが画面実装を <code>shared/</code> に寄せている構造の帰結です。</figcaption>';
+</script>
+</body>
+</html>
