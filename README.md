@@ -65,7 +65,8 @@ artifacts/
 │       └── index.html               2026年10月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー（保護なし・平文）
 <!-- /CALENDAR_TREE:lat-ceo-meeting-calendar -->
 ├── scripts/
-│   └── build_infographic_gate.js    平文HTMLを暗号化しゲートを生成するビルドスクリプト
+│   ├── build_infographic_gate.js    平文HTMLを暗号化しゲートを生成するビルドスクリプト
+│   └── classify_foragent_issues.mjs forAgent の Issue をアプリ／レイヤーで一次分類するスクリプト
 └── .github/workflows/deploy-pages.yml  GitHub Actions による Pages デプロイ
 ```
 
@@ -79,6 +80,38 @@ artifacts/
 - **実行オプション**: push の要否 / 作業報告 Issue の投稿 / README 転記 Issue の投稿（画像 blob リンク付き。ON にすると push も自動で ON）をチェックボックスで指定。
 - **固定仕様（パネルから外せない）**: ①既存スクリーンショットは確認なしで全削除して最新版に置き換え（`same` ブランチには常に最新版のみ） ②本番 Firebase への書き込み操作の禁止 ③git はスクリーンショットフォルダのみステージ — の3項目が生成される指示文に常に含まれる。
 - 平文HTML・パスワード保護なし。外部リクエストなしの単一ファイルで動作する。
+
+## Issue 機能分類マップの更新（`reports/foragent-issue-classification-<N>/`）
+
+[forAgent](https://github.com/yama-0t0k0/forAgent) の Issue を「どのアプリの・どのレイヤーの変更か」で
+分類したレポート。**開始 Issue 番号ごとに別ディレクトリ**として追加する（過去分を残すため）。
+
+```bash
+# ① 一次分類（gh CLI が forAgent へ認証済みであること）
+node scripts/classify_foragent_issues.mjs 718
+
+# ② JSON が欲しい場合
+node scripts/classify_foragent_issues.mjs 718 --json > /tmp/classified.json
+```
+
+スクリプトは Issue 本文の「変更ファイル」節に列挙されたパスをディレクトリ構造へ突き合わせて
+分類し、判定できなかった Issue を `⚠ 本文の手読みが必要` として列挙する。
+
+> [!IMPORTANT]
+> **スクリプトの出力をそのまま成果物にしないこと。**
+> 「変更ファイル」節を持たない Issue（調査報告のみのもの）、撤去済みディレクトリを指す Issue
+> （`apps/admin_app/node_backend` 等）、複数テーマに跨がる Issue は必ず取りこぼす。
+> #718 の回では 64 件中 10 件が該当した。`⚠` の付いた Issue は本文を読んで補正する。
+
+手順:
+
+1. 上記スクリプトで一次分類を作る
+2. `⚠` の付いた Issue と、`areas` が 1 件しかない Issue の本文を読んで補正する
+3. `reports/foragent-issue-classification-718/index.html` を雛形として
+   `reports/foragent-issue-classification-<新しい開始番号>/index.html` を作る
+   （HTML 内の `DATA` 配列と、冒頭の対象範囲・集計日を差し替える）
+4. 生成した `docs/` `spec/` へのリンクが実在するか、対象ブランチに対して全件検証する
+5. 本 README の一覧・構成ツリーと `index.html` のカードを更新して push
 
 ## 暗号化方式（🔒 付きコンテンツ）
 
