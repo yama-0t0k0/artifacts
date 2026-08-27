@@ -17,6 +17,7 @@
 | ✅ チャット機能 改善結果 検証レポート | https://yama-0t0k0.github.io/artifacts/reports/chat-improvement-verification/ | なし |
 | 🔁 チャット機能 改善結果 検証レポート（第2ラウンド） | https://yama-0t0k0.github.io/artifacts/reports/chat-improvement-verification-r2/ | なし |
 | 🗂️ forAgent Issue 機能分類マップ — #718 以降 | https://yama-0t0k0.github.io/artifacts/reports/foragent-issue-classification-718/ | なし |
+| 🗂️ forAgent Issue 機能分類マップ — #786 以降 | https://yama-0t0k0.github.io/artifacts/reports/foragent-issue-classification-786/ | なし |
 | 🗺️ forAgent アプリ全体構造マップ | https://yama-0t0k0.github.io/artifacts/docs/foragent-structure-map/ | 🔒 |
 | 📤 AdminApp ファイルアップロード → プロフ予測入力 詳細設計 | https://yama-0t0k0.github.io/artifacts/docs/admin-fileupload-profile-prediction/ | なし |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | なし |
@@ -49,8 +50,10 @@ artifacts/
 │   ├── chat-improvement-verification-r2/
 │   │   ├── index.html               チャット機能 改善結果 検証レポート 第2ラウンド（保護なし・平文）
 │   │   └── screenshots/             イシュー貼り付け用スクリーンショット
-│   └── foragent-issue-classification-718/
-│       └── index.html               forAgent Issue 機能分類マップ #718 以降（保護なし・平文）
+│   ├── foragent-issue-classification-718/
+│   │   └── index.html               forAgent Issue 機能分類マップ #718 以降（保護なし・平文）
+│   └── foragent-issue-classification-786/
+│       └── index.html               forAgent Issue 機能分類マップ #786 以降（保護なし・平文）
 ├── docs/                            リファレンス・設計ドキュメント
 │   ├── foragent-structure-map/
 │   │   └── index.html               forAgent アプリ全体構造マップ（🔒）
@@ -66,7 +69,8 @@ artifacts/
 <!-- /CALENDAR_TREE:lat-ceo-meeting-calendar -->
 ├── scripts/
 │   ├── build_infographic_gate.js    平文HTMLを暗号化しゲートを生成するビルドスクリプト
-│   └── classify_foragent_issues.mjs forAgent の Issue をアプリ／レイヤーで一次分類するスクリプト
+│   ├── classify_foragent_issues.mjs forAgent の Issue をアプリ／レイヤーで一次分類するスクリプト
+│   └── verify_doc_links.mjs         生成HTML内の docs/spec リンクが対象ブランチに実在するか検証
 └── .github/workflows/deploy-pages.yml  GitHub Actions による Pages デプロイ
 ```
 
@@ -101,16 +105,25 @@ node scripts/classify_foragent_issues.mjs 718 --json > /tmp/classified.json
 > **スクリプトの出力をそのまま成果物にしないこと。**
 > 「変更ファイル」節を持たない Issue（調査報告のみのもの）、撤去済みディレクトリを指す Issue
 > （`apps/admin_app/node_backend` 等）、複数テーマに跨がる Issue は必ず取りこぼす。
-> #718 の回では 64 件中 10 件が該当した。`⚠` の付いた Issue は本文を読んで補正する。
+> #718 の回では 64 件中 10 件（約 15%）、#786 の回では 39 件中 14 件（約 36%）が該当した。
+> `⚠` の付いた Issue と、`areas` が 1 件しかない Issue は本文を読んで補正する。
 
 手順:
 
 1. 上記スクリプトで一次分類を作る
 2. `⚠` の付いた Issue と、`areas` が 1 件しかない Issue の本文を読んで補正する
-3. `reports/foragent-issue-classification-718/index.html` を雛形として
+3. 直近の `reports/foragent-issue-classification-<前回の番号>/index.html` を雛形として
    `reports/foragent-issue-classification-<新しい開始番号>/index.html` を作る
    （HTML 内の `DATA` 配列と、冒頭の対象範囲・集計日を差し替える）
 4. 生成した `docs/` `spec/` へのリンクが実在するか、対象ブランチに対して全件検証する
+
+   ```bash
+   node scripts/verify_doc_links.mjs reports/foragent-issue-classification-<番号>/index.html origin/Agent <forAgent のパス>
+   ```
+
+   実在しないドキュメントへのリンクは、読者を存在しない根拠へ誘導するため、
+   リンクが無い状態より有害である。1 件でも欠けたら公開しない。
+
 5. 本 README の一覧・構成ツリーと `index.html` のカードを更新して push
 
 ## 暗号化方式（🔒 付きコンテンツ）
