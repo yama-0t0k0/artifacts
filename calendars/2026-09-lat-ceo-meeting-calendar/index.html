@@ -1,213 +1,67 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>2026年9月 カレンダー</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026年9月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー — ログイン</title>
 <style>
-  :root{
-    --bg: #f7f4ee;
-    --card: #ffffff;
-    --ink: #2e2a24;
-    --sub: #8a8378;
-    --line: #e7e1d6;
-    --accent: #c96a4f;
-    --sun: #d8654f;
-    --sat: #4f7fc9;
-    --holiday-bg: #fbeae6;
-    --phone: #4f9c6c;
-    --online: #4f7fc9;
-    --off: #a8a29b;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    padding:40px 20px;
-    background: var(--bg);
-    font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", -apple-system, sans-serif;
-    color: var(--ink);
-    display:flex;
-    justify-content:center;
-  }
-  .wrap{ width:100%; max-width:920px; }
-  .card{
-    background: var(--card);
-    border-radius: 24px;
-    padding: 40px 44px 32px;
-    box-shadow: 0 12px 36px rgba(60,50,30,0.08);
-    border: 1px solid var(--line);
-  }
-  .header{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    margin-bottom: 8px;
-  }
-  .title{ font-size: 30px; font-weight: 700; letter-spacing: 0.02em; }
-  .title .en{ font-size: 14px; color: var(--sub); font-weight: 400; margin-top: 4px; }
-  .badge{
-    font-size: 12px;
-    color: var(--accent);
-    background: #fbe9e2;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-weight: 600;
-    white-space:nowrap;
-  }
-  .subnote{
-    font-size: 13px;
-    color: var(--sub);
-    margin: 10px 0 26px;
-    line-height: 1.7;
-    border-left: 3px solid var(--accent);
-    padding-left: 12px;
-  }
-  .subnote b{ color: var(--ink); }
-  table{ width:100%; border-collapse: collapse; table-layout: fixed; }
-  th{
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--sub);
-    padding-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  th.sun{ color: var(--sun); }
-  th.sat{ color: var(--sat); }
-  td{
-    vertical-align: top;
-    border: 1px solid var(--line);
-    height: 108px;
-    padding: 8px;
-    position: relative;
-  }
-  td.other-month{ color: #cfc9bc; }
-  td.holiday{ background: var(--holiday-bg); }
-  .daynum{ font-size: 15px; font-weight: 600; }
-  .sun-num{ color: var(--sun); }
-  .sat-num{ color: var(--sat); }
-  .holiday-label{
-    font-size: 10px;
-    color: var(--accent);
-    margin-top: 2px;
-    font-weight: 600;
-  }
-  .note-line{ margin-top: 10px; height: 22px; border-bottom: 1px dashed var(--line); }
-  .tag{
-    margin-top: 10px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 8px;
-    border-radius: 7px;
-  }
-  .tag-icon{ font-size: 12px; line-height: 1; }
-  .tag.phone{ background: #e5f3ea; color: #3d7a52; }
-  .tag.online{ background: #e7eef9; color: #3d5f96; }
-  .tag.off{ background: #f0efec; color: #75706a; }
-  .tag-note{ font-size: 10px; color: var(--sub); margin-top: 4px; line-height: 1.4; }
-  .legend{
-    display:flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-top: 28px;
-    padding-top: 20px;
-    border-top: 1px solid var(--line);
-    align-items:center;
-  }
-  .legend-title{ font-size: 12px; color: var(--sub); font-weight: 600; margin-right: 4px; }
-  .legend-item{ display:flex; align-items:center; gap: 6px; font-size: 13px; }
-  .legend-icon{ font-size: 14px; line-height: 1; }
-  .dot{ width: 12px; height: 12px; border-radius: 4px; display:inline-block; }
-  .dot.phone{ background: var(--phone); }
-  .dot.online{ background: var(--online); }
-  .dot.off{ background: var(--off); }
-  .footer{ margin-top: 22px; font-size: 11px; color: var(--sub); text-align:right; }
+:root{ --bg:#16171a; --bg2:#1e2025; --card:#23262c; --txt:#e9eaec; --muted:#9aa1ab; --line:rgba(255,255,255,.12); --accent:#6aa6ff; --bad:#ff8a8a; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f7f5; --bg2:#fff; --card:#fff; --txt:#1b1d21; --muted:#5f656e; --line:rgba(0,0,0,.12); --accent:#1f6fe0; --bad:#d8463f; } }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:
+  radial-gradient(120% 120% at 0% 0%, rgba(106,166,255,.16), transparent 55%),
+  radial-gradient(120% 120% at 100% 100%, rgba(126,224,192,.14), transparent 55%), var(--bg);
+  color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Noto Sans JP",sans-serif;
+  display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.box{width:100%;max-width:380px;background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:34px 30px;}
+.lockico{width:52px;height:52px;border-radius:14px;background:rgba(106,166,255,.16);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px;}
+h1{font-size:20px;margin:0 0 6px;font-weight:700;}
+p.sub{margin:0 0 22px;color:var(--muted);font-size:13px;line-height:1.6;}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px;}
+input{width:100%;height:44px;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--txt);
+  font-size:15px;padding:0 14px;outline:none;}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(106,166,255,.2);}
+button{width:100%;height:44px;margin-top:16px;border:0;border-radius:10px;background:var(--accent);color:#fff;
+  font-size:15px;font-weight:600;cursor:pointer;}
+button:disabled{opacity:.6;cursor:default;}
+.err{color:var(--bad);font-size:13px;margin-top:12px;min-height:18px;}
+.foot{margin-top:18px;font-size:11px;color:var(--muted);line-height:1.6;}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <div class="header">
-      <div class="title">2026年9月<div class="en">SEPTEMBER 2026</div></div>
-      <div class="badge">山川CEO(株式会社Lat) 打ち合わせスケジュール</div>
-    </div>
-
-    <div class="subnote">
-      <b>株式会社Lat 山川CEO</b>との打ち合わせ方法（電話 / オンライン / お休み）を記載しています。打ち合わせは毎日10:00〜12:00の予定です。Outlookの勤務地表示（緑=ICC/千里オフィス勤務→電話、黄=在宅勤務→オンライン、赤=計画有休・夏季休暇・公休→お休み）をもとに振り分けています。
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th class="sun">日</th>
-          <th>月</th>
-          <th>火</th>
-          <th>水</th>
-          <th>木</th>
-          <th>金</th>
-          <th class="sat">土</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="other-month"><div class="daynum">30</div></td>
-          <td class="other-month"><div class="daynum">31</div></td>
-          <td><div class="daynum">1</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum">2</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum">3</div><div class="tag off"><span class="tag-icon">🌴</span>お休み</div></td>
-          <td><div class="daynum">4</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum sat-num">5</div><div class="note-line"></div></td>
-        </tr>
-        <tr>
-          <td><div class="daynum sun-num">6</div><div class="note-line"></div></td>
-          <td><div class="daynum">7</div><div class="tag phone"><span class="tag-icon">📞</span>電話</div></td>
-          <td><div class="daynum">8</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum">9</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum">10</div><div class="tag off"><span class="tag-icon">🌴</span>お休み</div></td>
-          <td><div class="daynum">11</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum sat-num">12</div><div class="note-line"></div></td>
-        </tr>
-        <tr>
-          <td><div class="daynum sun-num">13</div><div class="note-line"></div></td>
-          <td><div class="daynum">14</div><div class="tag phone"><span class="tag-icon">📞</span>電話</div></td>
-          <td><div class="daynum">15</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum">16</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum">17</div><div class="tag phone"><span class="tag-icon">📞</span>電話</div></td>
-          <td><div class="daynum">18</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum sat-num">19</div><div class="note-line"></div></td>
-        </tr>
-        <tr>
-          <td><div class="daynum sun-num">20</div><div class="note-line"></div></td>
-          <td class="holiday"><div class="daynum">21</div><div class="holiday-label">敬老の日</div><div class="tag off"><span class="tag-icon">🌴</span>お休み</div></td>
-          <td class="holiday"><div class="daynum">22</div><div class="holiday-label">国民の休日</div><div class="tag off"><span class="tag-icon">🌴</span>お休み</div></td>
-          <td class="holiday"><div class="daynum">23</div><div class="holiday-label">秋分の日</div><div class="tag off"><span class="tag-icon">🌴</span>お休み</div></td>
-          <td><div class="daynum">24</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum">25</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum sat-num">26</div><div class="note-line"></div></td>
-        </tr>
-        <tr>
-          <td><div class="daynum sun-num">27</div><div class="note-line"></div></td>
-          <td><div class="daynum">28</div><div class="tag phone"><span class="tag-icon">📞</span>電話</div></td>
-          <td><div class="daynum">29</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td><div class="daynum">30</div><div class="tag online"><span class="tag-icon">💻</span>オンライン</div></td>
-          <td class="other-month"><div class="daynum">1</div></td>
-          <td class="other-month"><div class="daynum">2</div></td>
-          <td class="other-month"><div class="daynum">3</div></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="legend">
-      <span class="legend-title">打ち合わせ方法の凡例</span>
-      <span class="legend-item"><span class="dot phone"></span><span class="legend-icon">📞</span>電話</span>
-      <span class="legend-item"><span class="dot online"></span><span class="legend-icon">💻</span>オンライン</span>
-      <span class="legend-item"><span class="dot off"></span><span class="legend-icon">🌴</span>お休み</span>
-    </div>
-
-    <div class="footer">作成日: 2026年8月7日</div>
-  </div>
-</div>
+<form class="box" id="f" autocomplete="off">
+  <div class="lockico">🔒</div>
+  <h1>2026年9月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー</h1>
+  <p class="sub">このページは保護されています。閲覧するにはパスワードを入力してください。</p>
+  <label for="pw">パスワード</label>
+  <input type="password" id="pw" autofocus autocomplete="current-password">
+  <button type="submit" id="btn">復号して表示</button>
+  <div class="err" id="err"></div>
+  <div class="foot">クライアント側で復号されます（カジュアル保護）。</div>
+</form>
+<script>
+const DATA={
+  salt:"c8KpykVkh+DCCFVRnFsoew==", iv:"KgfKF6Au+/wtAj8g", ct:"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", iter:250000
+};
+const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const f=document.getElementById('f'),pw=document.getElementById('pw'),err=document.getElementById('err'),btn=document.getElementById('btn');
+f.addEventListener('submit',async e=>{
+  e.preventDefault(); err.textContent=''; btn.disabled=true; btn.textContent='復号中…';
+  try{
+    const enc=new TextEncoder();
+    const km=await crypto.subtle.importKey('raw',enc.encode(pw.value),'PBKDF2',false,['deriveKey']);
+    const key=await crypto.subtle.deriveKey(
+      {name:'PBKDF2',salt:b64d(DATA.salt),iterations:DATA.iter,hash:'SHA-256'},
+      km,{name:'AES-GCM',length:256},false,['decrypt']);
+    const plainBuf=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(DATA.iv)},key,b64d(DATA.ct));
+    const html=new TextDecoder().decode(plainBuf);
+    try{sessionStorage.setItem('unlocked','1')}catch(_){}
+    document.open(); document.write(html); document.close();
+  }catch(_){
+    err.textContent='パスワードが違います。'; btn.disabled=false; btn.textContent='復号して表示'; pw.select();
+  }
+});
+</script>
 </body>
 </html>
