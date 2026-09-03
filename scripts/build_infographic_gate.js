@@ -126,7 +126,15 @@ button:disabled{opacity:.6;cursor:default;}
   <div class="foot">クライアント側で復号されます（カジュアル保護）。</div>
 </form>
 <script>
-const DATA={
+/* ゲートのコードは必ず IIFE に閉じ込める。
+   document.open() はドキュメントを作り直すが、グローバルの字句環境
+   （const/let の宣言）は作り直さない。ゲートがトップレベルで宣言した名前が
+   残ったまま本文が書き込まれるため、本文側に同名の const があると
+   "Identifier 'X' has already been declared" で本文のスクリプトが
+   丸ごと実行されなくなる（静的な HTML/SVG だけが表示され、
+   JS で描画している表やグラフが空になる）。実際に #830 の分類マップで発生した。 */
+(function(){
+const GATE={
   salt:"${b64(salt)}", iv:"${b64(iv)}", ct:"${b64(payload)}", iter:${ITER}
 };
 const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
@@ -137,9 +145,9 @@ f.addEventListener('submit',async e=>{
     const enc=new TextEncoder();
     const km=await crypto.subtle.importKey('raw',enc.encode(pw.value),'PBKDF2',false,['deriveKey']);
     const key=await crypto.subtle.deriveKey(
-      {name:'PBKDF2',salt:b64d(DATA.salt),iterations:DATA.iter,hash:'SHA-256'},
+      {name:'PBKDF2',salt:b64d(GATE.salt),iterations:GATE.iter,hash:'SHA-256'},
       km,{name:'AES-GCM',length:256},false,['decrypt']);
-    const plainBuf=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(DATA.iv)},key,b64d(DATA.ct));
+    const plainBuf=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(GATE.iv)},key,b64d(GATE.ct));
     const html=new TextDecoder().decode(plainBuf);
     try{sessionStorage.setItem('unlocked','1')}catch(_){}
     document.open(); document.write(html); document.close();
@@ -147,6 +155,7 @@ f.addEventListener('submit',async e=>{
     err.textContent='パスワードが違います。'; btn.disabled=false; btn.textContent='復号して表示'; pw.select();
   }
 });
+})();
 </script>
 </body>
 </html>`;
