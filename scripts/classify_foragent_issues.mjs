@@ -22,7 +22,7 @@ if (!Number.isFinite(FROM)) {
 }
 
 /** ブランチ同期作業。分類対象から外す。 */
-const SYNC_CHORE = /^chore: Agent ブランチ最新化と same へのマージ・main 最新化/;
+const SYNC_CHORE = /^chore: Agent ブランチ最新化と same へのマージ/;
 
 /** パス先頭一致 → [アプリ, レイヤー]。上から優先。 */
 const RULES = [

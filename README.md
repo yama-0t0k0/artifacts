@@ -18,6 +18,7 @@
 | 🔁 チャット機能 改善結果 検証レポート（第2ラウンド） | https://yama-0t0k0.github.io/artifacts/reports/chat-improvement-verification-r2/ | 🔒 |
 | 🗂️ forAgent Issue 機能分類マップ — #718 以降 | https://yama-0t0k0.github.io/artifacts/reports/foragent-issue-classification-718/ | 🔒 |
 | 🗂️ forAgent Issue 機能分類マップ — #786 以降 | https://yama-0t0k0.github.io/artifacts/reports/foragent-issue-classification-786/ | 🔒 |
+| 🗂️ forAgent Issue 機能分類マップ — #830 以降 | https://yama-0t0k0.github.io/artifacts/reports/foragent-issue-classification-830/ | 🔒 |
 | 🗺️ forAgent アプリ全体構造マップ | https://yama-0t0k0.github.io/artifacts/docs/foragent-structure-map/ | 🔒 |
 | 🏗️ forAgent ランタイム・アーキテクチャ図 | https://yama-0t0k0.github.io/artifacts/docs/foragent-agent-architecture/ | 🔒 |
 | 📤 AdminApp ファイルアップロード → プロフ予測入力 詳細設計 | https://yama-0t0k0.github.io/artifacts/docs/admin-fileupload-profile-prediction/ | 🔒 |
@@ -56,8 +57,10 @@ artifacts/
 │   │   └── screenshots/             イシュー貼り付け用スクリーンショット
 │   ├── foragent-issue-classification-718/
 │   │   └── index.html               forAgent Issue 機能分類マップ #718 以降（🔒）
-│   └── foragent-issue-classification-786/
-│       └── index.html               forAgent Issue 機能分類マップ #786 以降（🔒）
+│   ├── foragent-issue-classification-786/
+│   │   └── index.html               forAgent Issue 機能分類マップ #786 以降（🔒）
+│   └── foragent-issue-classification-830/
+│       └── index.html               forAgent Issue 機能分類マップ #830 以降（🔒）
 ├── docs/                            リファレンス・設計ドキュメント
 │   ├── foragent-structure-map/
 │   │   └── index.html               forAgent アプリ全体構造マップ（🔒）
@@ -111,7 +114,10 @@ node scripts/classify_foragent_issues.mjs 718 --json > /tmp/classified.json
 > **スクリプトの出力をそのまま成果物にしないこと。**
 > 「変更ファイル」節を持たない Issue（調査報告のみのもの）、撤去済みディレクトリを指す Issue
 > （`apps/admin_app/node_backend` 等）、複数テーマに跨がる Issue は必ず取りこぼす。
-> #718 の回では 64 件中 10 件（約 15%）、#786 の回では 39 件中 14 件（約 36%）が該当した。
+> #718 の回では 64 件中 10 件（約 15%）、#786 の回では 39 件中 14 件（約 36%）、
+> #830 の回では 34 件中 21 件（約 62%）が該当した。**比率は回を追うごとに上がっている。**
+> パスの写像表そのものが陳腐化するためで、#830 の回は `.agent/`（AI エージェント基盤）という
+> 表に無いディレクトリが主要な変更先になったことが主因だった。
 > `⚠` の付いた Issue と、`areas` が 1 件しかない Issue は本文を読んで補正する。
 
 手順:
@@ -138,7 +144,18 @@ node scripts/classify_foragent_issues.mjs 718 --json > /tmp/classified.json
      --title 'forAgent Issue 機能分類マップ — #<番号> 以降'
    ```
 
-6. 本 README の一覧・構成ツリーと `index.html` のカードを更新して push
+6. Issue 本文の「デプロイ済み」「CI へ組み込み」といった記述を鵜呑みにせず、
+   統合ブランチに実際に入っているかを確認する
+
+   ```bash
+   git merge-base --is-ancestor <commit> origin/Agent   # 0 なら含まれている
+   git cat-file -e origin/Agent:<新設されたはずのファイル>
+   ```
+
+   #830 の回はこれで、4 件分の作業が `Agent` にも `main` にも `same` にも
+   入っていないことが判明した。Issue の報告だけを読んでいると気づけない。
+
+7. 本 README の一覧・構成ツリーと `index.html` のカードを更新して push
 
 ## 暗号化方式（🔒 付きコンテンツ）
 
