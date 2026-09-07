@@ -2,15 +2,16 @@
 /**
  * forAgent の Issue を「どのアプリの・どのレイヤーの変更か」で一次分類する。
  *
- *   node scripts/classify_foragent_issues.mjs 718            # #718 以降
- *   node scripts/classify_foragent_issues.mjs 718 --json     # JSON で出力
+ *   node scripts/classify_foragent_issues.mjs 718
+ *   node scripts/classify_foragent_issues.mjs 718 --json
  *
  * 前提: gh CLI が yama-0t0k0/forAgent へ認証済みであること。
  *
- * これは「一次分類」であり最終成果物ではない。本文に「変更ファイル」節を持たない
- * Issue（調査報告のみのもの等）や、撤去済みディレクトリを指す Issue は取りこぼす。
- * 出力の unmatched / areas が空の行は必ず本文を読んで補正すること。
+ * これは一次分類であって成果物ではない。本文に「変更ファイル」節を持たない Issue
+ * （調査報告のみのもの等）や、撤去済みディレクトリを指す Issue は必ず取りこぼす。
+ * 末尾に出る「手読みが必要」の一覧は、本文を読んで補正する対象である。
  */
+
 import { execFileSync } from 'node:child_process';
 
 const REPO = 'yama-0t0k0/forAgent';
@@ -21,8 +22,16 @@ if (!Number.isFinite(FROM)) {
   process.exit(1);
 }
 
-/** ブランチ同期作業。分類対象から外す。 */
-const SYNC_CHORE = /^chore: Agent ブランチ最新化と same へのマージ/;
+/**
+ * 分類対象から外す Issue。タイトルの先頭で判定する。
+ * 除外したものは黙って消さず、末尾に件数と番号を出す。
+ * 「対象に無い」のが除外なのか取りこぼしなのかを、読む側が区別できるようにするため。
+ */
+const EXCLUDE = [
+  [/^chore: Agent ブランチ最新化と same へのマージ/, 'ブランチ同期 chore'],
+  [/^【鮫島】/,                                      '【鮫島】で始まるもの'],
+];
+const excluded = title => { for (const [re, why] of EXCLUDE) if (re.test(title)) return why; return null; };
 
 /** パス先頭一致 → [アプリ, レイヤー]。上から優先。 */
 const RULES = [
@@ -56,6 +65,8 @@ const RULES = [
   [/^tests\/security_rules\//,                   'データ層／インフラ','Firestore / Rules'],
   [/^infrastructure\//,                          'データ層／インフラ','インフラ設定'],
   [/^(firebase\.json|firestore\.rules|storage\.rules|\.firebaserc)$/, 'データ層／インフラ','Firebase 設定'],
+  [/^\.agent\/orchestrator\//,                    'AI エージェント基盤','オーケストレータ'],
+  [/^\.agent\//,                                 'AI エージェント基盤','エージェント基盤'],
   [/^tests\//,                                   '横断',            'テスト基盤'],
   [/^scripts\/release\//,                        '横断',            'リリース運用'],
   [/^scripts\/security\//,                       '横断',            'セキュリティ運用'],
@@ -85,9 +96,15 @@ const raw = execFileSync('gh',
    '--json','number,title,labels,state,createdAt,body'],
   { encoding:'utf8', maxBuffer: 64*1024*1024 });
 
-const rows = JSON.parse(raw)
-  .filter(i => i.number >= FROM && !SYNC_CHORE.test(i.title))
-  .sort((a,b) => a.number - b.number)
+const target = JSON.parse(raw)
+  .filter(i => i.number >= FROM)
+  .sort((a,b) => a.number - b.number);
+
+const dropped = target.map(i => ({ number:i.number, title:i.title, why:excluded(i.title) }))
+                      .filter(d => d.why);
+
+const rows = target
+  .filter(i => !excluded(i.title))
   .map(i => {
     const body = i.body || '';
     const sec  = body.split(/##+\s*(?:📝\s*)?変更(?:ファイル|点)/)[1];
@@ -106,7 +123,16 @@ const rows = JSON.parse(raw)
     };
   });
 
-if (AS_JSON) { console.log(JSON.stringify(rows,null,2)); process.exit(0); }
+/** 除外の内訳。--json のときも標準エラーへ出す（リダイレクト先を汚さずに目に入るように）。 */
+const dropSummary = () => {
+  if (!dropped.length) return '--- 除外: 0 件';
+  const byWhy = {};
+  for (const d of dropped) (byWhy[d.why] ??= []).push('#'+d.number);
+  return `--- 除外: ${dropped.length} 件\n` +
+    Object.entries(byWhy).map(([why,ns]) => `      ${why}: ${ns.length} 件 ${ns.join(' ')}`).join('\n');
+};
+
+if (AS_JSON) { console.log(JSON.stringify(rows,null,2)); console.error(dropSummary()); process.exit(0); }
 
 for (const r of rows) {
   console.log(`#${r.number} ${r.title}`);
@@ -116,5 +142,6 @@ for (const r of rows) {
   if (r.needsReview)      console.log('   ⚠ 本文の手読みが必要（変更ファイル節なし／パス未検出）');
 }
 const review = rows.filter(r => r.needsReview).map(r => '#'+r.number);
-console.log(`\n--- ${rows.length} 件（#${FROM} 以降、同期 chore を除く）`);
+console.log(`\n--- ${rows.length} 件（#${FROM} 以降、除外分を差し引いた数）`);
+console.log(dropSummary());
 console.log(`--- 手読みが必要: ${review.length} 件 ${review.join(' ')}`);
