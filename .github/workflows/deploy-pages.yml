@@ -36,8 +36,7 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html _site/index.html
-          mkdir -p _site/infographic
-          cp infographic/index.html _site/infographic/index.html
+          cp -R infographic _site/infographic
           if [ -d reports ]; then cp -R reports _site/reports; fi
           if [ -d tools ]; then cp -R tools _site/tools; fi
           if [ -d docs ]; then cp -R docs _site/docs; fi
