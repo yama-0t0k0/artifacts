@@ -8,6 +8,7 @@
 
 | コンテンツ | URL | 保護 |
 |---|---|---|
+| ◈ Direct Mode — 3D Architecture Atlas | https://yama-0t0k0.github.io/artifacts/infographic/autonomous-costsave/ | 🔒 |
 | 📊 法人ユーザーアプリ 仕様インフォグラフィック | https://yama-0t0k0.github.io/artifacts/infographic/ | 🔒 |
 | 🔍 バックエンド実装調査 — JS/TS 監査 | https://yama-0t0k0.github.io/artifacts/reports/backend-dart-audit/ | 🔒 |
 | 🧩 個別アプリ共通化調査 — apps × shared 監査 | https://yama-0t0k0.github.io/artifacts/reports/apps-shared-audit/ | 🔒 |
@@ -38,6 +39,7 @@
 artifacts/
 ├── index.html                       ランディングページ
 ├── infographic/
+│   ├── autonomous-costsave/index.html  Direct Mode 3Dインフォグラフィック（🔒）
 │   └── index.html                   法人ユーザーアプリ 仕様インフォグラフィック（暗号化 + ログインゲート）
 ├── reports/                         調査レポート
 │   ├── backend-dart-audit/
