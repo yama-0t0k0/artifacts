@@ -8,6 +8,7 @@
 
 | コンテンツ | URL | 保護 |
 |---|---|---|
+| ◈ MODULE ATLAS — Modular Monolith 3D | https://yama-0t0k0.github.io/artifacts/infographic/modular-monolith/ | 🔒 |
 | ◈ Invitation Orbit — 招待制登録フロー 3D | https://yama-0t0k0.github.io/artifacts/infographic/registration-flow/ | 🔒 |
 | ◈ Career Universe — 開発基本情報 3D | https://yama-0t0k0.github.io/artifacts/infographic/dev-basicinfo/ | 🔒 |
 | ◈ Direct Mode — Three.js 3D Architecture Atlas | https://yama-0t0k0.github.io/artifacts/infographic/autonomous-costsave/ | 🔒 |
@@ -41,6 +42,8 @@
 artifacts/
 ├── index.html                       ランディングページ
 ├── infographic/
+│   ├── modular-monolith/
+│   │   └── index.html               Modular Monolith Phase 1.5 — 3D構造アトラス（🔒）
 │   ├── registration-flow/index.html  招待制登録フロー Three.js 3D（🔒）
 │   ├── dev-basicinfo/index.html  開発基本情報 Three.js 3D（🔒）
 │   ├── autonomous-costsave/index.html  Direct Mode Three.js 3Dインフォグラフィック（🔒）
