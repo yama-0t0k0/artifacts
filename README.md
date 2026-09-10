@@ -8,6 +8,7 @@
 
 | コンテンツ | URL | 保護 |
 |---|---|---|
+| ◈ Career Universe — 開発基本情報 3D | https://yama-0t0k0.github.io/artifacts/infographic/dev-basicinfo/ | 🔒 |
 | ◈ Direct Mode — Three.js 3D Architecture Atlas | https://yama-0t0k0.github.io/artifacts/infographic/autonomous-costsave/ | 🔒 |
 | 📊 法人ユーザーアプリ 仕様インフォグラフィック | https://yama-0t0k0.github.io/artifacts/infographic/ | 🔒 |
 | 🔍 バックエンド実装調査 — JS/TS 監査 | https://yama-0t0k0.github.io/artifacts/reports/backend-dart-audit/ | 🔒 |
@@ -39,6 +40,7 @@
 artifacts/
 ├── index.html                       ランディングページ
 ├── infographic/
+│   ├── dev-basicinfo/index.html  開発基本情報 Three.js 3D（🔒）
 │   ├── autonomous-costsave/index.html  Direct Mode Three.js 3Dインフォグラフィック（🔒）
 │   └── index.html                   法人ユーザーアプリ 仕様インフォグラフィック（暗号化 + ログインゲート）
 ├── reports/                         調査レポート
