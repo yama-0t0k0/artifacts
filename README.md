@@ -8,6 +8,7 @@
 
 | コンテンツ | URL | 保護 |
 |---|---|---|
+| ◈ Invitation Orbit — 招待制登録フロー 3D | https://yama-0t0k0.github.io/artifacts/infographic/registration-flow/ | 🔒 |
 | ◈ Career Universe — 開発基本情報 3D | https://yama-0t0k0.github.io/artifacts/infographic/dev-basicinfo/ | 🔒 |
 | ◈ Direct Mode — Three.js 3D Architecture Atlas | https://yama-0t0k0.github.io/artifacts/infographic/autonomous-costsave/ | 🔒 |
 | 📊 法人ユーザーアプリ 仕様インフォグラフィック | https://yama-0t0k0.github.io/artifacts/infographic/ | 🔒 |
@@ -40,6 +41,7 @@
 artifacts/
 ├── index.html                       ランディングページ
 ├── infographic/
+│   ├── registration-flow/index.html  招待制登録フロー Three.js 3D（🔒）
 │   ├── dev-basicinfo/index.html  開発基本情報 Three.js 3D（🔒）
 │   ├── autonomous-costsave/index.html  Direct Mode Three.js 3Dインフォグラフィック（🔒）
 │   └── index.html                   法人ユーザーアプリ 仕様インフォグラフィック（暗号化 + ログインゲート）
