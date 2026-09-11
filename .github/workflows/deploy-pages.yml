@@ -6,6 +6,7 @@ on:
     paths:
       - "index.html"
       - "infographic/**"
+      - "lp/**"
       - "reports/**"
       - "tools/**"
       - "docs/**"
@@ -37,6 +38,7 @@ jobs:
           mkdir -p _site
           cp index.html _site/index.html
           cp -R infographic _site/infographic
+          if [ -d lp ]; then cp -R lp _site/lp; fi
           if [ -d reports ]; then cp -R reports _site/reports; fi
           if [ -d tools ]; then cp -R tools _site/tools; fi
           if [ -d docs ]; then cp -R docs _site/docs; fi
