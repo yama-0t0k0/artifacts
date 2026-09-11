@@ -8,6 +8,7 @@
 
 | コンテンツ | URL | 保護 |
 |---|---|---|
+| ◈ CAREER ORBIT — LaT 3D Landing Page | https://yama-0t0k0.github.io/artifacts/lp/career-orbit/ | 🔒 |
 | ◈ MODULE ATLAS — Modular Monolith 3D | https://yama-0t0k0.github.io/artifacts/infographic/modular-monolith/ | 🔒 |
 | ◈ Invitation Orbit — 招待制登録フロー 3D | https://yama-0t0k0.github.io/artifacts/infographic/registration-flow/ | 🔒 |
 | ◈ Career Universe — 開発基本情報 3D | https://yama-0t0k0.github.io/artifacts/infographic/dev-basicinfo/ | 🔒 |
@@ -41,6 +42,7 @@
 ```
 artifacts/
 ├── index.html                       ランディングページ
+├── lp/career-orbit/index.html       LaT 3Dランディングページ（🔒）
 ├── infographic/
 │   ├── modular-monolith/
 │   │   └── index.html               Modular Monolith Phase 1.5 — 3D構造アトラス（🔒）
