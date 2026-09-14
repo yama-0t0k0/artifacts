@@ -27,6 +27,7 @@
 | 🗂️ forAgent Issue 機能分類マップ — #867 以降 | https://yama-0t0k0.github.io/artifacts/reports/foragent-issue-classification-867/ | 🔒 |
 | 🗂️ forAgent Issue 機能分類マップ — #884 以降 | https://yama-0t0k0.github.io/artifacts/reports/foragent-issue-classification-884/ | 🔒 |
 | 🗺️ forAgent アプリ全体構造マップ | https://yama-0t0k0.github.io/artifacts/docs/foragent-structure-map/ | 🔒 |
+| 🏚️ forAgent モノレポ構造監査 — 設計図 vs 実ディレクトリ | https://yama-0t0k0.github.io/artifacts/reports/foragent-monorepo-structure-audit/ | 🔒 |
 | 🏗️ forAgent ランタイム・アーキテクチャ図 | https://yama-0t0k0.github.io/artifacts/docs/foragent-agent-architecture/ | 🔒 |
 | 📤 AdminApp ファイルアップロード → プロフ予測入力 詳細設計 | https://yama-0t0k0.github.io/artifacts/docs/admin-fileupload-profile-prediction/ | 🔒 |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | 🔒 |
@@ -76,8 +77,10 @@ artifacts/
 │   │   └── index.html               forAgent Issue 機能分類マップ #830 以降（🔒）
 │   ├── foragent-issue-classification-867/
 │   │   └── index.html               forAgent Issue 機能分類マップ #867 以降（🔒）
-│   └── foragent-issue-classification-884/
-│       └── index.html               forAgent Issue 機能分類マップ #884 以降（🔒）
+│   ├── foragent-issue-classification-884/
+│   │   └── index.html               forAgent Issue 機能分類マップ #884 以降（🔒）
+│   └── foragent-monorepo-structure-audit/
+│       └── index.html               forAgent モノレポ構造監査 — 設計図 vs 実ディレクトリ（🔒）
 ├── docs/                            リファレンス・設計ドキュメント
 │   ├── foragent-structure-map/
 │   │   └── index.html               forAgent アプリ全体構造マップ（🔒）
