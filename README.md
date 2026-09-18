@@ -29,6 +29,7 @@
 | 🗺️ forAgent アプリ全体構造マップ | https://yama-0t0k0.github.io/artifacts/docs/foragent-structure-map/ | 🔒 |
 | 🏚️ forAgent モノレポ構造監査 — 設計図 vs 実ディレクトリ | https://yama-0t0k0.github.io/artifacts/reports/foragent-monorepo-structure-audit/ | 🔒 |
 | 🔑 forAgent 改修引き渡し検査 — 構造監査13項目の追跡（2026-09-18） | https://yama-0t0k0.github.io/artifacts/reports/foragent-monorepo-structure-reaudit/ | 🔒 |
+| 🏠 forAgent 引き渡し完了検査 — 構造監査13項目の本流到達を確認（2026-09-18） | https://yama-0t0k0.github.io/artifacts/reports/foragent-monorepo-structure-handover/ | 🔒 |
 | 🏗️ forAgent ランタイム・アーキテクチャ図 | https://yama-0t0k0.github.io/artifacts/docs/foragent-agent-architecture/ | 🔒 |
 | 📤 AdminApp ファイルアップロード → プロフ予測入力 詳細設計 | https://yama-0t0k0.github.io/artifacts/docs/admin-fileupload-profile-prediction/ | 🔒 |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | 🔒 |
@@ -82,8 +83,10 @@ artifacts/
 │   │   └── index.html               forAgent Issue 機能分類マップ #884 以降（🔒）
 │   ├── foragent-monorepo-structure-audit/
 │   │   └── index.html               forAgent モノレポ構造監査 — 設計図 vs 実ディレクトリ（🔒）
-│   └── foragent-monorepo-structure-reaudit/
-│       └── index.html               forAgent 改修引き渡し検査 — 構造監査13項目の追跡（🔒）
+│   ├── foragent-monorepo-structure-reaudit/
+│   │   └── index.html               forAgent 改修引き渡し検査 — 構造監査13項目の追跡（🔒）
+│   └── foragent-monorepo-structure-handover/
+│       └── index.html               forAgent 引き渡し完了検査 — 13項目の本流到達を確認（🔒）
 ├── docs/                            リファレンス・設計ドキュメント
 │   ├── foragent-structure-map/
 │   │   └── index.html               forAgent アプリ全体構造マップ（🔒）
