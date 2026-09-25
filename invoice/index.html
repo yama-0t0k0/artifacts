@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>請求書 一覧 — ログイン</title>
+<style>
+:root{ --bg:#16171a; --bg2:#1e2025; --card:#23262c; --txt:#e9eaec; --muted:#9aa1ab; --line:rgba(255,255,255,.12); --accent:#6aa6ff; --bad:#ff8a8a; }
+@media (prefers-color-scheme: light){ :root{ --bg:#f6f7f5; --bg2:#fff; --card:#fff; --txt:#1b1d21; --muted:#5f656e; --line:rgba(0,0,0,.12); --accent:#1f6fe0; --bad:#d8463f; } }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:
+  radial-gradient(120% 120% at 0% 0%, rgba(106,166,255,.16), transparent 55%),
+  radial-gradient(120% 120% at 100% 100%, rgba(126,224,192,.14), transparent 55%), var(--bg);
+  color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Noto Sans JP",sans-serif;
+  display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.box{width:100%;max-width:380px;background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:34px 30px;}
+.lockico{width:52px;height:52px;border-radius:14px;background:rgba(106,166,255,.16);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px;}
+h1{font-size:20px;margin:0 0 6px;font-weight:700;}
+p.sub{margin:0 0 22px;color:var(--muted);font-size:13px;line-height:1.6;}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px;}
+input{width:100%;height:44px;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--txt);
+  font-size:15px;padding:0 14px;outline:none;}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(106,166,255,.2);}
+button{width:100%;height:44px;margin-top:16px;border:0;border-radius:10px;background:var(--accent);color:#fff;
+  font-size:15px;font-weight:600;cursor:pointer;}
+button:disabled{opacity:.6;cursor:default;}
+.err{color:var(--bad);font-size:13px;margin-top:12px;min-height:18px;}
+.foot{margin-top:18px;font-size:11px;color:var(--muted);line-height:1.6;}
+</style>
+</head>
+<body>
+<form class="box" id="f" autocomplete="off">
+  <div class="lockico">🔒</div>
+  <h1>請求書 一覧</h1>
+  <p class="sub">このページは保護されています。閲覧するにはパスワードを入力してください。</p>
+  <label for="pw">パスワード</label>
+  <input type="password" id="pw" autofocus autocomplete="current-password">
+  <button type="submit" id="btn">復号して表示</button>
+  <div class="err" id="err"></div>
+  <div class="foot">クライアント側で復号されます（カジュアル保護）。</div>
+</form>
+<script>
+/* ゲートのコードは必ず IIFE に閉じ込める。
+   document.open() はドキュメントを作り直すが、グローバルの字句環境
+   （const/let の宣言）は作り直さない。ゲートがトップレベルで宣言した名前が
+   残ったまま本文が書き込まれるため、本文側に同名の const があると
+   "Identifier 'X' has already been declared" で本文のスクリプトが
+   丸ごと実行されなくなる（静的な HTML/SVG だけが表示され、
+   JS で描画している表やグラフが空になる）。実際に #830 の分類マップで発生した。 */
+(function(){
+const GATE={
+  salt:"K7JhZt1SV0Hx5eTj53Bs5Q==", iv:"YD0Ngc2lipCojWp5", ct:"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", iter:250000
+};
+const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const f=document.getElementById('f'),pw=document.getElementById('pw'),err=document.getElementById('err'),btn=document.getElementById('btn');
+f.addEventListener('submit',async e=>{
+  e.preventDefault(); err.textContent=''; btn.disabled=true; btn.textContent='復号中…';
+  try{
+    const enc=new TextEncoder();
+    const km=await crypto.subtle.importKey('raw',enc.encode(pw.value),'PBKDF2',false,['deriveKey']);
+    const key=await crypto.subtle.deriveKey(
+      {name:'PBKDF2',salt:b64d(GATE.salt),iterations:GATE.iter,hash:'SHA-256'},
+      km,{name:'AES-GCM',length:256},false,['decrypt']);
+    const plainBuf=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(GATE.iv)},key,b64d(GATE.ct));
+    const html=new TextDecoder().decode(plainBuf);
+    try{sessionStorage.setItem('unlocked','1')}catch(_){}
+    document.open(); document.write(html); document.close();
+  }catch(_){
+    err.textContent='パスワードが違います。'; btn.disabled=false; btn.textContent='復号して表示'; pw.select();
+  }
+});
+})();
+</script>
+</body>
+</html>
