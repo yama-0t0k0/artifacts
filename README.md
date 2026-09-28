@@ -32,6 +32,7 @@
 | 🏠 forAgent 引き渡し完了検査 — 構造監査13項目の本流到達を確認（2026-09-18） | https://yama-0t0k0.github.io/artifacts/reports/foragent-monorepo-structure-handover/ | 🔒 |
 | 🔧 forAgent アフター点検 — 前回の宿題4点の完了と未合流の修正を確認（2026-09-23） | https://yama-0t0k0.github.io/artifacts/reports/foragent-monorepo-structure-aftercheck/ | 🔒 |
 | 📦 forAgent 検収点検 — 宿題4点の到達と本番への配達待ちを確認（2026-09-25） | https://yama-0t0k0.github.io/artifacts/reports/foragent-monorepo-structure-acceptance/ | 🔒 |
+| 🔁 forAgent 定期点検 — 宿題4点の本番到達と、フェーズ遷移の修正の配達待ちを確認（2026-09-29） | https://yama-0t0k0.github.io/artifacts/reports/foragent-monorepo-structure-periodic/ | 🔒 |
 | 🏗️ forAgent ランタイム・アーキテクチャ図 | https://yama-0t0k0.github.io/artifacts/docs/foragent-agent-architecture/ | 🔒 |
 | 📤 AdminApp ファイルアップロード → プロフ予測入力 詳細設計 | https://yama-0t0k0.github.io/artifacts/docs/admin-fileupload-profile-prediction/ | 🔒 |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | 🔒 |
@@ -91,8 +92,10 @@ artifacts/
 │   │   └── index.html               forAgent 引き渡し完了検査 — 13項目の本流到達を確認（🔒）
 │   ├── foragent-monorepo-structure-aftercheck/
 │   │   └── index.html               forAgent アフター点検 — 宿題4点の完了と未合流の修正（🔒）
-│   └── foragent-monorepo-structure-acceptance/
-│       └── index.html               forAgent 検収点検 — 宿題4点の到達と本番への配達待ち（🔒）
+│   ├── foragent-monorepo-structure-acceptance/
+│   │   └── index.html               forAgent 検収点検 — 宿題4点の到達と本番への配達待ち（🔒）
+│   └── foragent-monorepo-structure-periodic/
+│       └── index.html               forAgent 定期点検 — 宿題4点の本番到達とフェーズ遷移の修正の配達待ち（🔒）
 ├── docs/                            リファレンス・設計ドキュメント
 │   ├── foragent-structure-map/
 │   │   └── index.html               forAgent アプリ全体構造マップ（🔒）
