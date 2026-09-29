@@ -35,6 +35,7 @@
 | 🔁 forAgent 定期点検 — 宿題4点の本番到達と、フェーズ遷移の修正の配達待ちを確認（2026-09-29） | https://yama-0t0k0.github.io/artifacts/reports/foragent-monorepo-structure-periodic/ | 🔒 |
 | 🏗️ forAgent ランタイム・アーキテクチャ図 | https://yama-0t0k0.github.io/artifacts/docs/foragent-agent-architecture/ | 🔒 |
 | 📤 AdminApp ファイルアップロード → プロフ予測入力 詳細設計 | https://yama-0t0k0.github.io/artifacts/docs/admin-fileupload-profile-prediction/ | 🔒 |
+| 🎬 Agentic Artifact 構想 — フロントエンドからエージェントへ（3D動画） | https://yama-0t0k0.github.io/artifacts/docs/agentic-artifact-vision/ | 🔒 |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | 🔒 |
 <!-- CALENDAR_ROW:lat-ceo-meeting-calendar -->
 | 🗓️ 2026年10月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー | https://yama-0t0k0.github.io/artifacts/calendars/2026-10-lat-ceo-meeting-calendar/ | 🔒 |
@@ -101,8 +102,12 @@ artifacts/
 │   │   └── index.html               forAgent アプリ全体構造マップ（🔒）
 │   ├── foragent-agent-architecture/
 │   │   └── index.html               forAgent ランタイム・アーキテクチャ図（🔒）
-│   └── admin-fileupload-profile-prediction/
-│       └── index.html               AdminApp ファイルアップロード → プロフ予測入力 詳細設計（🔒）
+│   ├── admin-fileupload-profile-prediction/
+│   │   └── index.html               AdminApp ファイルアップロード → プロフ予測入力 詳細設計（🔒）
+│   └── agentic-artifact-vision/
+│       ├── index.html               Agentic Artifact 構想 3D動画（🔒）
+│       ├── video.bin                ナレーション付き動画（AES-256-GCM で暗号化。鍵は🔒ページ内）
+│       └── audio.bin                ナレーション＋BGM 音声（同上）
 ├── tools/                           操作パネル・ツール類
 │   └── screenshot-audit-launcher/
 │       └── index.html               forAgent スクリーンショット撮影パネル（🔒）
