@@ -38,7 +38,7 @@
 | 🎬 Agentic Artifact 構想 — フロントエンドからエージェントへ（3D動画） | https://yama-0t0k0.github.io/artifacts/docs/agentic-artifact-vision/ | 🔒 |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | 🔒 |
 <!-- CALENDAR_ROW:lat-ceo-meeting-calendar -->
-| 🗓️ 2026年10月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー | https://yama-0t0k0.github.io/artifacts/calendars/2026-10-lat-ceo-meeting-calendar/ | 🔒 |
+| 🗓️ 2026年9月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー | https://yama-0t0k0.github.io/artifacts/calendars/2026-09-lat-ceo-meeting-calendar/ | 🔒 |
 <!-- /CALENDAR_ROW:lat-ceo-meeting-calendar -->
 
 > ランディング（`index.html`）を除く全コンテンツページはパスワード保護（🔒）されています。
@@ -113,8 +113,8 @@ artifacts/
 │       └── index.html               forAgent スクリーンショット撮影パネル（🔒）
 ├── calendars/                        個人スケジュール系カレンダー（レポート/ドキュメント/ツールとは別カテゴリ）
 <!-- CALENDAR_TREE:lat-ceo-meeting-calendar -->
-│   └── 2026-10-lat-ceo-meeting-calendar/
-│       └── index.html               2026年10月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー（🔒）
+│   └── 2026-09-lat-ceo-meeting-calendar/
+│       └── index.html               2026年9月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー（🔒）
 <!-- /CALENDAR_TREE:lat-ceo-meeting-calendar -->
 ├── scripts/
 │   ├── build_infographic_gate.js    平文HTMLを暗号化しゲートを生成するビルドスクリプト
