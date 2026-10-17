@@ -74,6 +74,25 @@ if (DATE_OVERRIDE) {
     console.log('📅 更新日を ' + DATE_OVERRIDE + ' に差し替えました（ソースにも保存）');
   }
 }
+// ---- calendars/ 配下のスマホ表示ガード（再発防止） ----
+// 打ち合わせカレンダーは主にスマホ(iPhone Safari)で閲覧される。古いテンプレートから再生成されて
+// モバイル対応が静かに消える退行が2回起きたため、必須要素が無いソースは暗号化・公開させない。
+// 直し方: 最新の lat-ceo-meeting-calendar スキルの build_calendar_html.py で作り直す
+//         （既存ページは patch_calendar_html.py で CSS だけ最新化できる）。
+if (/[\\/]calendars[\\/]/.test(OUT)) {
+  const problems = [];
+  if (!/<meta[^>]+name=["']viewport["'][^>]*width=device-width/.test(src)) problems.push('viewport meta (width=device-width)');
+  if (!/text-size-adjust/.test(src)) problems.push('text-size-adjust (iOS の文字拡大対策)');
+  if (!/table-layout:\s*fixed/.test(src)) problems.push('table-layout: fixed');
+  const mi = src.indexOf('@media (max-width: 640px)');
+  if (mi < 0) problems.push('@media (max-width: 640px) ブロック');
+  else if (!/\.tag\s*\{[^}]*width:\s*100%/.test(src.slice(mi))) problems.push('モバイル用 .tag { width: 100% }');
+  if (problems.length) {
+    console.error('ERROR: スマホ表示に必要な要素がソースにありません。公開を中止しました:');
+    problems.forEach((x) => console.error('  - ' + x));
+    process.exit(1);
+  }
+}
 const salt = crypto.randomBytes(16);
 const iv = crypto.randomBytes(12);
 const key = crypto.pbkdf2Sync(PASSWORD, salt, ITER, 32, 'sha256');
@@ -151,6 +170,14 @@ f.addEventListener('submit',async e=>{
     const html=new TextDecoder().decode(plainBuf);
     try{sessionStorage.setItem('unlocked','1')}catch(_){}
     document.open(); document.write(html); document.close();
+    /* document.open() でヘッド(=viewport meta)が作り直される。iOS Safari で本文側の viewport が
+       効かず PC 幅レイアウトになる事例があったため、本文が viewport を宣言しているなら必ず再設定する */
+    try{
+      if(/name=["']viewport["']/.test(html) && !document.querySelector('meta[name=viewport]')){
+        var mv=document.createElement('meta'); mv.name='viewport'; mv.content='width=device-width, initial-scale=1';
+        (document.head||document.documentElement).appendChild(mv);
+      }
+    }catch(_){}
   }catch(_){
     err.textContent='パスワードが違います。'; btn.disabled=false; btn.textContent='復号して表示'; pw.select();
   }
