@@ -37,6 +37,7 @@
 | 📤 AdminApp ファイルアップロード → プロフ予測入力 詳細設計 | https://yama-0t0k0.github.io/artifacts/docs/admin-fileupload-profile-prediction/ | 🔒 |
 | 🎬 Agentic Artifact 構想 — フロントエンドからエージェントへ（3D動画） | https://yama-0t0k0.github.io/artifacts/docs/agentic-artifact-vision/ | 🔒 |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | 🔒 |
+| 🪐 forAgent 週次まとめ 2026-W46（11/09〜11/15）— 3D | https://yama-0t0k0.github.io/artifacts/digests/2026-W46/ | 🔒 |
 <!-- CALENDAR_ROW:lat-ceo-meeting-calendar -->
 | 🗓️ 2026年12月 山川CEO(株式会社Lat) 打ち合わせ方法カレンダー | https://yama-0t0k0.github.io/artifacts/calendars/2026-12-lat-ceo-meeting-calendar/ | あり |
 <!-- /CALENDAR_ROW:lat-ceo-meeting-calendar -->
@@ -111,6 +112,9 @@ artifacts/
 ├── tools/                           操作パネル・ツール類
 │   └── screenshot-audit-launcher/
 │       └── index.html               forAgent スクリーンショット撮影パネル（🔒）
+├── digests/                         forAgent の週次・月次まとめ Issue（ラベル digest）の図解。期間ごとにディレクトリを分ける
+│   └── 2026-W46/
+│       └── index.html               週次まとめ 2026-W46 — 3D惑星図＋SVG図解（🔒）
 ├── calendars/                        個人スケジュール系カレンダー（レポート/ドキュメント/ツールとは別カテゴリ）
 <!-- CALENDAR_TREE:lat-ceo-meeting-calendar -->
 │   └── 2026-12-lat-ceo-meeting-calendar/
