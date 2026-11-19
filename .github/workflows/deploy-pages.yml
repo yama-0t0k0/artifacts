@@ -12,6 +12,7 @@ on:
       - "docs/**"
       - "calendars/**"
       - "invoice/**"
+      - "digests/**"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -45,6 +46,7 @@ jobs:
           if [ -d docs ]; then cp -R docs _site/docs; fi
           if [ -d calendars ]; then cp -R calendars _site/calendars; fi
           if [ -d invoice ]; then cp -R invoice _site/invoice; fi
+          if [ -d digests ]; then cp -R digests _site/digests; fi
           touch _site/.nojekyll
 
       - name: Setup Pages
