@@ -38,6 +38,7 @@
 | 🎬 Agentic Artifact 構想 — フロントエンドからエージェントへ（3D動画） | https://yama-0t0k0.github.io/artifacts/docs/agentic-artifact-vision/ | 🔒 |
 | 📸 forAgent スクリーンショット撮影パネル | https://yama-0t0k0.github.io/artifacts/tools/screenshot-audit-launcher/ | 🔒 |
 | 🌕 forAgent 月次まとめ 2026-10（10/01〜10/31）— 3D | https://yama-0t0k0.github.io/artifacts/digests/2026-10/ | 🔒 |
+| 🌕 forAgent 月次まとめ 2026-09（09/01〜09/30）— 3D | https://yama-0t0k0.github.io/artifacts/digests/2026-09/ | 🔒 |
 | 🪐 forAgent 週次まとめ 2026-W47（11/16〜11/22）— 3D | https://yama-0t0k0.github.io/artifacts/digests/2026-W47/ | 🔒 |
 | 🪐 forAgent 週次まとめ 2026-W46（11/09〜11/15）— 3D | https://yama-0t0k0.github.io/artifacts/digests/2026-W46/ | 🔒 |
 <!-- CALENDAR_ROW:lat-ceo-meeting-calendar -->
@@ -115,6 +116,8 @@ artifacts/
 │   └── screenshot-audit-launcher/
 │       └── index.html               forAgent スクリーンショット撮影パネル（🔒）
 ├── digests/                         forAgent の週次・月次まとめ Issue（ラベル digest）の図解。期間ごとにディレクトリを分ける
+│   ├── 2026-09/
+│   │   └── index.html               月次まとめ 2026-09 — 3D惑星図＋SVG図解（🔒）
 │   ├── 2026-10/
 │   │   └── index.html               月次まとめ 2026-10 — 3D惑星図＋SVG図解（🔒）
 │   ├── 2026-W46/
